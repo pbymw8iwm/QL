@@ -99,7 +99,7 @@ function generate(){
   $.ajax({ 
                 cache: false,
 				type: "get", 
-				url: _gModuleName+"/business/com.math.web.MathAction?action=getSudoku&level="+level,
+				url: _gModuleName+"/business/com.ql.math.web.MathAction?action=getSudoku&level="+level,
 				contentType: "text/html; charset=UTF-8",
 				success: function(data, textStatus){
 				  if(textStatus == "success"){

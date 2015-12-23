@@ -1,4 +1,4 @@
-package com.math.web;
+package com.ql.math.web;
 
 import java.io.InputStream;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.math.web;
+package com.ql.math.web;
 
 import java.util.HashMap;
 import java.util.Random;
