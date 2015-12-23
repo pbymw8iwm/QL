@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="melibrary.com.genuitec.eclipse.j2eedt.core.MYECLIPSE_JAVAEE_5_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/QLCommon"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/appframe.jar"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/json-lib-1.1-jdk13.jar"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="/QLCommon/lib/json-ezmorph-1.0.2.jar"/>
+	<classpathentry kind="output" path="html/WEB-INF/classes"/>
+</classpath>

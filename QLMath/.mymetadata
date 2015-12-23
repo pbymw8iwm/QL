@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="QLMath"
+  id="myeclipse.1450746974532"
+  context-root="/QLMath"
+  j2ee-spec="5.0"
+  archive="QLMath.war">
+  <attributes>
+    <attribute name="webrootdir" value="html" />
+  </attributes>
+</project-module>
+
