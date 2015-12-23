@@ -105,7 +105,7 @@ public class JsonUtil {
 	}
 
 	/**
-	 * 将maps对象转换为json字符�?
+	 * 将maps对象转换为json字符串
 	 * @param pMap
 	 * @return
 	 * @throws Exception
