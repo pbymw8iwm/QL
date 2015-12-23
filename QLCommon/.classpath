@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/json-ezmorph-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

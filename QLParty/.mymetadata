@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="QLParty"
+  id="myeclipse.1450848214622"
+  context-root="/QLParty"
+  j2ee-spec="5.0"
+  archive="QLParty.war">
+  <attributes>
+    <attribute name="webrootdir" value="html" />
+  </attributes>
+</project-module>
+

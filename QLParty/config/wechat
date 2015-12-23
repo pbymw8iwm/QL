@@ -1,0 +1,6 @@
+AppId=wx11e86a9b295d322f
+AppSecret=1a75bc57c0dde917a77ec221f0c55b54
+ServerIp=xjsylhl.vicp.net/QLParty
+MchId=
+APIKey=
+OpClass=com.ql.party.wechat.WechatOpImpl

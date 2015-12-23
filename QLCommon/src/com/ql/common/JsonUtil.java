@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import com.ai.appframe2.common.DataContainerInterface;
 import com.ai.appframe2.common.DataStructInterface;
 import com.ai.appframe2.common.DataType;
-import com.ai.appframe2.util.locale.AppframeLocaleFactory;
 
 public class JsonUtil {
 	/**
@@ -30,9 +29,7 @@ public class JsonUtil {
  	    List reList = new ArrayList();
 		if(StringUtils.isNotBlank(pString)){
 			if(!JSONUtils.mayBeJSON(pString)){
-				//输入参数字符串不符合JSON规范.
-				String msg = AppframeLocaleFactory.getResource("com.ai.appframe2.web.json.format_error");
-				throw new Exception(msg);
+				throw new Exception("输入参数字符串不符合JSON规范");
 			}
 			JSONArray jArray = JSONArray.fromString(pString);
 			for (int i = 0; i < jArray.length(); i++) {
@@ -60,9 +57,7 @@ public class JsonUtil {
 		Map reMap = new HashMap();
 		if(StringUtils.isNotBlank(pString)){
 			if(!JSONUtils.mayBeJSON(pString)){
-				//输入参数字符串不符合JSON规范.
-				String msg = AppframeLocaleFactory.getResource("com.ai.appframe2.web.json.format_error");
-				throw new Exception(msg);
+				throw new Exception("输入参数字符串不符合JSON规范");
 			}
 			JSONObject jObject = JSONObject.fromString(pString);
 			if(!jObject.isNullObject() && !jObject.isEmpty()){
