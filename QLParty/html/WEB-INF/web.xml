@@ -37,6 +37,12 @@
     <servlet-class>com.ql.wechat.WechatServlet</servlet-class>
   </servlet>
   <servlet>
+    <description>微信授权菜单接口</description>
+    <display-name>微信授权菜单接口</display-name>
+    <servlet-name>WechatOp</servlet-name>
+    <servlet-class>com.ql.wechat.WechatOpServlet</servlet-class>
+  </servlet>
+  <servlet>
     <description>微信初始化接口</description>
     <display-name>微信初始化接口</display-name>
     <servlet-name>WechatInit</servlet-name>
@@ -50,6 +56,10 @@
   <servlet-mapping>
     <servlet-name>WeiXin</servlet-name>
     <url-pattern>/weixin</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WechatOp</servlet-name>
+    <url-pattern>/wechatop</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>WechatInit</servlet-name>

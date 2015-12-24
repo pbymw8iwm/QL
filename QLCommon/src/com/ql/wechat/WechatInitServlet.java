@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ai.appframe2.complex.cache.CacheFactory;
+import com.ai.appframe2.complex.cache.ICache;
 import com.ai.appframe2.web.HttpUtil;
 
 /**
  * 应用启动时获取AccessToken
- * 临时提供：t=t 获取当前的AccessToken
+ * 临时提供：t=t 获取当前的AccessToken,t=c 刷新用户缓存
  * @author hailu
  *
  */
@@ -49,6 +51,17 @@ public class WechatInitServlet extends HttpServlet {
 		String result = "";
 		if("t".equals(type)){
 			result = WechatCommons.AccessToken;
+		}
+		else if("c".equals(type)){
+			ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
+			try {
+				cache.refresh();
+				result = "finished";
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				result = e.getMessage();
+			}
 		}
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
@@ -101,7 +114,7 @@ public class WechatInitServlet extends HttpServlet {
 		new Thread(new TokenThread()).start();
 		
 		//触发一下缓存
-		//ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
+		ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
 	}
 
 }

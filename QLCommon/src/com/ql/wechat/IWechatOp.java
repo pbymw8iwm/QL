@@ -1,5 +1,8 @@
 package com.ql.wechat;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 处理微信传入的消息
  * @author linhl
@@ -33,4 +36,13 @@ public interface IWechatOp {
 	 * @return
 	 */
 	public String processMsg(ReceiveXmlEntity xmlEntity);
+	
+	/**
+	 * 处理带授权的菜单链接
+	 * @param request
+	 * @param response
+	 * @param param
+	 * @return
+	 */
+	public String getOpUrl(HttpServletRequest request, HttpServletResponse response, String param);
 }

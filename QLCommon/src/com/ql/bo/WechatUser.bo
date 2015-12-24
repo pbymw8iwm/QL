@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="WechatUser" mainattr="OpenId">
+    <mapingenty type="table">wechatuser</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="OpenId" maxlength="100" datatype="String" type="PK">
+        <mapingcol datatype="varchar">OpenId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserType" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">UserType</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>
