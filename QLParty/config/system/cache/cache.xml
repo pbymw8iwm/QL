@@ -53,5 +53,7 @@
    <cache id="com.asiainfo.appframe.ext.exeframe.ws.client.cache.WsClientCacheImpl" init="false"/>
 
    <!--ÒµÎñ»º´æ-->
-   <cache id="com.ql.wechat.WechatUserCacheImpl"/>
+   <cache id="com.ql.wechat.WechatUserCacheImpl">
+       <property name="cronExpression" value="0 0 4 * * ?"/>
+   </cache>
 </caches>

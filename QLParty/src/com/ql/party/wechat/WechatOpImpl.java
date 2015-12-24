@@ -1,57 +1,165 @@
 package com.ql.party.wechat;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ai.appframe2.complex.cache.CacheFactory;
+import com.ai.appframe2.complex.cache.ICache;
+import com.ql.bo.WechatUserBean;
+import com.ql.ivalues.IWechatUserValue;
+import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.IWechatOp;
+import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.ReceiveXmlEntity;
+import com.ql.wechat.WechatCommons;
+import com.ql.wechat.WechatUserCacheImpl;
+import com.ql.wechat.WechatUtils;
 
 public class WechatOpImpl implements IWechatOp {
 
+	private static transient Log log = LogFactory.getLog(WechatOpImpl.class);
 	/**
-	 * ´¦Àí¶©ÔÄÊÂ¼ş
+	 * å¤„ç†è®¢é˜…äº‹ä»¶
 	 * @param xmlEntity
 	 * @return
 	 */
 	public String processSubscribe(ReceiveXmlEntity xmlEntity){
-		return "»¶Ó­Ê¹ÓÃ¾Û»áÖúÊÖ£¡³õ´ÎÊ¹ÓÃ¿É²é¿´°ïÖú";
+		String openId = xmlEntity.getFromUserName();
+		if(log.isDebugEnabled())
+			log.debug("è®¢é˜…ï¼š"+openId);
+		IWechatUserValue wechatUser = null;
+		String result = null;
+        try{
+        	//è·å–å¾®ä¿¡ç”¨æˆ·ä¿¡æ¯
+        	ReceiveJson json = WechatUtils.httpRequest(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
+        	if(json.isError()){
+        		log.error("ç”¨æˆ·ä¿¡æ¯("+openId+")è·å–å¤±è´¥:"+json.getErrMsg());
+        		json = null;
+        	}
+        	
+        	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, openId);
+        	
+            if(wechatUser == null){
+            	//æ£€æŸ¥æ˜¯å¦æ˜¯ä¹‹å‰é€€è®¢è¿‡çš„
+            	wechatUser = QLServiceFactory.getQLSV().getUser(openId);
+            }
+            if(wechatUser.isNew()){
+            	result = "æ¬¢è¿ä½¿ç”¨èšä¼šåŠ©æ‰‹! åˆæ¬¡ä½¿ç”¨å¯æŸ¥çœ‹å¸®åŠ©";
+            }
+            else if(wechatUser.getState() == 0){
+        		wechatUser.setState(1);
+        		result = "æ¬¢è¿å›æ¥^_^";
+        	}
+            if(wechatUser.isNew() || wechatUser.isModified()){
+	            if(json != null){
+	            	wechatUser.setName(json.getNickname());
+	            	wechatUser.setGender(json.getSex());
+	            	wechatUser.setCity(json.getProvince()+json.getCity());
+	            	wechatUser.setImagedata(json.getHeadimgurl());
+	            }
+	            //ä¿å­˜
+	            QLServiceFactory.getQLSV().saveUser(wechatUser);
+	            //åˆ·ç¼“å­˜
+	            ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
+	            try {
+					HashMap map = cache.getAll();
+					map.put(openId,wechatUser);
+					map.put(wechatUser.getUsertype()+"_"+wechatUser.getUserid(), wechatUser);
+					
+				} catch (Exception e) {
+					log.error(e.getMessage(),e);
+				}
+            }
+        }
+        catch(Exception ex){
+        	log.error(ex.getMessage(),ex);
+        }
+		return result;
 	}
 
 	/**
-	 * ´¦ÀíÍË¶©ÊÂ¼ş
+	 * å¤„ç†é€€è®¢äº‹ä»¶
 	 * @param xmlEntity
 	 * @return
 	 */
 	public String processUnsubscribe(ReceiveXmlEntity xmlEntity){
-		return "¸ĞĞ»ÄúµÄÊ¹ÓÃ£¡ÆÚ´ıÄúµÄÔÙ´Îµ½À´£¡";
+		String openId = xmlEntity.getFromUserName();
+		if(log.isDebugEnabled())
+			log.debug("é€€è®¢ï¼š"+openId);
+		IWechatUserValue wechatUser = null;
+		try {
+			wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, openId);
+			if(wechatUser != null){
+				QLServiceFactory.getQLSV().deleteUser(wechatUser);
+	            //åˆ·ç¼“å­˜
+	            ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
+	            try {
+					HashMap map = cache.getAll();
+					map.remove(openId);
+					map.remove(wechatUser.getUsertype()+"_"+wechatUser.getUserid());
+				} catch (Exception e) {
+					log.error(e.getMessage(),e);
+				}
+			}
+		} catch (Exception ex) {
+        	log.error(ex.getMessage(),ex);
+		}
+		return "æ„Ÿè°¢ä½¿ç”¨, æœŸå¾…æ‚¨çš„å†æ¬¡åˆ°æ¥!";
 	}
 	
 	/**
-	 * ´¦Àí¶şÎ¬ÂëÉ¨Ãè
+	 * å¤„ç†å¸¦å‚äºŒç»´ç æ‰«æ
 	 * @param xmlEntity
 	 * @return
 	 */
 	public String processScan(ReceiveXmlEntity xmlEntity){
-		return "»¶Ó­Ê¹ÓÃ¾Û»áÖúÊÖ£¡";
+		return "æ¬¢è¿ä½¿ç”¨èšä¼šåŠ©æ‰‹ï¼";
 	}
 	
 	/**
-	 * ´¦ÀíÆÕÍ¨ÏûÏ¢
+	 * å¤„ç†æ™®é€šæ¶ˆæ¯
 	 * @param xmlEntity
 	 * @return
 	 */
 	public String processMsg(ReceiveXmlEntity xmlEntity){
-		return "»¶Ó­Ê¹ÓÃ¾Û»áÖúÊÖ£¡";
+		return "æ¬¢è¿ä½¿ç”¨èšä¼šåŠ©æ‰‹ï¼";
 	}
 
 	/**
-	 * ´¦Àí´øÊÚÈ¨µÄ²Ëµ¥Á´½Ó
+	 * å¤„ç†å¸¦æˆæƒçš„èœå•é“¾æ¥
 	 * @param request
 	 * @param response
 	 * @param param
 	 * @return
 	 */
 	public String getOpUrl(HttpServletRequest request, HttpServletResponse response, String param){
-		return null;
+		String url = null;
+		if(Type_NewParty.equals(param))
+			url = "party/NewParty.jsp";
+		else if(Type_CurrentParty.equals(param))
+			url = "party/CurrentParty.jsp";
+		else if(Type_PartyList.equals(param))
+			url = "party/PartyList.jsp";
+		else if(Type_NewCircle.equals(param))
+			url = "circle/NewCircle.jsp";
+		else if(Type_CircleList.equals(param))
+			url = "circle/CircleList.jsp";
+		else if(Type_Feedback.equals(param))
+			url = "help/Feedback.jsp";
+		return url;
 	}
+	
+	public static final String Type_NewParty = "1";
+	public static final String Type_CurrentParty = "2";
+	public static final String Type_PartyList = "3";
+	
+	public static final String Type_NewCircle = "11";
+	public static final String Type_CircleList = "12";
+
+	public static final String Type_Feedback = "99";
 }

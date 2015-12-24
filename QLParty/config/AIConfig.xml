@@ -42,9 +42,7 @@
 </ConfigKind>
 
 <ConfigKind name="UNCHECK_URL" remarks="不进行验证的url(包括session和访问权限)">
-  <ConfigItem name="/UserRegister.jsp" remarks="注册页面">N</ConfigItem>
-  <ConfigItem name="/ChangeUserPwd.jsp" remarks="密码修改页面">N</ConfigItem>
-  <ConfigItem name="/GetUserPwd.jsp" remarks="密码取回页面">N</ConfigItem>
+  <ConfigItem name="/help/Help.jsp" remarks="帮助页面">N</ConfigItem>
   <ConfigItem name="/index.jsp" remarks="首页">N</ConfigItem>
   <ConfigItem name="/js/Globe.jsp" remarks="平台">N</ConfigItem>
   <ConfigItem name="/webframe/" remarks="平台">N</ConfigItem>

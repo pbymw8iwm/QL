@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>我的圈子</title>
+    <title>使用说明</title>
 	
     <meta http-equiv="keywords" content="聚会助手  社交圈">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -12,7 +12,7 @@
   
   <body>
     <div class="container">
-		  
+		  <h3>帮助</h3>
 	</div>
   </body>
 </html>

@@ -1,51 +1,51 @@
 {
      "button":[
       {
-           "name":"聚会",
+           "name":"鑱氫細",
            "sub_button":[
            {	
                "type":"view",
-               "name":"创建聚会",
+               "name":"鍒涘缓鑱氫細",
                "url":"http://xjsylhl.vicp.net/QLParty/party/NewParty.jsp"
             },
            {	
                "type":"view",
-               "name":"当前聚会",
+               "name":"褰撳墠鑱氫細",
                "url":"http://xjsylhl.vicp.net/QLParty/party/CurrentParty.jsp"
             },
             {
                "type":"view",
-               "name":"聚会列表",
+               "name":"鑱氫細鍒楄〃",
                "url":"http://xjsylhl.vicp.net/QLParty/party/PartyList.jsp"
             }]
        },
        
       {
-           "name":"圈子",
+           "name":"鍦堝瓙",
            "sub_button":[
            {	
                "type":"view",
-               "name":"创建圈子",
+               "name":"鍒涘缓鍦堝瓙",
                "url":"http://xjsylhl.vicp.net/QLParty/circle/NewCircle.jsp"
             },
             {
                "type":"view",
-               "name":"我的圈子",
+               "name":"鎴戠殑鍦堝瓙",
                "url":"http://xjsylhl.vicp.net/QLParty/circle/CircleList.jsp"
             }]
        },
        
       {
-           "name":"帮助",
+           "name":"甯姪",
            "sub_button":[
            {	
                "type":"view",
-               "name":"使用说明",
+               "name":"浣跨敤璇存槑",
                "url":"http://xjsylhl.vicp.net/QLParty/help/Help.jsp"
             },
             {
                "type":"view",
-               "name":"问题反馈",
+               "name":"闂鍙嶉",
                "url":"http://xjsylhl.vicp.net/QLParty/help/Feedback.jsp"
             }]
        }

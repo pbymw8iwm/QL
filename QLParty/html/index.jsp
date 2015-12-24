@@ -1,26 +1,31 @@
-<%@ page language="java" import="java.util.*" pageEncoding="ISO-8859-1"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%@page import="com.ql.wechat.WechatCommons"%>
+<%@page import="com.ql.wechat.ReceiveJson"%>
+<%@ page contentType="text/html;charset=UTF-8"%>
+<!DOCTYPE html>
 <html>
   <head>
-    <base href="<%=basePath%>">
+    <title>首页</title>
+	
+    <meta http-equiv="keywords" content="聚会助手  社交圈">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     
-    <title>My JSP 'index.jsp' starting page</title>
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<!--
-	<link rel="stylesheet" type="text/css" href="styles.css">
-	-->
+    <%@ include file="/CommonHead.jsp"%>
   </head>
   
   <body>
-    This is my JSP page. <br>
+    <div class="container">
+		<h3>请关注微信公众号：聚会助手</h3>
+		<%
+		ReceiveJson json = WechatCommons.createQRCode(0, WechatCommons.AccessToken);
+		if(json.isError()){
+		%>  
+		<%=json.getErrMsg() %>
+		<%}else{ %>
+		<p class="help-block text-center">
+		<img src="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=<%=json.getTicket()%>" class="img-rounded" width="200" height="200"/>
+		</p>
+		
+		<%}%>
+	</div>
   </body>
 </html>
