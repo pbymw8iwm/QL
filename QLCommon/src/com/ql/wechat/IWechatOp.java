@@ -25,7 +25,7 @@ public interface IWechatOp {
 	public String processUnsubscribe(ReceiveXmlEntity xmlEntity);
 	
 	/**
-	 * 处理二维码扫描
+	 * 处理带参二维码扫描
 	 * @param xmlEntity
 	 * @return
 	 */

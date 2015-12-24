@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/appframe.jar"/>
+	<classpathentry kind="lib" path="lib/appframe.jar" sourcepath="E:/appframe/src"/>
 	<classpathentry kind="lib" path="lib/json-lib-1.1-jdk13.jar"/>
 	<classpathentry kind="con" path="melibrary.com.genuitec.eclipse.j2eedt.core.MYECLIPSE_JAVAEE_5_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>

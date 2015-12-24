@@ -1,16 +1,16 @@
 package com.ql.bo;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.ai.appframe2.bo.DataContainerFactory;
 import com.ai.appframe2.common.AIException;
 import com.ai.appframe2.common.DataContainerInterface;
 import com.ai.appframe2.common.ServiceManager;
 import com.ai.appframe2.util.criteria.Criteria;
-import com.ql.ivalues.IWechatUserValue;
+import com.ai.appframe2.bo.DataContainerFactory;
+
+import com.ql.ivalues.*;
 
 public class WechatUserEngine {
 
@@ -45,7 +45,7 @@ public class WechatUserEngine {
       if(beans!=null && beans.length==1)
 	      return beans[0];
       else if(beans!=null && beans.length>1){
-	//[����]��������ѯ����һ�����ϼ�¼
+	//[错误]根据主键查询出现一条以上记录
 	      throw new Exception("[ERROR]More datas than one queryed by PK");
       }else{
 	      WechatUserBean bean = new WechatUserBean();

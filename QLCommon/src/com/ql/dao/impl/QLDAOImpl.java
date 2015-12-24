@@ -50,7 +50,20 @@ public class QLDAOImpl implements IQLDAO {
 					if (dc.get("STATE") == null)
 						dc.set("STATE", Integer.valueOf(1));
 				}
-			} 
+				if (dc.getObjectType().hasProperty("CREATEDATE")) {
+					if (dc.get("CREATEDATE") == null)
+						dc.set("CREATEDATE", ServiceManager.getOpDateTime());
+				}
+				if (dc.getObjectType().hasProperty("DONEDATE")) {
+					if (dc.get("DONEDATE") == null)
+						dc.set("DONEDATE", ServiceManager.getOpDateTime());
+				}
+			}
+			else if(dc.isModified()){
+				if (dc.getObjectType().hasProperty("DONEDATE")) {
+					dc.set("DONEDATE", ServiceManager.getOpDateTime());
+				}
+			}
 //			else if (dc.isDeleted()) {
 //				 dc.setStsToOld();
 //				 dc.set("STATE", new Integer(0));
@@ -87,7 +100,20 @@ public class QLDAOImpl implements IQLDAO {
 						if (dcs[i].get("STATE") == null)
 							dcs[i].set("STATE", Integer.valueOf(1));
 					}
+					if (dcs[i].getObjectType().hasProperty("CREATEDATE")) {
+						if (dcs[i].get("CREATEDATE") == null)
+							dcs[i].set("CREATEDATE", ServiceManager.getOpDateTime());
+					}
+					if (dcs[i].getObjectType().hasProperty("DONEDATE")) {
+						if (dcs[i].get("DONEDATE") == null)
+							dcs[i].set("DONEDATE", ServiceManager.getOpDateTime());
+					}
 				} 
+				else if(dcs[i].isModified()){
+					if (dcs[i].getObjectType().hasProperty("DONEDATE")) {
+						dcs[i].set("DONEDATE", ServiceManager.getOpDateTime());
+					}
+				}
 //				else if (dcs[i].isDeleted()) {
 //					 dcs[i].setStsToOld();
 //					 dcs[i].set("STATE", new Integer(0));

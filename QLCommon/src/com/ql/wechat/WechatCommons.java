@@ -69,7 +69,7 @@ public class WechatCommons {
 	public static final String Url_DeleteMenu = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=";
     //带授权的菜单链接
 	private static final String Url_MenuView = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-          +AppId+"&redirect_uri=http%3A%2F%2F"+ServerIp+"%2Fwechatop&response_type=code&scope=snsapi_base&state={state}#wechat_redirect";
+          +AppId+"&redirect_uri=http%3A%2F%2F"+ServerIp.replaceAll("/", "%2F")+"%2Fwechatop&response_type=code&scope=snsapi_base&state={state}#wechat_redirect";
 	//创建二维码
 	public static final String Url_QrCode = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=";
     //用户基本信息
@@ -98,5 +98,11 @@ public class WechatCommons {
 	
 	public static String getUrlUserInfo(String openId){
 		return StringUtils.replaceOnce(Url_UserInfo, "{token}", AccessToken) + openId;
+	}
+	
+	public static ReceiveJson createQRCode(long id,String token)throws Exception{
+		String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
+		ReceiveJson json = WechatUtils.httpRequest(WechatCommons.Url_QrCode+token,WechatCommons.HttpPost,info);
+        return json;
 	}
 }

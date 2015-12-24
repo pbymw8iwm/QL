@@ -1,5 +1,6 @@
 package com.ql.dao.interfaces;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import com.ai.appframe2.common.DataContainerInterface;
@@ -10,6 +11,8 @@ public interface IQLDAO {
 	///////////////////////////////////////////////////
 	/** 公共方法  **/
 	///////////////////////////////////////////////////
+	public BigDecimal getNewId(ObjectType ot) throws Exception;
+	
 	public void saveData(DataContainerInterface dc) throws Exception;
 	
 	public void saveDatas(DataContainerInterface[] dcs) throws Exception;

@@ -100,14 +100,16 @@ public class WechatServlet extends HttpServlet {
         if(log.isDebugEnabled())
         	log.debug("回复："+result);
    
-        try {  
-            OutputStream os = response.getOutputStream();  
-            os.write(result.getBytes(WechatCommons.Charset));  
-            os.flush();  
-            os.close();  
-        } catch (Exception ex) {  
-        	log.error(ex.getMessage(),ex);
-        }  
+        if(result != null){
+	        try {  
+	            OutputStream os = response.getOutputStream();  
+	            os.write(result.getBytes(WechatCommons.Charset));  
+	            os.flush();  
+	            os.close();  
+	        } catch (Exception ex) {  
+	        	log.error(ex.getMessage(),ex);
+	        }  
+        }
 
 	}
 	

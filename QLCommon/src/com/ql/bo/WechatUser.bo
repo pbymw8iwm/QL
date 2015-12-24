@@ -13,8 +13,26 @@
       <attr floatlength="0" name="UserType" maxlength="20" datatype="Long" type="COL">
         <mapingcol datatype="tinyint">UserType</mapingcol>
       </attr>
+      <attr floatlength="0" name="Name" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Name</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Gender" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">Gender</mapingcol>
+      </attr>
+      <attr floatlength="0" name="City" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">City</mapingcol>
+      </attr>
+      <attr floatlength="0" name="ImageData" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">ImageData</mapingcol>
+      </attr>
       <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
         <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CreateDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">CreateDate</mapingcol>
+      </attr>
+      <attr floatlength="0" name="DoneDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">DoneDate</mapingcol>
       </attr>
     </attrlist>
     <relationlist />
