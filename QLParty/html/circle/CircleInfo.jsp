@@ -1,3 +1,4 @@
+<%@page import="com.ai.appframe2.common.SessionManager"%>
 <%@page import="com.ql.wechat.WechatCommons"%>
 <%@page import="com.ql.wechat.WechatUtils"%>
 <%@page import="com.ql.party.web.PartyAction"%>
@@ -13,12 +14,14 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     
     <%@ include file="/CommonHead.jsp"%>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"> </script>
   </head>
 
 <%
 String[] s = WechatUtils.getJsSignature(request);
 long cId = HttpUtil.getAsLong(request, "cId");
 ISocialCircleValue sc = PartyAction.getSocialCircle(cId);
+String userName = SessionManager.getUser().getName();
 %>  
   <body>
     <div class="container">
@@ -26,12 +29,12 @@ ISocialCircleValue sc = PartyAction.getSocialCircle(cId);
         <h3>此圈不存在，可能已经被删除</h3>
       <%}else{ %>
 		<div class="page-header">
-		  	<h3><%=sc.getCname() %>&nbsp;&nbsp;&nbsp;&nbsp;<small><%=sc.getExtAttr("TypeName") %>圈</small></h3>
+		  	<h3><%=sc.getCname() %>&nbsp;&nbsp;&nbsp;&nbsp;<small><%=sc.getExtAttr("TypeName") %>圈</small>
+		  	<button type="button" class="btn btn-link text-right" id="btnShare">请点右上角分享↑</button></h3>
 		</div>
 		<div class="center-block">
-		  <button type="button" class="btn btn-link text-left" id="btnShare">分享</button>
-		  <button type="button" class="btn btn-link text-center" >创建聚会</button>
-		  <button type="button" class="btn btn-link text-right" >编辑我的圈信息</button>
+		  <button type="button" class="btn btn-link" >创建聚会</button>
+		  <button type="button" class="btn btn-link" >编辑我的圈信息</button>
 		</div>
 		<div class="panel-group" id="accordion">
 		  <div class="panel panel-info" id="divMember">
@@ -64,27 +67,44 @@ wx.config({
       nonceStr: '<%=s[1] %>',
       signature: '<%=s[2] %>',
       jsApiList: [
-        'onMenuShareAppMessage'
+        'hideOptionMenu',
+        'showMenuItems',
+        'onMenuShareAppMessage',
+        'onMenuShareTimeline'
       ]
   });
-  
+
+wx.ready(function(){
+  wx.hideOptionMenu();
+  wx.showMenuItems({
+    menuList: ['menuItem:share:appMessage','menuItem:share:timeline'] // 要显示的菜单项，所有menu项见附录3
+  });
+
+  var shareMsg = {
+	    title: '<%=userName%>邀您加入<%=sc.getCname()%>', // 分享标题
+	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
+	    link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp?userName=<%=userName%>&cName=<%=sc.getCname()%>&ticket=<%=sc.getQrticket()%>', // 分享链接
+	    imgUrl: '', // 分享图标
+	    type: 'link', // 分享类型,music、video或link，不填默认为link
+	    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+	    success: function () { 
+	        // 用户确认分享后执行的回调函数
+	    },
+	    cancel: function () { 
+	        // 用户取消分享后执行的回调函数
+	    }
+	};
+
+  wx.onMenuShareAppMessage(shareMsg);
+  wx.onMenuShareTimeline(shareMsg);
+});
+wx.error(function(res){
+    alert(res);
+});
   
 $(document).ready(function(){
   $("#btnShare").click(function(){
-    wx.onMenuShareAppMessage({
-    title: '邀您加入', // 分享标题
-    desc: '加入圈子，参与聚会，分享照片', // 分享描述
-    link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp', // 分享链接
-    imgUrl: '', // 分享图标
-    type: 'link', // 分享类型,music、video或link，不填默认为link
-    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-    success: function () { 
-        // 用户确认分享后执行的回调函数
-    },
-    cancel: function () { 
-        // 用户取消分享后执行的回调函数
-    }
-});
+    alert("请点击右上角的三个小点，分享到朋友或朋友圈！");
   }); 
 });
 </script>

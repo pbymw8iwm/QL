@@ -21,7 +21,7 @@ ICfStaticDataValue[] sdatas = PartyAction.getStaticDatas("CircleType");
 		  	<h3>创建圈子</h3>
 			</div>
 		  <form role="form" class="form-horizontal" id="frmInfo" name="frmInfo">
-			   <div class="form-group sr-only">
+			   <div class="form-group">
 			      <label for="CName" class="col-xs-2 control-label">圈名</label>
 			      <div class="col-xs-10"><input type="text" maxlength="10" class="form-control" id="CName" name="CName" placeholder="请输入圈名"></div>
 			   </div>
@@ -58,7 +58,7 @@ $(document).ready(function(){
 				success: function(data, textStatus){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
-				    	window.location = "CircleInfo.jsp?cId="+data.msg;
+				    	window.location = _gModuleName+"/circle/CircleInfo.jsp?cId="+data.msg;
 				    }
 				    else
 				      alert(data.msg);
@@ -70,5 +70,7 @@ $(document).ready(function(){
 			}); 
 		}
   ); 
+  
+  //window.location = _gModuleName+"/circle/CircleInfo.jsp?cId=11";
 });
 </script>

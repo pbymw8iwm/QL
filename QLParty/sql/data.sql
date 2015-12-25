@@ -16,7 +16,7 @@ insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,s
 
 -- 配置数据
 insert into CfStaticData(CodeType,CodeValue,CodeName,SortId,State,Remarks)
-  values('CircleType','1','亲戚',1,1,'圈子分类');
+  values('CircleType','1','亲属',1,1,'圈子分类');
 insert into CfStaticData(CodeType,CodeValue,CodeName,SortId,State,Remarks)
   values('CircleType','2','同学',2,1,'圈子分类');
 insert into CfStaticData(CodeType,CodeValue,CodeName,SortId,State,Remarks)

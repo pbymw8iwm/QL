@@ -16,7 +16,7 @@
     <div class="container">
 		<h3>请关注微信公众号：聚会助手</h3>
 		<%
-		ReceiveJson json = WechatCommons.createQRCode("0", WechatCommons.AccessToken);
+		ReceiveJson json = WechatCommons.createQRCode(0, WechatCommons.AccessToken);
 		if(json.isError()){
 		%>  
 		<%=json.getErrMsg() %>

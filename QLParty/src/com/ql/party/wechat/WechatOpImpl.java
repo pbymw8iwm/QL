@@ -135,6 +135,7 @@ public class WechatOpImpl implements IWechatOp {
         catch(Exception ex){
         	log.error(ex.getMessage(),ex);
         }
+        //TODO 直接跳转到对应的页面
 		return "欢迎使用聚会助手！";
 	}
 	
@@ -148,10 +149,11 @@ public class WechatOpImpl implements IWechatOp {
 	}
 	
 	private void dealScan(String param,IWechatUserValue user)throws Exception{
-		if(param.startsWith("c_")){
+		long id = DataType.getAsLong(param);
+		long index = id%10;
+		if(index == 1){
 			//圈子
-			long cId = DataType.getAsLong(param.substring(2));
-			PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
+			PartyServiceFactory.getPartySV().joinSocialCircle(id/10, user);
 		}
 	}
 

@@ -9,15 +9,19 @@ import org.apache.commons.logging.LogFactory;
 import com.ai.appframe2.common.ServiceManager;
 import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
+import com.mysql.jdbc.StringUtils;
 import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.bo.SocialCircleEngine;
+import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.interfaces.IPartySV;
 import com.ql.sysmgr.QLServiceFactory;
+import com.ql.wechat.ReceiveJson;
+import com.ql.wechat.WechatCommons;
 
 public class PartySVImpl implements IPartySV{
 
@@ -35,6 +39,17 @@ public class PartySVImpl implements IPartySV{
 	 */
 	public long saveSocialCircle(ISocialCircleValue sc)throws Exception{
 		boolean isNew = sc.isNew();
+		if(isNew){
+			//获取二维码，圈子后缀1
+			ReceiveJson json = WechatCommons.createQRCode(sc.getCid()*10+1, WechatCommons.AccessToken);
+			if(json.isError()){
+				log.error("二维码获取失败："+json.getErrMsg());
+			}
+			else{
+				sc.setQrticket(json.getTicket());
+				sc.setQrdate(ServiceManager.getOpDateTime());
+			}
+		}
 		QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
 		//
 		if(isNew){
@@ -64,6 +79,19 @@ public class PartySVImpl implements IPartySV{
 	 * @throws Exception
 	 */
 	public void joinSocialCircle(long cId,IWechatUserValue user)throws Exception{
+		//检查是否已加入
+		String cond = CircleMemberBean.S_Cid + " = :cId and "
+				+ CircleMemberBean.S_Userid + " = :userId and "
+				+ CircleMemberBean.S_State + " > 0 ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		param.put("userId", user.getUserid());
+		ICircleMemberValue[] cms = (CircleMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, CircleMemberBean.class, CircleMemberBean.getObjectTypeStatic());
+		if(cms != null && cms.length > 0){
+			if(log.isDebugEnabled())
+				log.debug("用户"+user.getUserid()+"已经加入圈子"+cId);
+			return;
+		}
 		CircleMemberBean cm = new CircleMemberBean();
 		cm.setCid(cId);
 		cm.setUserid(user.getUserid());
@@ -84,7 +112,22 @@ public class PartySVImpl implements IPartySV{
 		param.put("cId", cId);
 		ISocialCircleValue[] sc = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
 		if(sc != null && sc.length > 0){
+			//设置圈子类型名称
 			sc[0].setExtAttr("TypeName", getCircleTypeName(sc[0].getCtype()+""));
+			//检查二维码是否过期
+			if(StringUtils.isNullOrEmpty(sc[0].getQrticket()) 
+					|| ServiceManager.getOpDateTime().getTime() - sc[0].getQrdate().getTime() > 29*24*3600*1000){
+				//获取二维码，圈子后缀1
+				ReceiveJson json = WechatCommons.createQRCode(sc[0].getCid()*10+1, WechatCommons.AccessToken);
+				if(json.isError()){
+					log.error("二维码获取失败："+json.getErrMsg());
+				}
+				else{
+					sc[0].setQrticket(json.getTicket());
+					sc[0].setQrdate(ServiceManager.getOpDateTime());
+					QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc[0]));
+				}
+			}
 			return sc[0];
 		}
 		else
@@ -103,8 +146,24 @@ public class PartySVImpl implements IPartySV{
 		Map param = new HashMap();
 		param.put("userId", userId);
 		ISocialCircleValue[] scs = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
-		for(ISocialCircleValue sc : scs)
+		for(ISocialCircleValue sc : scs){
+			//设置圈子类型名称
 			sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
+			//检查二维码是否过期
+			if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
+					|| ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime() > 29*24*3600*1000){
+				//获取二维码，圈子后缀1
+				ReceiveJson json = WechatCommons.createQRCode(sc.getCid()*10+1, WechatCommons.AccessToken);
+				if(json.isError()){
+					log.error("二维码获取失败："+json.getErrMsg());
+				}
+				else{
+					sc.setQrticket(json.getTicket());
+					sc.setQrdate(ServiceManager.getOpDateTime());
+					QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
+				}
+			}
+		}
 		return scs;
 	}
 	

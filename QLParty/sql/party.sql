@@ -6,6 +6,8 @@ CREATE TABLE SocialCircle(
 	CName nvarchar(30) NULL,
 	CType tinyint NULL,
 	ImageData nvarchar(500) NULL,
+	QrTicket nvarchar(500) NULL,
+	QrDate date NULL,
 	Creater bigint NULL,
 	State tinyint NULL,
 	CreateDate datetime NULL,

@@ -17,10 +17,12 @@ public class SocialCircleBean extends DataContainer implements DataContainerInte
 
 
   public final static  String S_Cname = "CName";
+  public final static  String S_Qrticket = "QrTicket";
   public final static  String S_State = "State";
   public final static  String S_Ctype = "CType";
   public final static  String S_Imagedata = "ImageData";
   public final static  String S_Creater = "Creater";
+  public final static  String S_Qrdate = "QrDate";
   public final static  String S_Createdate = "CreateDate";
   public final static  String S_Cid = "CId";
   public final static  String S_Donedate = "DoneDate";
@@ -63,6 +65,24 @@ public class SocialCircleBean extends DataContainer implements DataContainerInte
   }
   public String getCnameInitialValue(){
         return DataType.getAsString(this.getOldObj(S_Cname));
+      }
+
+  public void initQrticket(String value){
+     this.initProperty(S_Qrticket,value);
+  }
+  public  void setQrticket(String value){
+     this.set(S_Qrticket,value);
+  }
+  public  void setQrticketNull(){
+     this.set(S_Qrticket,null);
+  }
+
+  public String getQrticket(){
+       return DataType.getAsString(this.get(S_Qrticket));
+  
+  }
+  public String getQrticketInitialValue(){
+        return DataType.getAsString(this.getOldObj(S_Qrticket));
       }
 
   public void initState(long value){
@@ -135,6 +155,24 @@ public class SocialCircleBean extends DataContainer implements DataContainerInte
   }
   public long getCreaterInitialValue(){
         return DataType.getAsLong(this.getOldObj(S_Creater));
+      }
+
+  public void initQrdate(Timestamp value){
+     this.initProperty(S_Qrdate,value);
+  }
+  public  void setQrdate(Timestamp value){
+     this.set(S_Qrdate,value);
+  }
+  public  void setQrdateNull(){
+     this.set(S_Qrdate,null);
+  }
+
+  public Timestamp getQrdate(){
+        return DataType.getAsDateTime(this.get(S_Qrdate));
+  
+  }
+  public Timestamp getQrdateInitialValue(){
+        return DataType.getAsDateTime(this.getOldObj(S_Qrdate));
       }
 
   public void initCreatedate(Timestamp value){

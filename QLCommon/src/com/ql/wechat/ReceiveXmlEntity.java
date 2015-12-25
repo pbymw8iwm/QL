@@ -25,6 +25,7 @@ public class ReceiveXmlEntity {
     private String Format="";  
     private String Recognition="";  
     private String ThumbMediaId="";
+    private String MenuId = "";
        
     public String getRecognition() {  
         return Recognition;  
@@ -169,6 +170,12 @@ public class ReceiveXmlEntity {
     }  
     public void setMsgType(String msgType) {  
         MsgType = msgType;  
+    }  
+    public String getMenuId() {  
+        return MenuId;  
+    }  
+    public void setMenuId(String menuId) {  
+    	MenuId = menuId;  
     }  
 
 }

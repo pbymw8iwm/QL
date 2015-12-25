@@ -102,8 +102,11 @@ public class WechatCommons {
 		return StringUtils.replaceOnce(Url_UserInfo, "{token}", AccessToken) + openId;
 	}
 	
-	public static ReceiveJson createQRCode(String id,String token)throws Exception{
-		String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \""+id+"\"}}}";
+	//临时二维码,有效期30天
+	public static ReceiveJson createQRCode(long id,String token)throws Exception{
+		//永久二维码最多10万个
+		//String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
+		String info = "{\"expire_seconds\":2592000,\"action_name\": \"QR_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
 		ReceiveJson json = WechatUtils.httpRequest(WechatCommons.Url_QrCode+token,WechatCommons.HttpPost,info);
         return json;
 	}

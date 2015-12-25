@@ -16,6 +16,12 @@
       <attr floatlength="0" name="ImageData" maxlength="500" datatype="String" type="COL">
         <mapingcol datatype="varchar">ImageData</mapingcol>
       </attr>
+      <attr floatlength="0" name="QrTicket" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">QrTicket</mapingcol>
+      </attr>
+      <attr floatlength="0" name="QrDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="date">QrDate</mapingcol>
+      </attr>
       <attr floatlength="0" name="Creater" maxlength="21" datatype="Long" type="COL">
         <mapingcol datatype="bigint">Creater</mapingcol>
       </attr>
