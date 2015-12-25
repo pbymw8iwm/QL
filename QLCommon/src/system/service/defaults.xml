@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<!--
+全局默认配置信息
+-->
+<defaults>
+  <!--中心的类型和实现类的对应关系-->
+  <center>
+  </center>
+  <!--默认代理调用方式.默认采用pojo的模式进行调用，采用的实现类为配置的实现类-->
+  <proxy invoke="pojo" type="primitive">
+    <clazz name="com.ai.appframe2.complex.service.impl.LocalServiceInvokeImpl"/>
+  </proxy>
+  <!--默认事务信息.默认采用Required的方式进行事务操作，采用的实现类为配置的实现类-->
+  <transaction type="Required">
+    <!--<clazz name="com.ai.appframe2.complex.transaction.impl.LocalTransactionImpl"/>-->
+    <clazz name="com.ai.appframe2.complex.transaction.impl.LocalMutilTransactionImpl"/>
+    <!--<listener name="com.ai.appframe2.complex.transaction.listener.TestListenerImpl"/>-->
+    <!--映射每个服务模块对应的事务数据源，可以具体到类名-->
+    <mapping>
+      <!--平台自带-->
+      <property name="com.ai.appframe2.complex.self.service.base" value="base"/>
+      <property name="com.ai.appframe2.complex.self.service.check" value="base"/>
+      <property name="com.ql" value="base"/>
+    </mapping>
+  </transaction>
+  <!--默认数据源信息-->
+  <datasource>
+    <!--根据base取数据库配置，然后以本配置中的覆盖除base以外的连接池的配置-->
+    <!--默认 type=dbcp  db=oracle -->
+    <!--映射每个DAO模块对应的操作数据源-->
+    <clazz name="com.ai.appframe2.complex.datasource.impl.LocalMutilDataSourceImpl">
+      <property name="tableName" value="cfg_db_acct"/>
+    </clazz>
+    <pool name="base" primary="true">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+      <!--<property name="url" value="jdbc:oracle:thin:@localhost:1522:orcl"/>-->
+      <!-- <property name="url" value="jdbc:mysql://121.42.154.48/base?rewriteBatchedStatements=true&amp;cachePrepStmts=true&amp;useServerPrepStmts=true&amp;useUnicode=true&amp;characterEncoding=GBK&amp;autoReconnect=true&amp;failOverReadOnly=false"/> -->
+      <property name="url" value="jdbc:mysql://localhost/base?rewriteBatchedStatements=true&amp;cachePrepStmts=true&amp;useServerPrepStmts=true&amp;useUnicode=true&amp;characterEncoding=GBK&amp;autoReconnect=true&amp;failOverReadOnly=false"/> 
+      <property name="username" value="base"/>
+      <property name="password" value="base"/>
+ <!--      <property name="url" value="jdbc:oracle:thin:@10.11.20.6:1521:njdev"/>
+      <property name="username" value="product_ra"/>
+      <property name="password" value="product_ra"/>   -->
+      <property name="initialSize" value="5"/>
+      <property name="maxActive" value="10"/>
+      <property name="maxIdle" value="10"/>
+	    <property name="maxWait" value="2000"/>
+    </pool>
+    
+      
+    <mapping>
+      <!--平台自带-->
+      <property name="com.ai.appframe2.complex.self.dao.base" value="base"/>
+      <property name="com.ai.appframe2.complex.self.service.check" value="base"/>
+      <property name="com.ql" value="base"/>
+    </mapping>
+  </datasource>
+  <!--包含的服务配置文件-->
+  <!--平台-->
+  <include type="sv" classpath="system/service/appframe-service.xml"/>　
+</defaults>

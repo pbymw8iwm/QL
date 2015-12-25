@@ -11,10 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
 import com.ai.appframe2.web.HttpUtil;
+import com.ql.cache.CfStaticDataCacheImpl;
+import com.ql.cache.WechatUserCacheImpl;
 
 /**
  * 应用启动时获取AccessToken
- * 临时提供：t=t 获取当前的AccessToken,t=c 刷新用户缓存
+ * 临时提供：t=t 获取当前的AccessToken,t=c 刷新用户缓存,t=s 刷新配置数据
  * @author hailu
  *
  */
@@ -48,20 +50,28 @@ public class WechatInitServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String type = request.getParameter("t");
-		String result = "";
+		String result = null;
 		if("t".equals(type)){
 			result = WechatCommons.AccessToken;
 		}
-		else if("c".equals(type)){
-			ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
-			try {
-				cache.refresh();
-				result = "finished";
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = e.getMessage();
+		else{
+			ICache cache = null;
+			if("c".equals(type))
+				cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
+			else if("s".equals(type))
+				cache = (ICache)CacheFactory._getCacheInstances().get(CfStaticDataCacheImpl.class);
+			if(cache != null){
+				try {
+					cache.refresh();
+					result = "finished";
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					result = e.getMessage();
+				}
 			}
+			else
+				result = "未知操作";
 		}
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();

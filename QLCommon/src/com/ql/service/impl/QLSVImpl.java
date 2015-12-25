@@ -1,12 +1,38 @@
 package com.ql.service.impl;
 
+import com.ai.appframe2.complex.cache.CacheFactory;
+import com.ql.bo.CfStaticDataBean;
 import com.ql.bo.WechatUserBean;
 import com.ql.bo.WechatUserEngine;
+import com.ql.cache.CfStaticDataCacheImpl;
+import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.service.interfaces.IQLSV;
 import com.ql.sysmgr.QLServiceFactory;
 
 public class QLSVImpl implements IQLSV{
+	
+	/**
+	 * 获取所有的配置数据
+	 * @return
+	 * @throws Exception
+	 */
+	public ICfStaticDataValue[] getAllStaticDatas()throws Exception{
+		String cond = ICfStaticDataValue.S_State + " > 0 order by "
+				    + ICfStaticDataValue.S_Codetype + ", "
+				    + ICfStaticDataValue.S_Sortid;
+		return (CfStaticDataBean[])QLServiceFactory.getQLDAO().qryDatas(cond,null,CfStaticDataBean.class,CfStaticDataBean.getObjectTypeStatic());
+	}
+	
+	/**
+	 * 获取指定类型的配置数据
+	 * @param codeType
+	 * @return
+	 * @throws Exception
+	 */
+	public ICfStaticDataValue[] getStaticDatas(String codeType)throws Exception{
+		return (ICfStaticDataValue[])CacheFactory.get(CfStaticDataCacheImpl.class, codeType);
+	}
 
 	/**
 	 * 获取有效的用户

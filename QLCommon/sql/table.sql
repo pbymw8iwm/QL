@@ -1,4 +1,16 @@
+DROP TABLE CfStaticData;
 DROP TABLE WechatUser;
+
+CREATE TABLE CfStaticData(
+   CodeType             nvarchar(20)         not null,
+   CodeValue            nvarchar(20)         not null,
+   CodeName             nvarchar(200)        null,
+   ExtValue             nvarchar(40)         null,
+   SortId               tinyint              null,
+   State                tinyint              null,
+   Remarks              nvarchar(200)        null,
+   constraint PK_CFSTATICDATA primary key (CodeType, CodeValue)
+);
 
 CREATE TABLE WechatUser(
 	OpenId nvarchar(100) Primary Key,

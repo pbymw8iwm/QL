@@ -72,6 +72,8 @@ public class WechatCommons {
           +AppId+"&redirect_uri=http%3A%2F%2F"+ServerIp.replaceAll("/", "%2F")+"%2Fwechatop&response_type=code&scope=snsapi_base&state={state}#wechat_redirect";
 	//创建二维码
 	public static final String Url_QrCode = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=";
+	//获取二维码
+	public static final String Url_ShowQr = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     //用户基本信息
 	private static final String Url_UserInfo = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={token}&openid=";
 	//统一下单
@@ -100,8 +102,8 @@ public class WechatCommons {
 		return StringUtils.replaceOnce(Url_UserInfo, "{token}", AccessToken) + openId;
 	}
 	
-	public static ReceiveJson createQRCode(long id,String token)throws Exception{
-		String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
+	public static ReceiveJson createQRCode(String id,String token)throws Exception{
+		String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_str\": \""+id+"\"}}}";
 		ReceiveJson json = WechatUtils.httpRequest(WechatCommons.Url_QrCode+token,WechatCommons.HttpPost,info);
         return json;
 	}

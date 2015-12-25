@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="CfStaticData" mainattr="CodeType">
+    <mapingenty type="table">cfstaticdata</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="CodeType" maxlength="20" datatype="String" type="PK">
+        <mapingcol datatype="varchar">CodeType</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CodeValue" maxlength="20" datatype="String" type="PK">
+        <mapingcol datatype="varchar">CodeValue</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CodeName" maxlength="200" datatype="String" type="COL">
+        <mapingcol datatype="varchar">CodeName</mapingcol>
+      </attr>
+      <attr floatlength="0" name="ExtValue" maxlength="40" datatype="String" type="COL">
+        <mapingcol datatype="varchar">ExtValue</mapingcol>
+      </attr>
+      <attr floatlength="0" name="SortId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">SortId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Remarks" maxlength="200" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Remarks</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

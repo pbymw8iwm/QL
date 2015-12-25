@@ -1,4 +1,4 @@
-package com.ql.wechat;
+package com.ql.cache;
 
 import java.util.HashMap;
 

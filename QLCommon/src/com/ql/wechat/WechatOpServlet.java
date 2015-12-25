@@ -21,6 +21,7 @@ import com.ai.appframe2.privilege.UserManagerFactory;
 import com.ai.appframe2.web.BaseServer;
 import com.ai.appframe2.web.HttpUtil;
 import com.ql.bo.WechatUserBean;
+import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.IWechatUserValue;
 
 /**

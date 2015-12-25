@@ -1,8 +1,24 @@
 package com.ql.service.interfaces;
 
+import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.ivalues.IWechatUserValue;
 
 public interface IQLSV {
+	
+	/**
+	 * 获取所有的配置数据
+	 * @return
+	 * @throws Exception
+	 */
+	public ICfStaticDataValue[] getAllStaticDatas()throws Exception;
+	
+	/**
+	 * 获取指定类型的配置数据
+	 * @param codeType
+	 * @return
+	 * @throws Exception
+	 */
+	public ICfStaticDataValue[] getStaticDatas(String codeType)throws Exception;
 
 	/**
 	 * 获取有效的用户
