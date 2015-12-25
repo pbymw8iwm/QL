@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="CircleMember" mainattr="CId">
+    <mapingenty type="table">circlemember</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="CId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserName" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">UserName</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Phone" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Phone</mapingcol>
+      </attr>
+      <attr floatlength="0" name="City" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">City</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Job" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Job</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

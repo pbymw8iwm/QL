@@ -43,6 +43,7 @@
 
 <ConfigKind name="UNCHECK_URL" remarks="不进行验证的url(包括session和访问权限)">
   <ConfigItem name="/help/Help.jsp" remarks="帮助页面">N</ConfigItem>
+  <ConfigItem name="/circle/CircleQR.jsp" remarks="帮助页面">N</ConfigItem>
   <ConfigItem name="/index.jsp" remarks="首页">N</ConfigItem>
   <ConfigItem name="/js/Globe.jsp" remarks="平台">N</ConfigItem>
   <ConfigItem name="/webframe/" remarks="平台">N</ConfigItem>

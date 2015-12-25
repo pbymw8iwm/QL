@@ -9,9 +9,9 @@ import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.privilege.UserInfoInterface;
 import com.ai.appframe2.web.HttpUtil;
 import com.ai.frame.loginmgr.AbstractUserManagerImpl;
+import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.sysmgr.UserInfoImpl;
-import com.ql.wechat.WechatUserCacheImpl;
 
 public class UserManagerImpl extends AbstractUserManagerImpl{
 	private static final Log log = LogFactory.getLog(UserManagerImpl.class);
@@ -32,7 +32,7 @@ public class UserManagerImpl extends AbstractUserManagerImpl{
 		if(wechatUser != null){
 			user.setName(wechatUser.getName());
 			user.setCode(wechatUser.getName());
-			user.set("image", wechatUser.getImagedata());
+			user.set("wechatUser", wechatUser);
 		}
 		return user;
 	}

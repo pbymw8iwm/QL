@@ -28,7 +28,7 @@
   </listener>
   <servlet>
     <servlet-name>CentralControl</servlet-name>
-    <servlet-class>com.ai.appframe2.web.action.CentralControlServlet</servlet-class>
+    <servlet-class>com.ql.action.QLCentralControlServlet</servlet-class>
   </servlet>
   <servlet>
     <description>微信接口</description>

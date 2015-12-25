@@ -8,16 +8,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ai.appframe2.common.DataType;
 import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
-import com.ql.bo.WechatUserBean;
+import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.IWechatUserValue;
+import com.ql.party.service.PartyServiceFactory;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.IWechatOp;
 import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.ReceiveXmlEntity;
 import com.ql.wechat.WechatCommons;
-import com.ql.wechat.WechatUserCacheImpl;
 import com.ql.wechat.WechatUtils;
 
 public class WechatOpImpl implements IWechatOp {
@@ -75,6 +76,12 @@ public class WechatOpImpl implements IWechatOp {
 					log.error(e.getMessage(),e);
 				}
             }
+            
+            //扫描的带参二维码
+            if(xmlEntity.getEventKey() != null && xmlEntity.getEventKey().startsWith(WechatCommons.KeySubscribe)){
+            	String param = xmlEntity.getEventKey().substring(WechatCommons.KeySubscribe.length());
+            	dealScan(param,wechatUser);
+            }
         }
         catch(Exception ex){
         	log.error(ex.getMessage(),ex);
@@ -118,6 +125,16 @@ public class WechatOpImpl implements IWechatOp {
 	 * @return
 	 */
 	public String processScan(ReceiveXmlEntity xmlEntity){
+		String param = xmlEntity.getEventKey();
+		IWechatUserValue wechatUser = null;
+        try{
+        	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, xmlEntity.getFromUserName());
+        	if(wechatUser != null)
+        		dealScan(param,wechatUser);
+        }
+        catch(Exception ex){
+        	log.error(ex.getMessage(),ex);
+        }
 		return "欢迎使用聚会助手！";
 	}
 	
@@ -128,6 +145,14 @@ public class WechatOpImpl implements IWechatOp {
 	 */
 	public String processMsg(ReceiveXmlEntity xmlEntity){
 		return "欢迎使用聚会助手！";
+	}
+	
+	private void dealScan(String param,IWechatUserValue user)throws Exception{
+		if(param.startsWith("c_")){
+			//圈子
+			long cId = DataType.getAsLong(param.substring(2));
+			PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
+		}
 	}
 
 	/**

@@ -14,7 +14,6 @@
   <body>
     <div class="container">
 		<h3>创建聚会</h3>
-		<img src="<%=SessionManager.getUser().get("image") %>" class="img-rounded" width="50" height="50"/>
 	</div>
   </body>
 </html>
