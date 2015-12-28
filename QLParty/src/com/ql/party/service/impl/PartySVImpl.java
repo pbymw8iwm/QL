@@ -19,6 +19,7 @@ import com.ql.party.bo.SocialCircleEngine;
 import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.interfaces.IPartySV;
+import com.ql.party.sysmgr.RemoteResouseManager;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.WechatCommons;
@@ -114,9 +115,11 @@ public class PartySVImpl implements IPartySV{
 		if(sc != null && sc.length > 0){
 			//设置圈子类型名称
 			sc[0].setExtAttr("TypeName", getCircleTypeName(sc[0].getCtype()+""));
+			//设置圈头像
+			sc[0].setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc[0].getCid()+".jpg");
 			//检查二维码是否过期
 			if(StringUtils.isNullOrEmpty(sc[0].getQrticket()) 
-					|| ServiceManager.getOpDateTime().getTime() - sc[0].getQrdate().getTime() > 29*24*3600*1000){
+					|| (ServiceManager.getOpDateTime().getTime() - sc[0].getQrdate().getTime())/3600000 > 29*24){
 				//获取二维码，圈子后缀1
 				ReceiveJson json = WechatCommons.createQRCode(sc[0].getCid()*10+1, WechatCommons.AccessToken);
 				if(json.isError()){
@@ -149,9 +152,11 @@ public class PartySVImpl implements IPartySV{
 		for(ISocialCircleValue sc : scs){
 			//设置圈子类型名称
 			sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
+			//设置圈头像
+			sc.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc.getCid()+".jpg");
 			//检查二维码是否过期
 			if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
-					|| ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime() > 29*24*3600*1000){
+					|| (ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime())/3600000 > 29*24){
 				//获取二维码，圈子后缀1
 				ReceiveJson json = WechatCommons.createQRCode(sc.getCid()*10+1, WechatCommons.AccessToken);
 				if(json.isError()){

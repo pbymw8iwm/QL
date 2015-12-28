@@ -81,7 +81,7 @@ public class WechatOpServlet extends HttpServlet {
         try{
         	if(StringUtils.isBlank(code) == false){
         		//获取网页授权以取得open_id
-	            ReceiveJson json = WechatUtils.httpRequest(WechatCommons.getUrlOauth2(code),WechatCommons.HttpGet,null);
+	            ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlOauth2(code),WechatCommons.HttpGet,null);
 	            if(json.isError()){
 	            	log.error(json.getErrMsg());
 	            	user = SessionManager.getUser();

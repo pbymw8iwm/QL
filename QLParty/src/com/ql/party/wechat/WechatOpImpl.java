@@ -37,7 +37,7 @@ public class WechatOpImpl implements IWechatOp {
 		String result = null;
         try{
         	//获取微信用户信息
-        	ReceiveJson json = WechatUtils.httpRequest(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
+        	ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
         	if(json.isError()){
         		log.error("用户信息("+openId+")获取失败:"+json.getErrMsg());
         		json = null;

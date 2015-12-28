@@ -16,7 +16,7 @@ public class TokenThread implements Runnable {
         while (true) {  
             try {  
             	//获取token
-            	ReceiveJson json = WechatUtils.httpRequest(WechatCommons.Url_Token,WechatCommons.HttpGet,null);
+            	ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.Url_Token,WechatCommons.HttpGet,null);
             	if(json.isError()){
             		log.error(json.getErrCode()+":"+json.getErrMsg());
             		Thread.sleep(60 * 1000);
@@ -28,7 +28,7 @@ public class TokenThread implements Runnable {
                 	WechatCommons.AccessToken = token; 
                 	
                 	//获取jstoken
-                	ReceiveJson json2 = WechatUtils.httpRequest(WechatCommons.getUrlJsTicket(),WechatCommons.HttpGet,null);
+                	ReceiveJson json2 = WechatUtils.httpRequestJson(WechatCommons.getUrlJsTicket(),WechatCommons.HttpGet,null);
                 	if(json2.isError()){
                 		log.error(json2.getErrCode()+":"+json2.getErrMsg());
                 		Thread.sleep(60 * 1000);

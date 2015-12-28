@@ -71,6 +71,6 @@ $(document).ready(function(){
 		}
   ); 
   
-  //window.location = _gModuleName+"/circle/CircleInfo.jsp?cId=11";
+  window.location = _gModuleName+"/circle/CircleInfo.jsp?cId=11";
 });
 </script>

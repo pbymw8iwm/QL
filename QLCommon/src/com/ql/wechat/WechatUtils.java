@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -15,7 +16,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -226,14 +226,20 @@ public class WechatUtils {
 	 * @param outputStr 提交的数据
 	 * @return ReceiveJson
 	 */
-	public static ReceiveJson httpRequest(String requestUrl,String requestMethod, String outputStr)throws Exception {
+	public static ReceiveJson httpRequestJson(String requestUrl,String requestMethod, String outputStr)throws Exception {
 		return ReceiveJson.getReceiveJson(httpRequestString(requestUrl,requestMethod,outputStr));
 	}
 	
 	public static String httpRequestString(String requestUrl,String requestMethod, String outputStr)throws Exception {
+		// 将返回的输入流转换成字符串
+		String str = getInputStream(httpRequest(requestUrl,requestMethod,outputStr));
+		return str;
+	}
+	
+	public static InputStream httpRequest(String requestUrl,String requestMethod, String outputStr)throws Exception {
 		URL url = new URL(requestUrl);
-		HttpsURLConnection httpUrlConn = (HttpsURLConnection) url
-				.openConnection();
+		
+		HttpURLConnection httpUrlConn = (HttpURLConnection) url.openConnection();
 
 		httpUrlConn.setDoOutput(true);
 		httpUrlConn.setDoInput(true);
@@ -251,10 +257,8 @@ public class WechatUtils {
 			outputStream.write(outputStr.getBytes(WechatCommons.Charset));
 			outputStream.close();
 		}
-		// 将返回的输入流转换成字符串
-		String str = getInputStream(httpUrlConn.getInputStream());
 		httpUrlConn.disconnect();
-		return str;
+		return httpUrlConn.getInputStream();
 	}
 
 	public static String getRandomString(){

@@ -78,6 +78,8 @@ public class WechatCommons {
 	private static final String Url_UserInfo = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={token}&openid=";
 	//统一下单
 	public static final String Url_UnifiedOrder = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+	//多媒体文件下载接口
+	public static final String Url_MediaGet = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token={token}&media_id=";
 	
 	public static String AccessToken = null;
 	public static String JsTicket = null;
@@ -102,12 +104,16 @@ public class WechatCommons {
 		return StringUtils.replaceOnce(Url_UserInfo, "{token}", AccessToken) + openId;
 	}
 	
+	public static String getUrlMediaGet(String mediaId){
+		return StringUtils.replaceOnce(Url_MediaGet, "{token}", AccessToken) + mediaId;
+	}
+	
 	//临时二维码,有效期30天
 	public static ReceiveJson createQRCode(long id,String token)throws Exception{
 		//永久二维码最多10万个
 		//String info = "{\"action_name\": \"QR_LIMIT_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
 		String info = "{\"expire_seconds\":2592000,\"action_name\": \"QR_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": "+id+"}}}";
-		ReceiveJson json = WechatUtils.httpRequest(WechatCommons.Url_QrCode+token,WechatCommons.HttpPost,info);
+		ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.Url_QrCode+token,WechatCommons.HttpPost,info);
         return json;
 	}
 }

@@ -21,6 +21,7 @@
 String[] s = WechatUtils.getJsSignature(request);
 long cId = HttpUtil.getAsLong(request, "cId");
 ISocialCircleValue sc = PartyAction.getSocialCircle(cId);
+long userId = SessionManager.getUser().getID();
 String userName = SessionManager.getUser().getName();
 %>  
   <body>
@@ -29,12 +30,24 @@ String userName = SessionManager.getUser().getName();
         <h3>此圈不存在，可能已经被删除</h3>
       <%}else{ %>
 		<div class="page-header">
-		  	<h3><%=sc.getCname() %>&nbsp;&nbsp;&nbsp;&nbsp;<small><%=sc.getExtAttr("TypeName") %>圈</small>
-		  	<button type="button" class="btn btn-link text-right" id="btnShare">请点右上角分享↑</button></h3>
+		  <table>
+		    <tr>
+		      <td rowspan="2"><img id="cImg" src="<%=sc.getImagedata() %>" class="img-rounded" width="100" height="100"/></td>
+		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		      <td><h3><%=sc.getCname() %></h3></td>
+		    </tr>
+		    <tr>
+		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		      <td><%=sc.getExtAttr("TypeName") %>圈
+		  	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-link" id="btnShare">请点右上角分享↑</button></td>
+		    </tr>
+		  </table>
+		  	
+		  	
 		</div>
 		<div class="center-block">
-		  <button type="button" class="btn btn-link" >创建聚会</button>
 		  <button type="button" class="btn btn-link" >编辑我的圈信息</button>
+		  <button type="button" class="btn btn-link" >创建聚会</button>
 		</div>
 		<div class="panel-group" id="accordion">
 		  <div class="panel panel-info" id="divMember">
@@ -60,8 +73,9 @@ String userName = SessionManager.getUser().getName();
 </html>
 <script language="javascript">
 
+<%if(sc != null){ %>
 wx.config({
-      debug: false,
+      debug: true,
       appId: '<%=WechatCommons.AppId%>',
       timestamp: <%=s[0] %>,
       nonceStr: '<%=s[1] %>',
@@ -70,7 +84,9 @@ wx.config({
         'hideOptionMenu',
         'showMenuItems',
         'onMenuShareAppMessage',
-        'onMenuShareTimeline'
+        'onMenuShareTimeline',
+        'chooseImage',
+        'uploadImage'
       ]
   });
 
@@ -83,8 +99,8 @@ wx.ready(function(){
   var shareMsg = {
 	    title: '<%=userName%>邀您加入<%=sc.getCname()%>', // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
-	    link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp?userName=<%=userName%>&cName=<%=sc.getCname()%>&ticket=<%=sc.getQrticket()%>', // 分享链接
-	    imgUrl: '', // 分享图标
+	    link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp?userName=<%=userName%>&cName=<%=sc.getCname()%>&ticket=<%=sc.getQrticket()%>&cImg='+encodeURIComponent('<%=sc.getImagedata()%>'), // 分享链接
+	    imgUrl: '<%=sc.getImagedata()%>', // 分享图标
 	    type: 'link', // 分享类型,music、video或link，不填默认为link
 	    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
 	    success: function () { 
@@ -94,7 +110,6 @@ wx.ready(function(){
 	        // 用户取消分享后执行的回调函数
 	    }
 	};
-
   wx.onMenuShareAppMessage(shareMsg);
   wx.onMenuShareTimeline(shareMsg);
 });
@@ -106,5 +121,56 @@ $(document).ready(function(){
   $("#btnShare").click(function(){
     alert("请点击右上角的三个小点，分享到朋友或朋友圈！");
   }); 
+
+
+<%if(userId == sc.getCreater()){ %>  
+  $("#cImg").click(function(){
+    wx.chooseImage({
+	    count: 1, // 默认9
+	    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+	    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+	    success: function (res) {
+	        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+	        jQuery(function(){
+	          $.each( localIds, function(i, n){
+	              $("#cImg").attr("src",n);
+	              wx.uploadImage({
+					    localId: n, // 需要上传的图片的本地ID，由chooseImage接口获得
+					    isShowProgressTips: 1, // 默认为1，显示进度提示
+					    success: function (res) {
+					        var serverId = res.serverId; // 返回图片的服务器端ID
+					        dealImg(serverId);
+					    }
+				  });
+	            });
+	        });
+	    }
+	});
+  });
+<%}%>
 });
+
+function dealImg(serverId){
+	$.ajax({ 
+				type: "post", 
+				async: false,
+				processData: false,
+				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=changeCircleImg&cId=<%=sc.getCid()%>&mediaId="+serverId,
+				contentType: "text/html; charset=UTF-8",
+				success: function(data, textStatus){
+				  if(textStatus == "success"){
+				    if(data.flag == true){
+				    	
+				    }
+				    else
+				      alert(data.msg);
+				  }
+	      },
+	      error:function(httpRequest,errType,ex ){
+	        alert(ex);
+	      }
+	}); 
+}
+
+<%}%>
 </script>
