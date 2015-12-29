@@ -35,6 +35,7 @@ public class WechatOpImpl implements IWechatOp {
 			log.debug("订阅："+openId);
 		IWechatUserValue wechatUser = null;
 		String result = null;
+		boolean isRecover = false;
         try{
         	//获取微信用户信息
         	ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
@@ -54,6 +55,7 @@ public class WechatOpImpl implements IWechatOp {
             }
             else if(wechatUser.getState() == 0){
         		wechatUser.setState(1);
+        		isRecover = true;
         		result = "欢迎回来^_^";
         	}
             if(wechatUser.isNew() || wechatUser.isModified()){
@@ -64,7 +66,7 @@ public class WechatOpImpl implements IWechatOp {
 	            	wechatUser.setImagedata(json.getHeadimgurl());
 	            }
 	            //保存
-	            QLServiceFactory.getQLSV().saveUser(wechatUser);
+	            PartyServiceFactory.getPartySV().saveUser(wechatUser,isRecover);
 	            //刷缓存
 	            ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
 	            try {
@@ -108,7 +110,7 @@ public class WechatOpImpl implements IWechatOp {
 		try {
 			wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, openId);
 			if(wechatUser != null){
-				QLServiceFactory.getQLSV().deleteUser(wechatUser);
+				PartyServiceFactory.getPartySV().deleteUser(wechatUser);
 	            //刷缓存
 	            ICache cache = (ICache)CacheFactory._getCacheInstances().get(WechatUserCacheImpl.class);
 	            try {

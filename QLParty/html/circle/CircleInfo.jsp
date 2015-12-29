@@ -50,7 +50,7 @@ String userName = SessionManager.getUser().getName();
 		<div class="panel-group" id="accordion">
 		  <div class="panel panel-info" id="divMember">
 		    <div class="panel-heading">
-		      <a data-toggle="collapse" data-parent="#accordion" href="#cMember"><h4 class="panel-title">圈友</h4></a>
+		      <a data-toggle="collapse" data-parent="#accordion" href="#cMember"><h4 class="panel-title">圈友(<%=sc.getExtAttr("MemberCount") %>人)</h4></a>
 		    </div>
 		    <div id="cMember" class="panel-collapse collapse">
 		      成员。。。
@@ -58,7 +58,7 @@ String userName = SessionManager.getUser().getName();
 		  </div>
 		  <div class="panel panel-info" id="divParty">
 		    <div class="panel-heading">
-		      <a data-toggle="collapse" data-parent="#accordion" href="#cParty"><h4 class="panel-title">聚会</h4></a>
+		      <a data-toggle="collapse" data-parent="#accordion" href="#cParty"><h4 class="panel-title">聚会(<%=sc.getExtAttr("PartyCount") %>个)</h4></a>
 		    </div>
 		    <div id="cParty" class="panel-collapse collapse">
 		      聚会。。。

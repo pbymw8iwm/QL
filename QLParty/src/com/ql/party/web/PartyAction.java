@@ -16,6 +16,7 @@ import com.ql.common.CommonUtil;
 import com.ql.common.HttpJsonUtil;
 import com.ql.common.JsonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
+import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
@@ -43,6 +44,16 @@ public class PartyAction extends QLBaseAction{
 	 */
 	public static ISocialCircleValue getSocialCircle(long cId)throws Exception{
 		return PartyServiceFactory.getPartySV().getSocialCircle(cId);
+	}
+	
+	/**
+	 * 查询用户的圈子
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public static ISocialCircleValue[] getSocialCircles()throws Exception{
+		return PartyServiceFactory.getPartySV().getSocialCircleByUser(SessionManager.getUser().getID());
 	}
 
 	/*************************************************
@@ -76,6 +87,23 @@ public class PartyAction extends QLBaseAction{
 			long cId = HttpUtil.getAsLong(request, "cId");
 			remoteImg(cId,mediaId);			
 	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	//保存个人的圈信息
+	public void saveCircleMemberInfo(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			String json = HttpUtil.getStringFromBufferedReader(request);
+			Map map = JsonUtil.getMapFromJsObject(json);
+			
+			CircleMemberBean cm = new CircleMemberBean();
+			JsonUtil.mapToBean(map, cm);
+			PartyServiceFactory.getPartySV().saveCircleMemberInfo(cm);
+	        HttpJsonUtil.showInfo(response,"保存成功!");
 	    }
 	    catch(Exception ex){
 	      log.error(ex.getMessage(),ex);
