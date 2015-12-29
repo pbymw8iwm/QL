@@ -26,7 +26,7 @@ import com.ql.ivalues.IWechatUserValue;
 
 /**
  * 微信菜单连接
- * @author hailu
+ * @author linhl
  *
  */
 public class WechatOpServlet extends HttpServlet {
@@ -77,14 +77,13 @@ public class WechatOpServlet extends HttpServlet {
         }
                 
         IWechatUserValue wechatUser = null;
-        UserInfoInterface user = null;
+        UserInfoInterface user = SessionManager.getUser();
         try{
         	if(StringUtils.isBlank(code) == false){
         		//获取网页授权以取得open_id
 	            ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlOauth2(code),WechatCommons.HttpGet,null);
 	            if(json.isError()){
 	            	log.error(json.getErrMsg());
-	            	user = SessionManager.getUser();
 	        		if(user != null){
 	        			wechatUser = new WechatUserBean();
 	        			wechatUser.setUserid(user.getID());
@@ -95,12 +94,16 @@ public class WechatOpServlet extends HttpServlet {
 	            else{
 		            String openId = json.getOpenId();
 		        	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, openId);
+		        	//与session中的用户不一致
+		        	if(wechatUser != null && user != null){
+		        		if(wechatUser.getUserid() != user.getID())
+		        			user = null;
+		        	}
 	            }
         	}
-        	else{
+        	else if(user != null){
         		long userId = HttpUtil.getAsLong(request, "user");
         		long userType = HttpUtil.getAsLong(request, "type");
-        		user = SessionManager.getUser();
         		if(userId == user.getID()){
         			wechatUser = new WechatUserBean();
         			wechatUser.setUserid(userId);
@@ -139,8 +142,10 @@ public class WechatOpServlet extends HttpServlet {
         }
         
         String url = WechatCommons.WechatOp.getOpUrl(request, response, type);
+        //必须redirect，否则微信的js校验不通过
         if(url != null)
-        	request.getRequestDispatcher(url).forward(request, response);
+        	response.sendRedirect(url);
+//        	request.getRequestDispatcher(url).forward(request, response);
 	}
 	
 	/**
