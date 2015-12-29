@@ -27,6 +27,18 @@ import com.ql.wechat.WechatCommons;
 public class PartySVImpl implements IPartySV{
 
 	private static transient Log log = LogFactory.getLog(PartySVImpl.class);
+	private static final int TypeCircle = 1;
+	private static final int TypeParty = 2;
+	
+	/**
+	 * 获取二维码的id，原id加后缀
+	 * @param id
+	 * @param type
+	 * @return
+	 */
+	private long getQrId(long id,int type){
+		return id * 10 + type;
+	}
 	
 	/*************************************************
 	 * 圈子
@@ -42,7 +54,9 @@ public class PartySVImpl implements IPartySV{
 		boolean isNew = sc.isNew();
 		if(isNew){
 			//获取二维码，圈子后缀1
-			ReceiveJson json = WechatCommons.createQRCode(sc.getCid()*10+1, WechatCommons.AccessToken);
+			long cId = QLServiceFactory.getQLDAO().getNewId(SocialCircleBean.getObjectTypeStatic()).longValue();
+			sc.setCid(cId);
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),TypeCircle), WechatCommons.AccessToken);
 			if(json.isError()){
 				log.error("二维码获取失败："+json.getErrMsg());
 			}
@@ -113,24 +127,7 @@ public class PartySVImpl implements IPartySV{
 		param.put("cId", cId);
 		ISocialCircleValue[] sc = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
 		if(sc != null && sc.length > 0){
-			//设置圈子类型名称
-			sc[0].setExtAttr("TypeName", getCircleTypeName(sc[0].getCtype()+""));
-			//设置圈头像
-			sc[0].setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc[0].getCid()+".jpg");
-			//检查二维码是否过期
-			if(StringUtils.isNullOrEmpty(sc[0].getQrticket()) 
-					|| (ServiceManager.getOpDateTime().getTime() - sc[0].getQrdate().getTime())/3600000 > 29*24){
-				//获取二维码，圈子后缀1
-				ReceiveJson json = WechatCommons.createQRCode(sc[0].getCid()*10+1, WechatCommons.AccessToken);
-				if(json.isError()){
-					log.error("二维码获取失败："+json.getErrMsg());
-				}
-				else{
-					sc[0].setQrticket(json.getTicket());
-					sc[0].setQrdate(ServiceManager.getOpDateTime());
-					QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc[0]));
-				}
-			}
+			setCircleInfo(sc[0]);
 			return sc[0];
 		}
 		else
@@ -150,26 +147,35 @@ public class PartySVImpl implements IPartySV{
 		param.put("userId", userId);
 		ISocialCircleValue[] scs = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
 		for(ISocialCircleValue sc : scs){
-			//设置圈子类型名称
-			sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
-			//设置圈头像
-			sc.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc.getCid()+".jpg");
-			//检查二维码是否过期
-			if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
-					|| (ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime())/3600000 > 29*24){
-				//获取二维码，圈子后缀1
-				ReceiveJson json = WechatCommons.createQRCode(sc.getCid()*10+1, WechatCommons.AccessToken);
-				if(json.isError()){
-					log.error("二维码获取失败："+json.getErrMsg());
-				}
-				else{
-					sc.setQrticket(json.getTicket());
-					sc.setQrdate(ServiceManager.getOpDateTime());
-					QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
-				}
-			}
+			setCircleInfo(sc);
 		}
 		return scs;
+	}
+	
+	/**
+	 * 设置查询的圈子的附加信息
+	 * @param sc
+	 * @throws Exception
+	 */
+	private void setCircleInfo(ISocialCircleValue sc)throws Exception{
+		//设置圈子类型名称
+		sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
+		//设置圈头像
+		sc.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc.getCid()+"-200?_="+Math.random());
+		//检查二维码是否过期
+		if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
+				|| (ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime())/3600000 > 29*24){
+			//获取二维码，圈子后缀1
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),TypeCircle), WechatCommons.AccessToken);
+			if(json.isError()){
+				log.error("二维码获取失败："+json.getErrMsg());
+			}
+			else{
+				sc.setQrticket(json.getTicket());
+				sc.setQrdate(ServiceManager.getOpDateTime());
+				QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
+			}
+		}
 	}
 	
 	/**

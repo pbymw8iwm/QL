@@ -1,8 +1,5 @@
 package com.ql.party.web;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -15,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import com.ai.appframe2.common.SessionManager;
 import com.ai.appframe2.web.HttpUtil;
 import com.ql.action.QLBaseAction;
+import com.ql.common.CommonUtil;
 import com.ql.common.HttpJsonUtil;
 import com.ql.common.JsonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
@@ -54,6 +52,7 @@ public class PartyAction extends QLBaseAction{
 	//创建圈子
 	public void createCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
+			String mediaId = HttpUtil.getAsString(request, "mediaId");
 			String json = HttpUtil.getStringFromBufferedReader(request);
 			Map map = JsonUtil.getMapFromJsObject(json);
 			
@@ -61,6 +60,7 @@ public class PartyAction extends QLBaseAction{
 			JsonUtil.mapToBean(map, sc);
 			sc.setCreater(SessionManager.getUser().getID());
 			long cId = PartyServiceFactory.getPartySV().saveSocialCircle(sc);
+			remoteImg(cId,mediaId);	
 	        HttpJsonUtil.showInfo(response,cId+"");
 	    }
 	    catch(Exception ex){
@@ -85,23 +85,12 @@ public class PartyAction extends QLBaseAction{
 	
 	private void remoteImg(long cId,String mediaId)throws Exception{
 		//从微信服务器下载
+		if(log.isDebugEnabled())
+			log.debug("mediaId:"+mediaId);
 		InputStream is = WechatUtils.httpRequest(WechatCommons.getUrlMediaGet(mediaId), WechatCommons.HttpGet, null);
-		byte[] datas = readBytes(is);
+		byte[] datas = CommonUtil.readBytes(is);
 		//上传到七牛
-		RemoteResouseManager.upload(datas, "c_"+cId+".jpg");
+		RemoteResouseManager.upload(datas, "c_"+cId);
 	}
 	
-	public static byte[] readBytes(InputStream in) throws IOException {
-		BufferedInputStream bufin = new BufferedInputStream(in);
-		int buffSize = 1024;
-		ByteArrayOutputStream out = new ByteArrayOutputStream(buffSize);
-		byte[] temp = new byte[buffSize];
-		int size = 0;
-		while ((size = bufin.read(temp)) != -1) {
-			out.write(temp, 0, size);
-		}
-		bufin.close();
-		byte[] content = out.toByteArray();
-		return content;
-	}
 }

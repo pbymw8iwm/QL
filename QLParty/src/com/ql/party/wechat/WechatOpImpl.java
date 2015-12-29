@@ -80,7 +80,13 @@ public class WechatOpImpl implements IWechatOp {
             //扫描的带参二维码
             if(xmlEntity.getEventKey() != null && xmlEntity.getEventKey().startsWith(WechatCommons.KeySubscribe)){
             	String param = xmlEntity.getEventKey().substring(WechatCommons.KeySubscribe.length());
-            	dealScan(param,wechatUser);
+            	String rt = dealScan(param,wechatUser);
+            	if(rt != null){
+            		if(result == null)
+            			result = rt;
+            		else
+            			result += "\n"+rt;
+            	}
             }
         }
         catch(Exception ex){
@@ -127,16 +133,18 @@ public class WechatOpImpl implements IWechatOp {
 	public String processScan(ReceiveXmlEntity xmlEntity){
 		String param = xmlEntity.getEventKey();
 		IWechatUserValue wechatUser = null;
+		String result = null;
         try{
         	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, xmlEntity.getFromUserName());
         	if(wechatUser != null)
-        		dealScan(param,wechatUser);
+        		result = dealScan(param,wechatUser);
         }
         catch(Exception ex){
         	log.error(ex.getMessage(),ex);
         }
-        //TODO 直接跳转到对应的页面
-		return "欢迎使用聚会助手！";
+        if(result == null)
+        	result = "欢迎使用聚会助手！";
+		return result;
 	}
 	
 	/**
@@ -148,13 +156,16 @@ public class WechatOpImpl implements IWechatOp {
 		return "欢迎使用聚会助手！";
 	}
 	
-	private void dealScan(String param,IWechatUserValue user)throws Exception{
+	private String dealScan(String param,IWechatUserValue user)throws Exception{
 		long id = DataType.getAsLong(param);
 		long index = id%10;
 		if(index == 1){
 			//圈子
-			PartyServiceFactory.getPartySV().joinSocialCircle(id/10, user);
+			long cId = id/10;
+			PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
+			return "您已加入圈子，点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
 		}
+		return null;
 	}
 
 	/**
@@ -178,6 +189,10 @@ public class WechatOpImpl implements IWechatOp {
 			url = "circle/CircleList.jsp";
 		else if(Type_Feedback.equals(param))
 			url = "help/Feedback.jsp";
+		else if(param.startsWith(Type_CircleInfo)){
+			String strCId = param.substring(Type_CircleInfo.length());
+        	url = "circle/CircleInfo.jsp?cId="+strCId;
+		}
 		return url;
 	}
 	
@@ -187,6 +202,7 @@ public class WechatOpImpl implements IWechatOp {
 	
 	public static final String Type_NewCircle = "11";
 	public static final String Type_CircleList = "12";
+	public static final String Type_CircleInfo = "13_";
 
 	public static final String Type_Feedback = "99";
 }

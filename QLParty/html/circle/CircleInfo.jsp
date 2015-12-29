@@ -1,6 +1,5 @@
 <%@page import="com.ai.appframe2.common.SessionManager"%>
 <%@page import="com.ql.wechat.WechatCommons"%>
-<%@page import="com.ql.wechat.WechatUtils"%>
 <%@page import="com.ql.party.web.PartyAction"%>
 <%@page import="com.ql.party.ivalues.ISocialCircleValue"%>
 <%@page import="com.ai.appframe2.web.HttpUtil"%>
@@ -14,11 +13,10 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     
     <%@ include file="/CommonHead.jsp"%>
-	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"> </script>
+    <%@ include file="/WechatJsHead.jsp"%>
   </head>
 
 <%
-String[] s = WechatUtils.getJsSignature(request);
 long cId = HttpUtil.getAsLong(request, "cId");
 ISocialCircleValue sc = PartyAction.getSocialCircle(cId);
 long userId = SessionManager.getUser().getID();
@@ -74,28 +72,6 @@ String userName = SessionManager.getUser().getName();
 <script language="javascript">
 
 <%if(sc != null){ %>
-wx.config({
-      debug: true,
-      appId: '<%=WechatCommons.AppId%>',
-      timestamp: <%=s[0] %>,
-      nonceStr: '<%=s[1] %>',
-      signature: '<%=s[2] %>',
-      jsApiList: [
-        'hideOptionMenu',
-        'showMenuItems',
-        'onMenuShareAppMessage',
-        'onMenuShareTimeline',
-        'chooseImage',
-        'uploadImage'
-      ]
-  });
-
-wx.ready(function(){
-  wx.hideOptionMenu();
-  wx.showMenuItems({
-    menuList: ['menuItem:share:appMessage','menuItem:share:timeline'] // 要显示的菜单项，所有menu项见附录3
-  });
-
   var shareMsg = {
 	    title: '<%=userName%>邀您加入<%=sc.getCname()%>', // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
@@ -110,11 +86,18 @@ wx.ready(function(){
 	        // 用户取消分享后执行的回调函数
 	    }
 	};
+	
+wx.ready(function(){
+  wx.hideOptionMenu();
+  wx.showMenuItems({
+    menuList: ['menuItem:share:appMessage','menuItem:share:timeline'] // 要显示的菜单项，所有menu项见附录3
+  });
+
   wx.onMenuShareAppMessage(shareMsg);
   wx.onMenuShareTimeline(shareMsg);
 });
 wx.error(function(res){
-    alert(res);
+//    alert(res.errMsg);
 });
   
 $(document).ready(function(){
@@ -160,7 +143,10 @@ function dealImg(serverId){
 				success: function(data, textStatus){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
-				    	
+				      shareMsg.imgUrl = shareMsg.imgUrl + Math.random();
+				      shareMsg.link = shareMsg.link + Math.random();
+					  wx.onMenuShareAppMessage(shareMsg);
+					  wx.onMenuShareTimeline(shareMsg);
 				    }
 				    else
 				      alert(data.msg);

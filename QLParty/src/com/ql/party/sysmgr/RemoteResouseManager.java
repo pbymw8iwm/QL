@@ -53,6 +53,8 @@ public class RemoteResouseManager {
 	  try {
 	        Response res = S_UploadManager.put(data, key, getUpToken(key));
         	DefaultPutRet ret = res.jsonToObject(DefaultPutRet.class);
+		    if(log.isDebugEnabled())
+			    log.debug("上传"+ret.key+":"+res.isOK());
         	return ret.key;
 	    } catch (QiniuException e) {
 	        Response r = e.response;

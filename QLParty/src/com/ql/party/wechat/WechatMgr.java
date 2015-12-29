@@ -2,15 +2,15 @@ package com.ql.party.wechat;
 
 import java.io.InputStream;
 
+import com.ql.common.CommonUtil;
 import com.ql.party.sysmgr.RemoteResouseManager;
-import com.ql.party.web.PartyAction;
 import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.WechatCommons;
 import com.ql.wechat.WechatUtils;
 
 public class WechatMgr {
 
-	private static String AccessToken = "S9mLtPy5QoHd6dZws-6NOjkQd1pzRi8UFo-71paGPJnbxcRrm0dImTcDM8wBaEiUNG-hfp5t7uvChcjDVCfUgdekFFB3gfGNUQ1I9-0yLikEDAeAJAPOL";
+	private static String AccessToken = "5bq9j9eCI4ttsRi7JFoPlM-hz3IB0p_qxBia9_fGslc0GRwcx7hAFfcJF8Ime8pcCny8oahhPghqezqIv1syRUNkPn0fZP6dhRdVxL5PuRcLPWbACAAEL";
 	public static void createMenu()throws Exception{
 
         String menu = "{"
@@ -73,13 +73,13 @@ public class WechatMgr {
 	}
 	
 	public static void main(String[] args) throws Exception{
-//		WechatMgr.createMenu();
+		WechatMgr.createMenu();
 		
 		//从微信服务器下载
-				InputStream is = WechatUtils.httpRequest(WechatCommons.getUrlMediaGet("RJWGpD3eUTy5SPjUutga4y84y49wlcpIwFHNDrQ6b9KYrYBgP4f9h_-iWcFdjLZ_"), WechatCommons.HttpGet, null);
-				byte[] datas = PartyAction.readBytes(is);
+				/*InputStream is = WechatUtils.httpRequest(WechatCommons.getUrlMediaGet("RJWGpD3eUTy5SPjUutga4y84y49wlcpIwFHNDrQ6b9KYrYBgP4f9h_-iWcFdjLZ_"), WechatCommons.HttpGet, null);
+				byte[] datas = CommonUtil.readBytes(is);
 				//上传到七牛
 				String key = RemoteResouseManager.upload(datas, "c_11.jpg");
-				System.out.println(key);
+				System.out.println(key);*/
 	}
 }

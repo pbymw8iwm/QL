@@ -22,8 +22,13 @@ wx.config({
       nonceStr: '<%=s[1] %>',
       signature: '<%=s[2] %>',
       jsApiList: [
-        'onMenuShareAppMessage'
+        'hideOptionMenu',
+        'showMenuItems',
+        'onMenuShareAppMessage',
+        'onMenuShareTimeline',
+        'chooseImage',
+        'uploadImage'
       ]
   });
-  
+ 
 </script>
