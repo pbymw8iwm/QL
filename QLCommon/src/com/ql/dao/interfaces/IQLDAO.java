@@ -23,4 +23,7 @@ public interface IQLDAO {
 	
 	public DataContainerInterface[] qryDatasFromSql(String sql, Map param, Class aClass, ObjectType ot) throws Exception;
 
+	public int getCount(String cond, Map param, ObjectType ot)throws Exception;
+	
+	public int execute(String sql,Map param)throws Exception;
 }

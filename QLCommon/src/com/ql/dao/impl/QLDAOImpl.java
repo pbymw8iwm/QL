@@ -171,5 +171,29 @@ public class QLDAOImpl implements IQLDAO {
 				conn.close();
 		}
 	}
+	
+	public int getCount(String cond, Map param, ObjectType ot)throws Exception{
+		Connection conn = null;
+		try {
+			conn = ServiceManager.getSession().getConnection();
+			return ServiceManager.getDataStore().retrieveCount(conn, ot, cond, param ,null);
+		} 
+		finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
 
+	public int execute(String sql,Map param)throws Exception{
+		Connection conn = null;
+		try {
+			conn = ServiceManager.getSession().getConnection();
+			return ServiceManager.getDataStore().execute(conn, sql, param);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			if (conn != null)
+				conn.close();
+		}
+	}
 }
