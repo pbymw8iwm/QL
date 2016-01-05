@@ -1,7 +1,10 @@
 package com.ql.math.web;
 
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 public class Sudoku{
 	
@@ -76,14 +79,21 @@ public class Sudoku{
 		  return true;
 	}
 	
-	public int[] generate(int level,int[] result){
-		System.out.println("begin");
-		long start = System.currentTimeMillis();
+	public int[] generate(int level,int[] result)throws Exception{
 		//构造完整的
 		int[][] sdk = generate();
-		System.out.println("g1");
+		int cc = 0;
+		for (int i = 0; i < sdk.length; i++) {
+			for (int j = 0; j < sdk[i].length; j++) {
+				result[cc] = sdk[i][j];
+				cc++;
+			}
+		}
+		System.out.println("first");
 		int[] qsdk = new int[81];
-		boolean isResolved = false;
+		Slove sl = null;
+		int resultCount = 0;
+		int totalCount = 0;
 		//挖洞
 		do {
 			// 更新数独终盘
@@ -98,43 +108,25 @@ public class Sudoku{
 				sdk[ax][ay] = 0;
 				wnf = _wnf(sdk);
 			} while (whatLevel(wnf) != level);
-			System.out.println("level"+level);
 			//求解
-			int cc = 0;
+			cc = 0;
 			for (int i = 0; i < sdk.length; i++) {
 				for (int j = 0; j < sdk[i].length; j++) {
-					result[cc] = sdk[i][j];
 					qsdk[cc] = sdk[i][j];
 					cc++;
 				}
 			}
-			isResolved = resolve(result);
-			System.out.println(isResolved);
-		} while (isResolved == false);
+			sl = new Slove(qsdk);            
+			sl.resolve();            
+			resultCount = sl.answers;
+			if(resultCount != 1){
+				totalCount++;
+				if(totalCount > 5)
+					throw new Exception("no");
+			}
+		} while (resultCount != 1);
 		
-		// 输出结果
-				int j=0;
-				for(int i=0;i<qsdk.length;i++){
-					System.out.print(qsdk[i] + ",");
-					j++;
-					if(j == 9){
-						j = 0;
-//						System.out.println();
-					}
-				}
-				System.out.println();
-				System.out.println("answer:");
-				j=0;
-				for(int i=0;i<result.length;i++){
-					System.out.print(result[i] + ",");
-					j++;
-					if(j == 9){
-						j = 0;
-//						System.out.println();
-					}
-				}
-		System.out.println();
-		System.out.println("耗时："+(System.currentTimeMillis() - start));
+//		resolve(result);
 		return qsdk;
 	}
 	
@@ -370,13 +362,107 @@ public class Sudoku{
 		return wnf;
 	}
 	
+	public static void deal(char[] a){
+		a[0] = '1';
+		a[1] = '2';
+	}
+	
+	public static void main2(String[] args)throws Exception {
+		Sudoku sudoku = new Sudoku();
+		int[] sdk = new int[]{1,0,0,0,0,0,0,0,0,0,0,2,3,0,0,0,7,4,0,0,0,2,0,0,0,8,5,6,0,0,8,7,0,0,5,0,0,0,0,9,0,6,0,0,0,0,9,0,0,2,4,0,0,3,5,8,0,0,0,2,0,0,0,9,4,0,0,0,7,8,0,0,0,0,0,0,0,0,0,0,6};
+		Slove sl = sudoku.new Slove(sdk);
+		sl.resolve();
+		System.out.println(sl.answers);
+		resolve(sdk);
+		for(int s : sdk)
+			System.out.print(s+",");
+	}
+	
 	public static void main(String[] args) {
-		Sudoku sdk = new Sudoku();
-		for(int i=0;i<13;i++){
-//			sdk.generate();
-			System.out.println("***************************  " + i);
-			int[] result = new int[81];
-			int[] shuDu = sdk.generate(3,result);
+		Sudoku sudoku = new Sudoku();
+		int level = 1;
+		{
+//			System.out.println("L"+level);
+			int index = 0;
+			for(int t=index;t<index+10;t++){
+				int[] result = new int[81];
+				try {
+					int[] qsdk = sudoku.generate(level,result);
+					
+					int j=0;
+					System.out.print("L"+level+"_Q_"+index+"=");
+					for(int i=0;i<qsdk.length;i++){
+						if(i>0)
+							System.out.print(",");
+						System.out.print(qsdk[i]);
+						j++;
+						if(j == 9){
+							j = 0;
+						}
+					}
+					System.out.println();
+					System.out.print("L"+level+"_A_"+index+"=");
+					j=0;
+					for(int i=0;i<result.length;i++){
+						if(i>0)
+							System.out.print(",");
+						System.out.print(result[i]);
+						j++;
+						if(j == 9){
+							j = 0;
+						}
+					}
+					System.out.println();
+					index++;
+				} catch (Exception e) {
+					System.out.println("no:"+t);
+				}
+			}
+		}
+	}
+	
+	public class Slove {
+		public int answers = 0;
+		private char[] te_ = null;
+		public String sd_answer = "";
+
+		public Slove(int[] sz) {
+			this.te_ = new char[81];
+			for (int i = 0; i < sz.length; i++) {
+				te_[i] = (sz[i] + "").charAt(0);
+			}
+		}
+
+		public void resolve() {
+			resolve(te_);
+		}
+
+		public void resolve(char[] A) {
+			int i, j;
+			for (i = 0; i < 81; i++) {
+				if (A[i] != '0') {
+					continue;
+				}
+				HashMap<String, String> h = new HashMap<String, String>();
+				for (j = 0; j < 81; j++) {
+					h.put(j / 9 == i / 9 || j % 9 == i % 9
+							|| (j / 27 == i / 27)
+							&& ((j % 9 / 3) == (i % 9 / 3)) ? "" + A[j] : "0",
+							"1");
+				}
+				for (j = 1; j <= 9; j++) {
+					if (h.get("" + j) == null) {
+						A[i] = (char) ('0' + j);
+						resolve(A);
+						if(answers > 1)
+							return;
+					}
+				}
+				A[i] = '0';
+				return;
+			}
+			answers +=1;
+			return;
 		}
 	}
 }
