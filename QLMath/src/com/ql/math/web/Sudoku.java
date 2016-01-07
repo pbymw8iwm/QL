@@ -14,8 +14,10 @@ public class Sudoku{
 		if(sdk.length != result.length)
 			return false;
 		for(int i=0;i<sdk.length;i++){
-			if(sdk[i] != 0 && sdk[i] != result[i])
+			if(sdk[i] != 0 && sdk[i] != result[i]){
+				System.out.println("答案与题目不一致");
 				return false;
+			}
 		}
 		//检查是否是解
 		if(checkRow(result)
@@ -34,7 +36,7 @@ public class Sudoku{
 			  }
 			  for(int i=1;i<=9;i++){
 			    if(tmp[i] != 1){
-			      System.out.println("第"+(row+1)+"行有误！");
+			      System.out.println("第"+(row+1)+"行有误！有"+tmp[i]+"个"+i);
 			      return false;
 			    }
 			  }
@@ -50,7 +52,7 @@ public class Sudoku{
 			  }
 			  for(int i=1;i<=9;i++){
 			    if(tmp[i] != 1){
-			    	System.out.println("第"+(col+1)+"列有误！");
+			    	System.out.println("第"+(col+1)+"列有误！有"+tmp[i]+"个"+i);
 			    	return false;
 			    }
 			  }
@@ -71,7 +73,7 @@ public class Sudoku{
 		    }
 			  for(int k=1;k<=9;k++){
 			    if(tmp[k] != 1){
-			    	System.out.println("第"+(k+1)+"个小九宫格有误！");
+			    	System.out.println("第"+(k+1)+"个小九宫格有误！有"+tmp[k]+"个"+k);
 			      return false;
 			    }
 			  }
@@ -89,7 +91,7 @@ public class Sudoku{
 				cc++;
 			}
 		}
-		System.out.println("first");
+//		System.out.println("first");
 		int[] qsdk = new int[81];
 		Slove sl = null;
 		int resultCount = 0;
@@ -176,7 +178,7 @@ public class Sudoku{
 				}
 				else{
 					if(i<8){
-						if(genNum(n,i+1,1))
+						if(genNum(n,i+1,0))
 							return true;
 					}
 					else
@@ -378,13 +380,13 @@ public class Sudoku{
 			System.out.print(s+",");
 	}
 	
-	public static void main(String[] args) {
+	public static void main1(String[] args) {
 		Sudoku sudoku = new Sudoku();
 		int level = 1;
 		{
 //			System.out.println("L"+level);
-			int index = 0;
-			for(int t=index;t<index+10;t++){
+			int index = 97;
+			for(int t=index;index<100;t++){
 				int[] result = new int[81];
 				try {
 					int[] qsdk = sudoku.generate(level,result);
@@ -415,8 +417,40 @@ public class Sudoku{
 					System.out.println();
 					index++;
 				} catch (Exception e) {
-					System.out.println("no:"+t);
+//					System.out.println("no:"+t);
 				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws Exception{
+		InputStream in = MathAction.class.getClassLoader().getResourceAsStream("sudoku");
+		Properties pps = new Properties();
+		pps.load(in);
+		int[] sdk = new int[81];
+		int[] result = new int[81];
+		
+		for(int level = 1;level < 4;level++){
+			int count = Integer.parseInt(pps.getProperty("L"+level));
+			for(int index = 0;index<count;index++){
+				String q = pps.getProperty("L"+level+"_Q_"+index);
+				String a = pps.getProperty("L"+level+"_A_"+index);
+				
+				StringTokenizer toKenizer = new StringTokenizer(q, ",");
+				int i = 0;        
+				while (toKenizer.hasMoreElements()) {           
+					sdk[i++] = Integer.valueOf(toKenizer.nextToken());        
+				}
+				
+				toKenizer = new StringTokenizer(a, ",");
+				i = 0;        
+				while (toKenizer.hasMoreElements()) {           
+					result[i++] = Integer.valueOf(toKenizer.nextToken());        
+				}
+				
+				//检查是否正确，以防止不小心修改了文件
+				if(Sudoku.check(sdk, result) == false)
+					System.out.println(index);
 			}
 		}
 	}
