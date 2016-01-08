@@ -14,7 +14,7 @@
     <%@ include file="/WechatJsHead.jsp"%>
   </head>
 <%
-ISocialCircleValue[] scs = PartyAction.getSocialCircles();
+ISocialCircleValue[] scs = PartyAction.getSocialCircles(true);
 String userName = SessionManager.getUser().getName();
 %>  
   <body>
@@ -24,7 +24,7 @@ String userName = SessionManager.getUser().getName();
 	    <div class="page-header">
 	  	  <table>
 		    <tr>
-		      <td rowspan="2"><img id="cImg<%=sc.getCid() %>" src="<%=sc.getImagedata() %>" class="img-rounded" width="80" height="80"/></td>
+		      <td rowspan="2"><img id="cImg<%=sc.getCid() %>" src="<%=sc.getImagedata() %>" class="img-thumbnail" width="80" height="80"/></td>
 		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 		      <td><h3><a href='<%=request.getContextPath()%>/circle/CircleInfo.jsp?cId=<%=sc.getCid()%>' id="a<%=sc.getCid()%>"><%=sc.getCname() %></a></h3></td>
 		    </tr>
@@ -33,7 +33,7 @@ String userName = SessionManager.getUser().getName();
 		      <td><%=sc.getExtAttr("TypeName") %>圈
 		  	&nbsp;&nbsp;&nbsp;&nbsp;<%=sc.getExtAttr("MemberCount") %>个成员
 		  	&nbsp;&nbsp;&nbsp;&nbsp;<%=sc.getExtAttr("PartyCount") %>个聚会
-		  	&nbsp;&nbsp;&nbsp;&nbsp;<a xname="aShare" cid="<%=sc.getCid()%>" ticket="<%=sc.getQrticket()%>">分享</a></td>
+		  	&nbsp;&nbsp;&nbsp;&nbsp;<a xname="aShare" cid="<%=sc.getCid()%>" ticket="<%=sc.getQrticket()%>">邀请</a></td>
 		    </tr>
 		  </table>
 		</div>
@@ -59,9 +59,6 @@ $(document).ready(function(){
     var cName = $("#a"+$(this).attr("cid")).text();
     var ticket = $(this).attr("ticket");
     var img = $("#cImg"+$(this).attr("cid")).attr("src");
-    alert(cName);
-    alert(ticket);
-    alert(img);
     var shareMsg = {
 	    title: '<%=userName%>邀您加入'+cName, // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
@@ -71,7 +68,7 @@ $(document).ready(function(){
     wx.onMenuShareAppMessage(shareMsg);
     wx.onMenuShareTimeline(shareMsg);
     
-    alert("请点击右上角的三个小点，分享到朋友或朋友圈！");
+    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
   }); 
 });
 </script>

@@ -1,3 +1,5 @@
+<%@page import="com.ql.party.web.PartyAction"%>
+<%@page import="com.ql.party.ivalues.ISocialCircleValue"%>
 <%@page import="java.net.URLDecoder"%>
 <%@page import="com.ai.appframe2.web.HttpUtil"%>
 <%@page import="com.ql.wechat.WechatCommons"%>
@@ -5,13 +7,27 @@
 <!DOCTYPE html>
 <html>
 <%
-String userName = HttpUtil.getAsString(request, "userName");
-String cName = HttpUtil.getAsString(request, "cName");
-String cImg = URLDecoder.decode(HttpUtil.getAsString(request, "cImg"),"UTF-8"); 
-String ticket = HttpUtil.getAsString(request, "ticket");
+Long cId = HttpUtil.getAsLong(request, "cId");
+String cName;
+String cImg;
+String cType;
+String ticket;
+if(cId > 0){
+	ISocialCircleValue sc = PartyAction.getSocialCircle(cId,false);
+	cName = sc.getCname();
+	cImg = sc.getImagedata();
+	ticket = sc.getQrticket();
+	cType = sc.getExtAttr("TypeName")+"圈";
+}
+else{
+	cName = HttpUtil.getAsString(request, "cName");
+	cImg = URLDecoder.decode(HttpUtil.getAsString(request, "cImg"),"UTF-8"); 
+	ticket = HttpUtil.getAsString(request, "ticket");
+	cType = "";
+}
 %> 
   <head>
-    <title><%=userName %>分享的圈子</title>
+    <title>邀您加入圈子</title>
 	
     <meta http-equiv="keywords" content="聚会助手  社交圈">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -28,6 +44,8 @@ String ticket = HttpUtil.getAsString(request, "ticket");
 				<img src="<%=cImg %>" class="img-rounded" width="80" height="80"/>
 				<br/>
 				<B><%=cName %></B>
+				<br/>
+				<%=cType %>
 				<br/>
 				<img src="<%=WechatCommons.Url_ShowQr + ticket%>" class="img-rounded" width="200" height="200"/>
 				<br/>

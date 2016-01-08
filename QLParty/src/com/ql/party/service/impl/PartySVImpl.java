@@ -15,9 +15,14 @@ import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.CircleMemberEngine;
+import com.ql.party.bo.PartyBean;
+import com.ql.party.bo.PartyEngine;
+import com.ql.party.bo.PartyMemberBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.bo.SocialCircleEngine;
 import com.ql.party.ivalues.ICircleMemberValue;
+import com.ql.party.ivalues.IPartyMemberValue;
+import com.ql.party.ivalues.IPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.interfaces.IPartySV;
 import com.ql.party.sysmgr.RemoteResouseManager;
@@ -121,25 +126,52 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	/**
-	 * 加入圈子
+	 * 转让圈主
 	 * @param cId
-	 * @param user
+	 * @param newMaster
 	 * @throws Exception
 	 */
-	public void joinSocialCircle(long cId,IWechatUserValue user)throws Exception{
+	public void changeMaster(long cId,long newMaster)throws Exception{
+		SocialCircleBean sc = new SocialCircleBean();
+		sc.setCid(cId);
+		sc.setStsToOld();
+		sc.setCreater(newMaster);
+		QLServiceFactory.getQLDAO().saveData(sc);
+	}
+	
+	/**
+	 * 检查是否已经加入圈子
+	 * @param cId
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isJoinedCircle(long cId,long userId)throws Exception{
 		//检查是否已加入
 		String cond = CircleMemberBean.S_Cid + " = :cId and "
 				+ CircleMemberBean.S_Userid + " = :userId and "
 				+ CircleMemberBean.S_State + " > 0 ";
 		Map param = new HashMap();
 		param.put("cId", cId);
-		param.put("userId", user.getUserid());
-		ICircleMemberValue[] cms = (CircleMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, CircleMemberBean.class, CircleMemberBean.getObjectTypeStatic());
-		if(cms != null && cms.length > 0){
-			if(log.isDebugEnabled())
-				log.debug("用户"+user.getUserid()+"已经加入圈子"+cId);
-			return;
+		param.put("userId", userId);
+		ICircleMemberValue[] cms = (CircleMemberBean[]) QLServiceFactory
+				.getQLDAO().qryDatas(cond, param, CircleMemberBean.class,
+						CircleMemberBean.getObjectTypeStatic());
+		if (cms != null && cms.length > 0) {
+			if (log.isDebugEnabled())
+				log.debug("用户" + userId + "已经加入圈子" + cId);
+			return true;
 		}
+		return false;
+	}
+	
+	/**
+	 * 加入圈子
+	 * @param cId
+	 * @param user
+	 * @throws Exception
+	 */
+	public void joinSocialCircle(long cId,IWechatUserValue user)throws Exception{
 		CircleMemberBean cm = new CircleMemberBean();
 		cm.setCid(cId);
 		cm.setUserid(user.getUserid());
@@ -151,16 +183,17 @@ public class PartySVImpl implements IPartySV{
 	/**
 	 * 根据圈子编号查询圈子
 	 * @param cId
+	 * @param isExtInfo 是否查询附加信息
 	 * @return
 	 * @throws Exception
 	 */
-	public ISocialCircleValue getSocialCircle(long cId)throws Exception{
+	public ISocialCircleValue getSocialCircle(long cId, boolean isExtInfo)throws Exception{
 		String cond = ISocialCircleValue.S_Cid + " = :cId ";
 		Map param = new HashMap();
 		param.put("cId", cId);
 		ISocialCircleValue[] sc = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
 		if(sc != null && sc.length > 0){
-			setCircleInfo(sc[0]);
+			setCircleInfo(sc[0],isExtInfo);
 			return sc[0];
 		}
 		else
@@ -170,17 +203,18 @@ public class PartySVImpl implements IPartySV{
 	/**
 	 * 查询用户所有的圈子
 	 * @param userId
+	 * @param isExtInfo 是否查询附加信息
 	 * @return
 	 * @throws Exception
 	 */
-	public ISocialCircleValue[] getSocialCircleByUser(long userId)throws Exception{
+	public ISocialCircleValue[] getSocialCirclesByUser(long userId, boolean isExtInfo)throws Exception{
 		String cond = ISocialCircleValue.S_Cid + " in (select a.CId from CircleMember a where a.UserId = :userId and a.State > 0) and "
 				+ ISocialCircleValue.S_State + " > 0 ";
 		Map param = new HashMap();
 		param.put("userId", userId);
 		ISocialCircleValue[] scs = (SocialCircleBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, SocialCircleBean.class, SocialCircleBean.getObjectTypeStatic());
 		for(ISocialCircleValue sc : scs){
-			setCircleInfo(sc);
+			setCircleInfo(sc,isExtInfo);
 		}
 		return scs;
 	}
@@ -201,12 +235,41 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	/**
+	 * 获取用户的圈信息
+	 * @param cId
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public ICircleMemberValue getUserCircleInfo(long cId,long userId)throws Exception{
+		return CircleMemberEngine.getBean(userId, cId);
+	}
+	
+	/**
 	 * 保存个人的圈信息
 	 * @param cm
 	 * @throws Exception
 	 */
 	public void saveCircleMemberInfo(ICircleMemberValue cm)throws Exception{
 		QLServiceFactory.getQLDAO().saveData(CircleMemberEngine.transfer(cm));
+	}
+	
+	/**
+	 * 将用户踢出圈子
+	 * @param userIds
+	 * @param cId
+	 * @throws Exception
+	 */
+	public void kickoutCircle(long[] userIds,long cId)throws Exception{
+		CircleMemberBean[] cms = new CircleMemberBean[userIds.length];
+		for(int i=0;i<userIds.length;i++){
+			cms[i] = new CircleMemberBean();
+			cms[i].setCid(cId);
+			cms[i].setUserid(userIds[i]);
+			cms[i].setStsToOld();
+			cms[i].delete();
+		}
+		QLServiceFactory.getQLDAO().saveDatas(cms);
 	}
 	
 	/**
@@ -224,15 +287,35 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	/**
+	 * 查询圈友
+	 * @param cId
+	 * @return
+	 * @throws Exception
+	 */
+	public ICircleMemberValue[] getCircleMembers(long cId)throws Exception{
+		String cond = ICircleMemberValue.S_Cid + " = :cId and "
+				+ ICircleMemberValue.S_State + " > 0 ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		ICircleMemberValue[] cms = (CircleMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, CircleMemberBean.class, CircleMemberBean.getObjectTypeStatic());
+		for(ICircleMemberValue cm : cms){
+			IWechatUserValue wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, "0_"+cm.getUserid());
+			if(wechatUser != null)
+				cm.setExtAttr("ImageData", wechatUser.getImagedata());
+		}
+		return cms;
+	}
+	
+	/**
 	 * 设置查询的圈子的附加信息
 	 * @param sc
 	 * @throws Exception
 	 */
-	private void setCircleInfo(ISocialCircleValue sc)throws Exception{
-		//设置圈子类型名称
-		sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
+	private void setCircleInfo(ISocialCircleValue sc, boolean isExtInfo)throws Exception{
 		//设置圈头像
 		sc.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc.getCid()+"-200?_="+Math.random());
+		//设置圈子类型名称
+		sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
 		//检查二维码是否过期
 		if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
 				|| (ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime())/3600000 > 29*24){
@@ -247,6 +330,8 @@ public class PartySVImpl implements IPartySV{
 				QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
 			}
 		}
+		if(isExtInfo == false)
+			return;
 		//查询成员数
 		int countM = getCircleMemberCount(sc.getCid());
 		sc.setExtAttr("MemberCount", countM);
@@ -272,4 +357,58 @@ public class PartySVImpl implements IPartySV{
 	/*************************************************
 	 * 聚会
 	 *************************************************/
+	/**
+	 * 保存聚会
+	 * @param party
+	 * @return 聚会ID
+	 * @throws Exception
+	 */
+	public long saveParty(IPartyValue party)throws Exception{
+		boolean isNew = party.isNew();
+		if(isNew){
+			//获取二维码，聚会后缀1
+			long pId = QLServiceFactory.getQLDAO().getNewId(PartyBean.getObjectTypeStatic()).longValue();
+			party.setPartyid(pId);
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(party.getPartyid(),TypeParty), WechatCommons.AccessToken);
+			if(json.isError()){
+				log.error("二维码获取失败："+json.getErrMsg());
+			}
+			else{
+				party.setQrticket(json.getTicket());
+				party.setQrdate(ServiceManager.getOpDateTime());
+			}
+		}
+		QLServiceFactory.getQLDAO().saveData(PartyEngine.transfer(party));
+		//
+		if(isNew){
+			joinParty(party.getPartyid(),ServiceManager.getUser().getID());
+		}
+		return party.getPartyid();
+	}
+		
+	/**
+	 * 加入聚会
+	 * @param partyId
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void joinParty(long partyId,long userId)throws Exception{
+		//检查是否已加入
+		String cond = PartyMemberBean.S_Partyid + " = :partyId and "
+				+ PartyMemberBean.S_Userid + " = :userId and "
+				+ PartyMemberBean.S_State + " > 0 ";
+		Map param = new HashMap();
+		param.put("partyId", partyId);
+		param.put("userId", userId);
+		IPartyMemberValue[] pms = (PartyMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, PartyMemberBean.class, PartyMemberBean.getObjectTypeStatic());
+		if(pms != null && pms.length > 0){
+			if(log.isDebugEnabled())
+				log.debug("用户"+userId+"已经加入聚会"+partyId);
+			return;
+		}
+		PartyMemberBean pm = new PartyMemberBean();
+		pm.setPartyid(partyId);
+		pm.setUserid(userId);
+		QLServiceFactory.getQLDAO().saveData(pm);
+	}
 }

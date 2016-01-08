@@ -118,11 +118,10 @@ public class WechatOpServlet extends HttpServlet {
         }
         
         if(wechatUser == null){
-        	response.setContentType("text/html");
-        	OutputStream os = response.getOutputStream();  
-            os.write("未知用户".getBytes(WechatCommons.Charset));  
-            os.flush();  
-            os.close(); 
+        	String url = WechatCommons.WechatOp.getNoUserOpUrl(type);
+        	if(url == null)
+        		url = WechatCommons.LoginPage;
+        	response.sendRedirect(url);
             return;
         }
         
@@ -141,7 +140,7 @@ public class WechatOpServlet extends HttpServlet {
             return;
         }
         
-        String url = WechatCommons.WechatOp.getOpUrl(request, response, type);
+        String url = WechatCommons.WechatOp.getOpUrl(type,wechatUser);
         //必须redirect，否则微信的js校验不通过
         if(url != null)
         	response.sendRedirect(url);

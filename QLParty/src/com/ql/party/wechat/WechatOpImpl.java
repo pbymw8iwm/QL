@@ -2,9 +2,6 @@ package com.ql.party.wechat;
 
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -13,6 +10,7 @@ import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
 import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.IWechatUserValue;
+import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.IWechatOp;
@@ -36,14 +34,7 @@ public class WechatOpImpl implements IWechatOp {
 		IWechatUserValue wechatUser = null;
 		String result = null;
 		boolean isRecover = false;
-        try{
-        	//获取微信用户信息
-        	ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
-        	if(json.isError()){
-        		log.error("用户信息("+openId+")获取失败:"+json.getErrMsg());
-        		json = null;
-        	}
-        	
+        try{        	
         	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, openId);
         	
             if(wechatUser == null){
@@ -59,6 +50,12 @@ public class WechatOpImpl implements IWechatOp {
         		result = "欢迎回来^_^";
         	}
             if(wechatUser.isNew() || wechatUser.isModified()){
+            	//获取微信用户信息
+            	ReceiveJson json = WechatUtils.httpRequestJson(WechatCommons.getUrlUserInfo(openId), WechatCommons.HttpGet, null);
+            	if(json.isError()){
+            		log.error("用户信息("+openId+")获取失败:"+json.getErrMsg());
+            		json = null;
+            	}
 	            if(json != null){
 	            	wechatUser.setName(json.getNickname());
 	            	wechatUser.setGender(json.getSex());
@@ -138,6 +135,11 @@ public class WechatOpImpl implements IWechatOp {
 		String result = null;
         try{
         	wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, xmlEntity.getFromUserName());
+        	//如果在应用停止的时候关注的，就会只关注而没有创建用户，所以这样要加个判断
+        	if(wechatUser == null){
+        		result = processSubscribe(xmlEntity);
+        		wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, xmlEntity.getFromUserName());
+        	}
         	if(wechatUser != null)
         		result = dealScan(param,wechatUser);
         }
@@ -164,20 +166,21 @@ public class WechatOpImpl implements IWechatOp {
 		if(index == 1){
 			//圈子
 			long cId = id/10;
-			PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
-			return "您已加入圈子，点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
+			if(PartyServiceFactory.getPartySV().isJoinedCircle(cId, user.getUserid()) == false)
+				PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
+			ISocialCircleValue sc = PartyServiceFactory.getPartySV().getSocialCircle(cId, false);
+			return "您已加入圈子【"+sc.getCname()+"】，点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
 		}
 		return null;
 	}
 
 	/**
 	 * 处理带授权的菜单链接
-	 * @param request
-	 * @param response
 	 * @param param
+	 * @param wechatUser
 	 * @return
 	 */
-	public String getOpUrl(HttpServletRequest request, HttpServletResponse response, String param){
+	public String getOpUrl(String param, IWechatUserValue wechatUser){
 		String url = null;
 		if(Type_NewParty.equals(param))
 			url = "party/NewParty.jsp";
@@ -195,6 +198,34 @@ public class WechatOpImpl implements IWechatOp {
 			String strCId = param.substring(Type_CircleInfo.length());
         	url = "circle/CircleInfo.jsp?cId="+strCId;
 		}
+		else if(param.startsWith(Type_JoinCircle)){
+			String strCId = param.substring(Type_JoinCircle.length());
+			try {
+				boolean isM = PartyServiceFactory.getPartySV().isJoinedCircle(Long.parseLong(strCId), wechatUser.getUserid());
+				//已经加入圈子
+				if(isM)
+					url = "circle/CircleInfo.jsp?cId="+strCId;
+				else
+					url = "circle/CircleQR.jsp?cId="+strCId;
+			} 
+			catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		return url;
+	}
+	
+	/**
+	 * 处理未知用户的带授权菜单链接
+	 * @param param
+	 * @return
+	 */
+	public String getNoUserOpUrl(String param){
+		String url = null;
+		if(param.startsWith(Type_JoinCircle)){
+			String strCId = param.substring(Type_JoinCircle.length());
+        	url = "circle/CircleQR.jsp?cId="+strCId;
+		}
 		return url;
 	}
 	
@@ -205,6 +236,7 @@ public class WechatOpImpl implements IWechatOp {
 	public static final String Type_NewCircle = "11";
 	public static final String Type_CircleList = "12";
 	public static final String Type_CircleInfo = "13_";
+	public static final String Type_JoinCircle = "14_";
 
 	public static final String Type_Feedback = "99";
 }

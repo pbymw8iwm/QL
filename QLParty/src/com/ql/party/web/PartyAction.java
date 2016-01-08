@@ -2,6 +2,7 @@ package com.ql.party.web;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import com.ql.common.JsonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.SocialCircleBean;
+import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.sysmgr.RemoteResouseManager;
@@ -42,18 +44,28 @@ public class PartyAction extends QLBaseAction{
 	 * @return
 	 * @throws Exception
 	 */
-	public static ISocialCircleValue getSocialCircle(long cId)throws Exception{
-		return PartyServiceFactory.getPartySV().getSocialCircle(cId);
+	public static ISocialCircleValue getSocialCircle(long cId,boolean isExtInfo)throws Exception{
+		return PartyServiceFactory.getPartySV().getSocialCircle(cId, isExtInfo);
 	}
 	
 	/**
 	 * 查询用户的圈子
-	 * @param userId
+	 * @param isExtInfo 是否查询附加信息
 	 * @return
 	 * @throws Exception
 	 */
-	public static ISocialCircleValue[] getSocialCircles()throws Exception{
-		return PartyServiceFactory.getPartySV().getSocialCircleByUser(SessionManager.getUser().getID());
+	public static ISocialCircleValue[] getSocialCircles(boolean isExtInfo)throws Exception{
+		return PartyServiceFactory.getPartySV().getSocialCirclesByUser(SessionManager.getUser().getID(),isExtInfo);
+	}
+	
+	/**
+	 * 查询圈子的成员
+	 * @param cId
+	 * @return
+	 * @throws Exception
+	 */
+	public static ICircleMemberValue[] getCircleMembers(long cId)throws Exception{
+		return PartyServiceFactory.getPartySV().getCircleMembers(cId);
 	}
 
 	/*************************************************
@@ -94,6 +106,45 @@ public class PartyAction extends QLBaseAction{
 	    }
 	}
 	
+	//转让圈主
+	public void changeMaster(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long cId = HttpUtil.getAsLong(request, "cId");
+			long userId = HttpUtil.getAsLong(request, "userId");
+			PartyServiceFactory.getPartySV().changeMaster(cId, userId);
+	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}	
+	
+	//退出
+	public void quitCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long cId = HttpUtil.getAsLong(request, "cId");
+			PartyServiceFactory.getPartySV().quitCircle(SessionManager.getUser().getID(), cId);
+	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	public void getSelfCircleInfo(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long cId = HttpUtil.getAsLong(request, "cId");
+			ICircleMemberValue cm = PartyServiceFactory.getPartySV().getUserCircleInfo(cId, SessionManager.getUser().getID());
+			HttpJsonUtil.showInfo(response,JsonUtil.getJsonFromBO(cm));
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
 	//保存个人的圈信息
 	public void saveCircleMemberInfo(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
@@ -104,6 +155,26 @@ public class PartyAction extends QLBaseAction{
 			JsonUtil.mapToBean(map, cm);
 			PartyServiceFactory.getPartySV().saveCircleMemberInfo(cm);
 	        HttpJsonUtil.showInfo(response,"保存成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	//踢出圈子
+	public void kickoutCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long cId = HttpUtil.getAsLong(request, "cId");
+			String users = HttpUtil.getAsString(request, "userIds");
+			StringTokenizer toKenizer = new StringTokenizer(users, ",");
+			long[] userIds = new long[toKenizer.countTokens()];
+			int i = 0;        
+			while (toKenizer.hasMoreElements()) {           
+				userIds[i++] = Long.valueOf(toKenizer.nextToken());        
+			}
+			PartyServiceFactory.getPartySV().kickoutCircle(userIds, cId);
+	        HttpJsonUtil.showInfo(response,"处理成功!");
 	    }
 	    catch(Exception ex){
 	      log.error(ex.getMessage(),ex);

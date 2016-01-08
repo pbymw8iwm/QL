@@ -5,6 +5,12 @@ insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
   values('SEQ_SC',1,10,0);
 insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
   values('SEQ_CM',1,10,0);
+insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
+  values('SEQ_PARTY',1,10,0);
+insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
+  values('SEQ_PHOTO',1,10,0);
+insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
+  values('SEQ_MSG',1,10,0);
   
 insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
   values('WECHATUSER',1,'S','SEQ_WUSER',10); 
@@ -12,6 +18,12 @@ insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,s
   values('SOCIALCIRCLE',1,'S','SEQ_SC',10); 
 insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
   values('CIRCLEMEMBER',1,'S','SEQ_CM',10); 
+insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
+  values('PARTY',1,'S','SEQ_PARTY',10); 
+insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
+  values('PARTYPHOTO',1,'S','SEQ_PHOTO',10); 
+insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
+  values('PARTYMSG',1,'S','SEQ_MSG',10); 
   
 
 -- 配置数据

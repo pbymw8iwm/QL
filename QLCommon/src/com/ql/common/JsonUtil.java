@@ -137,16 +137,33 @@ public class JsonUtil {
 	}
 	
 	public static void mapToBean(Map map,DataContainerInterface dc)throws Exception{
-		String[] key = (String[])map.keySet().toArray(new String[0]);
+		String[] keys = (String[])map.keySet().toArray(new String[0]);
 		Map keyProperties = dc.getKeyProperties();
+		//设置主键
+		boolean hasKey = false;
+		for(Object key:keyProperties.keySet()){
+			String sKey = key.toString();
+			for(String k : keys){
+				if(sKey.equals(k)){
+					Object obj = map.get(k);
+					if(obj != null){
+					  dc.set(k, obj);
+					  hasKey = true;
+					}
+					break;
+				}
+			}
+		}
+		if(hasKey)
+			dc.setStsToOld();
 		for(int i = 0; i < map.size(); i++) {
-			if(keyProperties.containsKey(key[i]))
+			if(keyProperties.containsKey(keys[i]))
 				continue;
-			if(dc.hasPropertyName(key[i])){
-				Object obj = map.get(key[i]);
+			if(dc.hasPropertyName(keys[i])){
+				Object obj = map.get(keys[i]);
 				if(obj == null)
 					continue;
-				String javaType = dc.getObjectType().getProperty(key[i]).getJavaDataType();
+				String javaType = dc.getObjectType().getProperty(keys[i]).getJavaDataType();
 				if(javaType.equalsIgnoreCase(DataType.DATATYPE_DATE)
 						|| javaType.equalsIgnoreCase(DataType.DATATYPE_DATETIME)
 						|| javaType.equalsIgnoreCase(DataType.DATATYPE_TIME)){
@@ -157,17 +174,17 @@ public class JsonUtil {
 						TimeZone zone=TimeZone.getTimeZone("GMT"+strZone);  
 						Calendar c=Calendar.getInstance(zone);  
 						c.setTimeInMillis(DataType.getAsLong(strTime)); 
-						dc.set(key[i], c.getTime());
+						dc.set(keys[i], c.getTime());
 					}
 					else
-						dc.set(key[i], obj);
+						dc.set(keys[i], obj);
 				}
 				else{
-					dc.set(key[i], obj);
+					dc.set(keys[i], obj);
 				}
 			}
 			else{
-//				System.out.println(key[i]);
+//				System.out.println(keys[i]);
 			}
 		}
 	}

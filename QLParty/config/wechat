@@ -4,3 +4,4 @@ ServerIp=xjsylhl.vicp.net/QLParty
 MchId=
 APIKey=
 OpClass=com.ql.party.wechat.WechatOpImpl
+LoginPage=index.jsp

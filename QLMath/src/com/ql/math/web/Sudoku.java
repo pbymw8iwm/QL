@@ -363,12 +363,7 @@ public class Sudoku{
 		wnf = wnf / empty_sum;
 		return wnf;
 	}
-	
-	public static void deal(char[] a){
-		a[0] = '1';
-		a[1] = '2';
-	}
-	
+		
 	public static void main2(String[] args)throws Exception {
 		Sudoku sudoku = new Sudoku();
 		int[] sdk = new int[]{1,0,0,0,0,0,0,0,0,0,0,2,3,0,0,0,7,4,0,0,0,2,0,0,0,8,5,6,0,0,8,7,0,0,5,0,0,0,0,9,0,6,0,0,0,0,9,0,0,2,4,0,0,3,5,8,0,0,0,2,0,0,0,9,4,0,0,0,7,8,0,0,0,0,0,0,0,0,0,0,6};

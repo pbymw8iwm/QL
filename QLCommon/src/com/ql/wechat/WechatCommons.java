@@ -22,6 +22,7 @@ public class WechatCommons {
 	public static String MchId = null; // 康复在线  商户号
 	public static String APIKey = null; //API密钥
 	public static IWechatOp WechatOp = null; // wechat处理类
+	public static String LoginPage = null; // 未知用户登录界面
 	
 	static{
 		try{
@@ -33,6 +34,7 @@ public class WechatCommons {
 			ServerIp = pps.getProperty("ServerIp");
 			MchId = pps.getProperty("MchId");
 			APIKey = pps.getProperty("APIKey");
+			LoginPage = pps.getProperty("LoginPage");
 			String opClass = pps.getProperty("OpClass");
 			Class cls = Class.forName(opClass);
 			WechatOp = (IWechatOp) cls.getDeclaredConstructor(null).newInstance(null);

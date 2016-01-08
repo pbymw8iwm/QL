@@ -3,6 +3,8 @@ package com.ql.wechat;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ql.ivalues.IWechatUserValue;
+
 /**
  * 处理微信传入的消息
  * @author linhl
@@ -39,10 +41,16 @@ public interface IWechatOp {
 	
 	/**
 	 * 处理带授权的菜单链接
-	 * @param request
-	 * @param response
+	 * @param param
+	 * @param wechatUser
+	 * @return
+	 */
+	public String getOpUrl(String param, IWechatUserValue wechatUser);
+	
+	/**
+	 * 处理未知用户的带授权菜单链接
 	 * @param param
 	 * @return
 	 */
-	public String getOpUrl(HttpServletRequest request, HttpServletResponse response, String param);
+	public String getNoUserOpUrl(String param);
 }
