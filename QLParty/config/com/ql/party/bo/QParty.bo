@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="QParty" mainattr="PartyId">
+    <mapingenty type="query">select p.*,c.CName,c.ImageData,m.UserName from Party p,SocialCircle c,CircleMember m where p.CId = c.CId and p.CId = m.CId and p.Creater = m.UserId and p.state &gt; 0 and c.state &gt; 0 and m.state &gt; 0</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="PartyId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">PartyId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Theme" maxlength="50" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">Theme</mapingcol>
+      </attr>
+      <attr floatlength="0" name="StartTime" maxlength="19" datatype="DateTime" type="COL">
+        <mapingcol datatype="DATETIME">StartTime</mapingcol>
+      </attr>
+      <attr floatlength="0" name="EndTime" maxlength="19" datatype="DateTime" type="COL">
+        <mapingcol datatype="DATETIME">EndTime</mapingcol>
+      </attr>
+      <attr floatlength="0" name="GatheringPlace" maxlength="100" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">GatheringPlace</mapingcol>
+      </attr>
+      <attr floatlength="0" name="QrTicket" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">QrTicket</mapingcol>
+      </attr>
+      <attr floatlength="0" name="QrDate" maxlength="10" datatype="DateTime" type="COL">
+        <mapingcol datatype="DATE">QrDate</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Creater" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">Creater</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="4" datatype="Integer" type="COL">
+        <mapingcol datatype="TINYINT">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="DoneDate" maxlength="19" datatype="DateTime" type="COL">
+        <mapingcol datatype="DATETIME">DoneDate</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Remarks" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">Remarks</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CName" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">CName</mapingcol>
+      </attr>
+      <attr floatlength="0" name="ImageData" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">ImageData</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserName" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">UserName</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

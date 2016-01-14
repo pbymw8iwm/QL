@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="PartyMember" mainattr="PartyId">
+    <mapingenty type="table">partymember</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="PartyId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">PartyId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="PCount" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="int">PCount</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Remarks" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Remarks</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

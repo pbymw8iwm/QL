@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>我的圈子</title>
+    <title>圈子信息</title>
 	
     <meta http-equiv="keywords" content="聚会助手  社交圈">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -90,26 +90,26 @@ String userName = SessionManager.getUser().getName();
 				     <input type="text" maxlength="10" class="form-control" id="UserId" name="UserId" value="<%=userId%>"/>
 				   </div>
 				   <div class="form-group">
-				      <label for="UserName" class="col-xs-2 control-label">昵称</label>
-				      <div class="col-xs-10"><input type="text" maxlength="10" class="form-control" id="UserName" name="UserName" placeholder="请输入昵称"></div>
+				      <label for="UserName" class="col-xs-3 control-label">昵称</label>
+				      <div class="col-xs-9"><input type="text" maxlength="10" class="form-control" id="UserName" name="UserName" placeholder="请输入昵称"></div>
 				   </div>
 				   <div class="form-group">
-				      <label for="CType" class="col-xs-2 control-label">电话</label>
-				      <div class="col-xs-10"><input type="tel" class="form-control" id="Phone" name="Phone" placeholder="请输入电话"></div>
+				      <label for="CType" class="col-xs-3 control-label">电话</label>
+				      <div class="col-xs-9"><input type="tel" class="form-control" id="Phone" name="Phone" placeholder="请输入电话"></div>
 				   </div>
 				   <div class="form-group">
-				      <label for="Job" class="col-xs-2 control-label">工作</label>
-				      <div class="col-xs-10"><input type="text" maxlength="30" class="form-control" id="Job" name="Job" placeholder="请输入工作"></div>
+				      <label for="Job" class="col-xs-3 control-label">工作</label>
+				      <div class="col-xs-9"><input type="text" maxlength="30" class="form-control" id="Job" name="Job" placeholder="请输入工作"></div>
 				   </div>
 				   <div class="form-group">
-				      <label for="City" class="col-xs-2 control-label">地址</label>
-				      <div class="col-xs-10"><input type="text" maxlength="30" class="form-control" id="City" name="City" placeholder="请输入地址"></div>
+				      <label for="City" class="col-xs-3 control-label">地址</label>
+				      <div class="col-xs-9"><input type="text" maxlength="30" class="form-control" id="City" name="City" placeholder="请输入地址"></div>
 				   </div>
 				</form>
 			  </div>
 			    <div class="modal-footer">
 			        <button type="button" class="btn btn-sm btn-success" id="btnSave">保存</button>
-			        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal" id="btnClose">取消</button>
+			        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">取消</button>
 			    </div>
 		    </div>
 		  </div>
@@ -153,6 +153,10 @@ var myInfo = null;
 $(document).ready(function(){
   $("#btnShare").click(function(){
     alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
+  }); 
+  
+  $("#btnParty").click(function(){
+    window.location = "<%=request.getContextPath()%>/party/NewParty.jsp?cId=<%=cId%>&cName=<%=sc.getCname() %>";
   }); 
   
   $("#aMember").click(function(){
@@ -220,7 +224,7 @@ $(document).ready(function(){
 				success: function(data, textStatus){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
-				    	$("#btnClose").click();
+				    	$('#myInfoModal').modal('hide');
 				    	myInfo.UserName = $("#UserName").val();
       					myInfo.Phone = $("#Phone").val();
                         myInfo.Job = $("#Job").val();

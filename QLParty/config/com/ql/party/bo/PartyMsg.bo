@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="PartyMsg" mainattr="MsgId">
+    <mapingenty type="table">partymsg</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="MsgId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">MsgId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="PartyId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">PartyId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Message" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Message</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="DoneDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">DoneDate</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

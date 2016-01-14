@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="Party" mainattr="PartyId">
+    <mapingenty type="table">party</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="PartyId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">PartyId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Theme" maxlength="50" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Theme</mapingcol>
+      </attr>
+      <attr floatlength="0" name="StartTime" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">StartTime</mapingcol>
+      </attr>
+      <attr floatlength="0" name="EndTime" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">EndTime</mapingcol>
+      </attr>
+      <attr floatlength="0" name="GatheringPlace" maxlength="100" datatype="String" type="COL">
+        <mapingcol datatype="varchar">GatheringPlace</mapingcol>
+      </attr>
+      <attr floatlength="0" name="QrTicket" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">QrTicket</mapingcol>
+      </attr>
+      <attr floatlength="0" name="QrDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="date">QrDate</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Creater" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">Creater</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="DoneDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">DoneDate</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Remarks" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Remarks</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

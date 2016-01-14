@@ -10,8 +10,10 @@ import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
 import com.ql.cache.WechatUserCacheImpl;
 import com.ql.ivalues.IWechatUserValue;
+import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
+import com.ql.party.sysmgr.PartyCommon;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.IWechatOp;
 import com.ql.wechat.ReceiveJson;
@@ -163,13 +165,28 @@ public class WechatOpImpl implements IWechatOp {
 	private String dealScan(String param,IWechatUserValue user)throws Exception{
 		long id = DataType.getAsLong(param);
 		long index = id%10;
-		if(index == 1){
+		if(index == PartyCommon.TypeCircle){
 			//圈子
 			long cId = id/10;
 			if(PartyServiceFactory.getPartySV().isJoinedCircle(cId, user.getUserid()) == false)
 				PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
 			ISocialCircleValue sc = PartyServiceFactory.getPartySV().getSocialCircle(cId, false);
-			return "您已加入圈子【"+sc.getCname()+"】，点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
+			return "您加入了圈子【"+sc.getCname()+"】，可点击菜单 【圈子】->【我的圈子】查看，也可点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
+		}
+		else if(index == PartyCommon.TypeParty){
+			//聚会
+			long partyId = id/10;
+			long userId = user.getUserid();
+			IQPartyValue party = PartyServiceFactory.getPartySV().getParty(partyId, false);
+			if(PartyServiceFactory.getPartySV().isJoinedParty(partyId, userId) == false){
+				long cId = party.getCid();
+				//没有加入圈子则加入
+				if(PartyServiceFactory.getPartySV().isJoinedCircle(cId, userId) == false)
+					PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
+				PartyServiceFactory.getPartySV().joinParty(partyId, cId, userId);
+			}
+			return "您加入了"+party.getUsername()+"组织的聚会，可点击菜单【聚会】->【当前聚会】查看，也可点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_PartyInfo+partyId)+"'>这里</a>进入";
+			
 		}
 		return null;
 	}
@@ -198,6 +215,10 @@ public class WechatOpImpl implements IWechatOp {
 			String strCId = param.substring(Type_CircleInfo.length());
         	url = "circle/CircleInfo.jsp?cId="+strCId;
 		}
+		else if(param.startsWith(Type_PartyInfo)){
+			String strPId = param.substring(Type_PartyInfo.length());
+        	url = "party/PartyInfo.jsp?partyId="+strPId;
+		}
 		else if(param.startsWith(Type_JoinCircle)){
 			String strCId = param.substring(Type_JoinCircle.length());
 			try {
@@ -207,6 +228,20 @@ public class WechatOpImpl implements IWechatOp {
 					url = "circle/CircleInfo.jsp?cId="+strCId;
 				else
 					url = "circle/CircleQR.jsp?cId="+strCId;
+			} 
+			catch (Exception e) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		else if(param.startsWith(Type_JoinParty)){
+			String strPId = param.substring(Type_JoinParty.length());
+			try {
+				boolean isM = PartyServiceFactory.getPartySV().isJoinedParty(Long.parseLong(strPId), wechatUser.getUserid());
+				//已经加入聚会
+				if(isM)
+					url = "party/PartyInfo.jsp?partyId="+strPId;
+				else
+					url = "party/PartyQR.jsp?partyId="+strPId;
 			} 
 			catch (Exception e) {
 				log.error(e.getMessage(),e);
@@ -226,12 +261,18 @@ public class WechatOpImpl implements IWechatOp {
 			String strCId = param.substring(Type_JoinCircle.length());
         	url = "circle/CircleQR.jsp?cId="+strCId;
 		}
+		else if(param.startsWith(Type_JoinParty)){
+			String strPId = param.substring(Type_JoinParty.length());
+        	url = "party/PartyQR.jsp?partyId="+strPId;
+		}
 		return url;
 	}
 	
 	public static final String Type_NewParty = "1";
 	public static final String Type_CurrentParty = "2";
 	public static final String Type_PartyList = "3";
+	public static final String Type_PartyInfo = "4_";
+	public static final String Type_JoinParty = "5_";
 	
 	public static final String Type_NewCircle = "11";
 	public static final String Type_CircleList = "12";

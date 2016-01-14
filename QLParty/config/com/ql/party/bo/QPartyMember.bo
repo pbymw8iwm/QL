@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="QPartyMember" mainattr="PartyId">
+    <mapingenty type="query">select pm.*,cm.UserName from PartyMember pm,CircleMember cm
+ where pm.UserId = cm.UserId and pm.CId = cm.CId
+       and pm.state &gt; 0 and cm.state &gt; 0</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="PartyId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">PartyId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="CId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">CId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="BIGINT">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="PCount" maxlength="11" datatype="Long" type="COL">
+        <mapingcol datatype="INT">PCount</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="4" datatype="Integer" type="COL">
+        <mapingcol datatype="TINYINT">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Remarks" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">Remarks</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserName" maxlength="30" datatype="String" type="COL">
+        <mapingcol datatype="VARCHAR">UserName</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

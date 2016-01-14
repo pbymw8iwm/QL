@@ -46,6 +46,7 @@ CREATE TABLE Party(
 
 CREATE TABLE PartyMember(
     PartyId bigint not null,
+    CId bigint NULL,
     UserId bigint not null,
     PCount int null,
 	State tinyint NULL,
@@ -67,6 +68,7 @@ CREATE TABLE PartyMsg(
 	MsgId bigint Primary Key,
     PartyId bigint NULL,
 	Message nvarchar(500) NULL,
+    CId bigint NULL,
 	UserId bigint NULL,
 	State tinyint NULL,
 	DoneDate datetime NULL

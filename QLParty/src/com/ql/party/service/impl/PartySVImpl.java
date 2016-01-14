@@ -1,5 +1,6 @@
 package com.ql.party.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,13 +19,20 @@ import com.ql.party.bo.CircleMemberEngine;
 import com.ql.party.bo.PartyBean;
 import com.ql.party.bo.PartyEngine;
 import com.ql.party.bo.PartyMemberBean;
+import com.ql.party.bo.QPartyBean;
+import com.ql.party.bo.QPartyEngine;
+import com.ql.party.bo.QPartyMemberBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.bo.SocialCircleEngine;
 import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.IPartyMemberValue;
 import com.ql.party.ivalues.IPartyValue;
+import com.ql.party.ivalues.IQPartyMemberValue;
+import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
+import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.service.interfaces.IPartySV;
+import com.ql.party.sysmgr.PartyCommon;
 import com.ql.party.sysmgr.RemoteResouseManager;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.ReceiveJson;
@@ -33,8 +41,6 @@ import com.ql.wechat.WechatCommons;
 public class PartySVImpl implements IPartySV{
 
 	private static transient Log log = LogFactory.getLog(PartySVImpl.class);
-	private static final int TypeCircle = 1;
-	private static final int TypeParty = 2;
 	
 	/**
 	 * 获取二维码的id，原id加后缀
@@ -94,7 +100,7 @@ public class PartySVImpl implements IPartySV{
 			//获取二维码，圈子后缀1
 			long cId = QLServiceFactory.getQLDAO().getNewId(SocialCircleBean.getObjectTypeStatic()).longValue();
 			sc.setCid(cId);
-			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),TypeCircle), WechatCommons.AccessToken);
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),PartyCommon.TypeCircle), WechatCommons.AccessToken);
 			if(json.isError()){
 				log.error("二维码获取失败："+json.getErrMsg());
 			}
@@ -320,7 +326,7 @@ public class PartySVImpl implements IPartySV{
 		if(StringUtils.isNullOrEmpty(sc.getQrticket()) 
 				|| (ServiceManager.getOpDateTime().getTime() - sc.getQrdate().getTime())/3600000 > 29*24){
 			//获取二维码，圈子后缀1
-			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),TypeCircle), WechatCommons.AccessToken);
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(sc.getCid(),PartyCommon.TypeCircle), WechatCommons.AccessToken);
 			if(json.isError()){
 				log.error("二维码获取失败："+json.getErrMsg());
 			}
@@ -369,7 +375,7 @@ public class PartySVImpl implements IPartySV{
 			//获取二维码，聚会后缀1
 			long pId = QLServiceFactory.getQLDAO().getNewId(PartyBean.getObjectTypeStatic()).longValue();
 			party.setPartyid(pId);
-			ReceiveJson json = WechatCommons.createQRCode(getQrId(party.getPartyid(),TypeParty), WechatCommons.AccessToken);
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(party.getPartyid(),PartyCommon.TypeParty), WechatCommons.AccessToken);
 			if(json.isError()){
 				log.error("二维码获取失败："+json.getErrMsg());
 			}
@@ -381,19 +387,19 @@ public class PartySVImpl implements IPartySV{
 		QLServiceFactory.getQLDAO().saveData(PartyEngine.transfer(party));
 		//
 		if(isNew){
-			joinParty(party.getPartyid(),ServiceManager.getUser().getID());
+			joinParty(party.getPartyid(),party.getCid(),ServiceManager.getUser().getID());
 		}
 		return party.getPartyid();
 	}
-		
+	
 	/**
-	 * 加入聚会
+	 * 是否加入了聚会
 	 * @param partyId
 	 * @param userId
+	 * @return
 	 * @throws Exception
 	 */
-	public void joinParty(long partyId,long userId)throws Exception{
-		//检查是否已加入
+	public boolean isJoinedParty(long partyId,long userId)throws Exception{
 		String cond = PartyMemberBean.S_Partyid + " = :partyId and "
 				+ PartyMemberBean.S_Userid + " = :userId and "
 				+ PartyMemberBean.S_State + " > 0 ";
@@ -404,11 +410,152 @@ public class PartySVImpl implements IPartySV{
 		if(pms != null && pms.length > 0){
 			if(log.isDebugEnabled())
 				log.debug("用户"+userId+"已经加入聚会"+partyId);
-			return;
+			return true;
 		}
+		return false;
+	}
+		
+	/**
+	 * 加入聚会
+	 * @param partyId
+	 * @param cId
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void joinParty(long partyId,long cId,long userId)throws Exception{
 		PartyMemberBean pm = new PartyMemberBean();
 		pm.setPartyid(partyId);
 		pm.setUserid(userId);
+		pm.setCid(cId);
+		pm.setPcount(1);
 		QLServiceFactory.getQLDAO().saveData(pm);
+	}
+	
+	/**
+	 * 设置聚会参与情况
+	 * @param partyId
+	 * @param userId
+	 * @param state
+	 * @param count
+	 * @throws Exception
+	 */
+	public void setPartyMember(long partyId,long userId,long state,long count)throws Exception{
+		PartyMemberBean pm = new PartyMemberBean();
+		pm.setPartyid(partyId);
+		pm.setUserid(userId);
+		pm.setStsToOld();
+		if(state == 0)
+			pm.delete();
+		else{
+			pm.setState(state);
+			pm.setPcount(count);
+		}
+		QLServiceFactory.getQLDAO().saveData(pm);
+	}
+	
+	/**
+	 * 根据聚会编号查询聚会
+	 * @param partyId
+	 * @param isExtInfo 是否查询附加信息
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue getParty(long partyId, boolean isExtInfo)throws Exception{
+		String sql = QPartyBean.getObjectTypeStatic().getMapingEnty();
+		sql += " and " + IQPartyValue.S_Partyid + " = :partyId ";
+		Map param = new HashMap();
+		param.put("partyId", partyId);
+		IQPartyValue[] sc = (QPartyBean[])QLServiceFactory.getQLDAO().qryDatasFromSql(sql, param, QPartyBean.class, QPartyBean.getObjectTypeStatic());
+		if(sc != null && sc.length > 0){
+			setPartyInfo(sc[0],isExtInfo);
+			return sc[0];
+		}
+		else
+			return null;
+	}
+	
+	/**
+	 * 查询参与聚会的圈友
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyMemberValue[] getPartyMembers(long partyId)throws Exception{
+		String sql = QPartyMemberBean.getObjectTypeStatic().getMapingEnty();
+		sql += " and " + IQPartyMemberValue.S_Partyid + " = :partyId ";
+		Map param = new HashMap();
+		param.put("partyId", partyId);
+		IQPartyMemberValue[] cms = (QPartyMemberBean[])QLServiceFactory.getQLDAO().qryDatasFromSql(sql, param, QPartyMemberBean.class, QPartyMemberBean.getObjectTypeStatic());
+		for(IQPartyMemberValue cm : cms){
+			IWechatUserValue wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, "0_"+cm.getUserid());
+			if(wechatUser != null)
+				cm.setExtAttr("ImageData", wechatUser.getImagedata());
+		}
+		return cms;
+	}
+	
+	/**
+	 * 设置查询的聚会的附加信息
+	 * @param party
+	 * @throws Exception
+	 */
+	private void setPartyInfo(IQPartyValue party, boolean isExtInfo)throws Exception{
+		//设置圈头像
+		party.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+party.getCid()+"-200?_="+Math.random());
+		//处理时间
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String pTime = df.format(party.getStarttime());
+		party.setExtAttr("Start", pTime);
+		if(party.getEndtime() != null){
+		    pTime += " - " + df.format(party.getEndtime());
+			party.setExtAttr("End", df.format(party.getEndtime()));
+		}
+		else
+			party.setExtAttr("End", "");
+		party.setExtAttr("PTime", pTime);
+		if(StringUtils.isNullOrEmpty(party.getGatheringplace()))
+			party.setGatheringplace("待定");
+		//检查二维码是否过期
+		if(StringUtils.isNullOrEmpty(party.getQrticket()) 
+				|| (ServiceManager.getOpDateTime().getTime() - party.getQrdate().getTime())/3600000 > 29*24){
+			//获取二维码，聚会后缀2
+			ReceiveJson json = WechatCommons.createQRCode(getQrId(party.getCid(),PartyCommon.TypeParty), WechatCommons.AccessToken);
+			if(json.isError()){
+				log.error("二维码获取失败："+json.getErrMsg());
+			}
+			else{
+				party.setQrticket(json.getTicket());
+				party.setQrdate(ServiceManager.getOpDateTime());
+				QLServiceFactory.getQLDAO().saveData(QPartyEngine.transfer(party));
+			}
+		}
+		if(isExtInfo == false)
+			return;
+		
+		//查询当前用户的参与情况
+		long userId = ServiceManager.getUser().getID();
+		String cond = IPartyMemberValue.S_Partyid + " = :partyId and "
+				+ IPartyMemberValue.S_Userid + " = :userId ";
+		Map param = new HashMap();
+		param.put("partyId", party.getPartyid());
+		param.put("userId", userId);
+		IPartyMemberValue[] pms = (PartyMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, PartyMemberBean.class, PartyMemberBean.getObjectTypeStatic());
+		if(pms != null && pms.length > 0){
+			party.setExtAttr("SelfState", pms[0].getState());
+			if(pms[0].getState() == 1)
+				  party.setExtAttr("SelfStateName", "参加");
+			else if(pms[0].getState() == 2)
+				  party.setExtAttr("SelfStateName", "待定");
+			party.setExtAttr("SelfCount", pms[0].getPcount());
+		}
+		else{
+			party.setExtAttr("SelfState", 0);
+			party.setExtAttr("SelfStateName", "不参加");
+			party.setExtAttr("SelfCount", 0);
+		}
+	}
+	
+	public static void main(String[] args)throws Exception {
+		PartyServiceFactory.getPartySV().getPartyMembers(1);
 	}
 }

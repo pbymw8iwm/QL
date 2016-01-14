@@ -2,6 +2,9 @@ package com.ql.party.service.interfaces;
 
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.ivalues.ICircleMemberValue;
+import com.ql.party.ivalues.IPartyValue;
+import com.ql.party.ivalues.IQPartyMemberValue;
+import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 
 public interface IPartySV {
@@ -126,4 +129,54 @@ public interface IPartySV {
 	/*************************************************
 	 * 聚会
 	 *************************************************/
+	/**
+	 * 保存聚会
+	 * @param party
+	 * @return 聚会ID
+	 * @throws Exception
+	 */
+	public long saveParty(IPartyValue party)throws Exception;
+	/**
+	 * 是否加入了聚会
+	 * @param partyId
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isJoinedParty(long partyId,long userId)throws Exception;
+	
+	/**
+	 * 加入聚会
+	 * @param partyId
+	 * @param cId
+	 * @param userId
+	 * @throws Exception
+	 */
+	public void joinParty(long partyId,long cId,long userId)throws Exception;
+	
+	/**
+	 * 设置聚会参与情况
+	 * @param partyId
+	 * @param userId
+	 * @param state
+	 * @param count
+	 * @throws Exception
+	 */
+	public void setPartyMember(long partyId,long userId,long state,long count)throws Exception;
+	
+	/**
+	 * 根据聚会编号查询聚会
+	 * @param partyId
+	 * @param isExtInfo 是否查询附加信息
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue getParty(long partyId, boolean isExtInfo)throws Exception;
+	/**
+	 * 查询参与聚会的圈友
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyMemberValue[] getPartyMembers(long partyId)throws Exception;
 }

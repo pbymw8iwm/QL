@@ -18,8 +18,11 @@ import com.ql.common.HttpJsonUtil;
 import com.ql.common.JsonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.party.bo.CircleMemberBean;
+import com.ql.party.bo.PartyBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.ivalues.ICircleMemberValue;
+import com.ql.party.ivalues.IQPartyMemberValue;
+import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.sysmgr.RemoteResouseManager;
@@ -68,9 +71,27 @@ public class PartyAction extends QLBaseAction{
 		return PartyServiceFactory.getPartySV().getCircleMembers(cId);
 	}
 
+	/**
+	 * 查询聚会
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
+	public static IQPartyValue getParty(long partyId,boolean isExtInfo)throws Exception{
+		return PartyServiceFactory.getPartySV().getParty(partyId, isExtInfo);
+	}
+	
+	public static IQPartyMemberValue[] getPartyMembers(long partyId)throws Exception{
+		return PartyServiceFactory.getPartySV().getPartyMembers(partyId);
+	}
+
 	/*************************************************
 	 * action
 	 *************************************************/
+		
+		/********************************************
+		 * 圈子
+		 ********************************************/
 	
 	//创建圈子
 	public void createCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
@@ -191,5 +212,60 @@ public class PartyAction extends QLBaseAction{
 		//上传到七牛
 		RemoteResouseManager.upload(datas, "c_"+cId);
 	}
+
 	
+		/********************************************
+		 * 聚会
+		 ********************************************/
+
+	//创建聚会
+	public void createParty(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			String json = HttpUtil.getStringFromBufferedReader(request);
+			Map map = JsonUtil.getMapFromJsObject(json);
+			
+			PartyBean party = new PartyBean();
+			JsonUtil.mapToBean(map, party);
+			party.setCreater(SessionManager.getUser().getID());
+			long partyId = PartyServiceFactory.getPartySV().saveParty(party);
+	        HttpJsonUtil.showInfo(response,partyId+"");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}	
+	
+	//修改聚会信息
+	public void saveParty(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			String json = HttpUtil.getStringFromBufferedReader(request);
+			Map map = JsonUtil.getMapFromJsObject(json);
+			
+			PartyBean party = new PartyBean();
+			JsonUtil.mapToBean(map, party);
+			long partyId = PartyServiceFactory.getPartySV().saveParty(party);
+	        HttpJsonUtil.showInfo(response,partyId+"");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	//设置参与信息
+	public void setPartyMember(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long partyId = HttpUtil.getAsLong(request, "partyId");
+			long state = HttpUtil.getAsLong(request, "state");
+			long count = HttpUtil.getAsLong(request, "count");
+			
+			PartyServiceFactory.getPartySV().setPartyMember(partyId, SessionManager.getUser().getID(), state, count);
+	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
 }

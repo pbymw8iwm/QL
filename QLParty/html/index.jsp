@@ -14,7 +14,7 @@
     <div class="container">
 		<p class="help-block text-center">
 		<br/>		
-		<img src="images/QR.png" class="img-rounded" width="200" height="200"/>
+		<img src="<%=request.getContextPath() %>/images/QR.png" class="img-rounded" width="200" height="200"/>
 		<br/>		
 		<font size="5">聚会助手</font>
 		</p>
