@@ -90,7 +90,7 @@ $(document).ready(function(){
 	      }
 	    }
 	    
-window.location = _gModuleName+"/party/PartyInfo.jsp?partyId=1";
+//window.location = _gModuleName+"/party/PartyInfo.jsp?partyId=1";
 
   $("#StartTime").datetimepicker(dtp);
   $("#EndTime").datetimepicker(dtp);

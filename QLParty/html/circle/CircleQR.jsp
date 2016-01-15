@@ -14,6 +14,12 @@ String cType;
 String ticket;
 if(cId > 0){
 	ISocialCircleValue sc = PartyAction.getSocialCircle(cId,false);
+	if(sc == null){
+%>
+<body><h3>圈子可能已经被删除</h3></body>
+<%
+	  return;
+	}
 	cName = sc.getCname();
 	cImg = sc.getImagedata();
 	ticket = sc.getQrticket();
@@ -43,7 +49,7 @@ else{
 		    <p class="help-block text-center">
 				<img src="<%=cImg %>" class="img-rounded" width="80" height="80"/>
 				<br/>
-				<B><%=cName %></B>
+				<strong><%=cName %></strong>
 				<br/>
 				<%=cType %>
 				<br/>

@@ -9,6 +9,12 @@
 <%
 Long partyId = HttpUtil.getAsLong(request, "partyId");
 IQPartyValue party = PartyAction.getParty(partyId,false);
+if(party == null){
+%>  
+<body><h3>聚会可能已经被删除</h3></body>
+<%
+  return;
+}
 %> 
   <head>
     <title>邀您参加聚会</title>
@@ -27,9 +33,9 @@ IQPartyValue party = PartyAction.getParty(partyId,false);
 		    <p class="help-block text-center">
 				来自：<%=party.getCname() %>&nbsp;&nbsp;-&nbsp;&nbsp;<%=party.getUsername() %>
 				<br/>
-				<B><%=party.getExtAttr("PTime") %></B>
+				<strong><%=party.getExtAttr("PTime") %></strong>
 				<br/>
-				地点：<B><%=party.getGatheringplace() %></B>
+				地点：<strong><%=party.getGatheringplace() %></strong>
 				<br/><br/>
 				<button type="button" class="btn btn-link" id="btnInfo" data-toggle="modal" data-target="#infoModal">查看参与情况</button>
 			</p>
@@ -40,7 +46,7 @@ IQPartyValue party = PartyAction.getParty(partyId,false);
 		</div>
 		<br/>
 		<p class="help-block text-center">
-		      参加聚会请长按扫描下方二维码：
+		      参加聚会请长按识别下图二维码
 		  <img src="<%=WechatCommons.Url_ShowQr + party.getQrticket()%>" class="img-rounded" width="200" height="200"/>
 		  <br/>
 		      扫码参加聚会，分享精彩时刻

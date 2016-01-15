@@ -7,15 +7,16 @@
 <%
 long pId = HttpUtil.getAsLong(request, "partyId");
 IQPartyMemberValue[] pms = PartyAction.getPartyMembers(pId);
-int rows = 0;
+int count1 = 0,count2 = 0;
 //确定参加的人数
 for(IQPartyMemberValue pm : pms){
   if(pm.getState() == 1)
-    rows++;
+    count1++;
 }
+//待定的人数
+count2 = pms.length - count1;
 //取多的人数
-if(rows * 2 < pms.length)
-  rows = pms.length - rows;
+int rows = count1 > count2 ? count1 : count2;
 if(rows%4 > 0)
   rows = rows/4 + 1;
 else
@@ -28,8 +29,8 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 </style>
 
 <ul id="myTab" class="nav nav-tabs">
-   <li class="active"><a href="#pm1" data-toggle="tab">确定参加</a></li>
-   <li><a href="#pm2" data-toggle="tab">待定</a></li>
+   <li class="active"><a href="#pm1" data-toggle="tab">确定参加&nbsp;&nbsp;<span class="badge"><%=count1 %></span></a></li>
+   <li><a href="#pm2" data-toggle="tab">待定&nbsp;&nbsp;<span class="badge"><%=count2 %></span></a></li>
 </ul>
 
 <div class="tab-content">
@@ -43,7 +44,7 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 	%>
 	  <dd>
 	    <img src="<%=pms[i].getExtAttr("ImageData") %>" class="img-rounded" width="60" height="60"/>
-	    <br/><span><%=pms[i].getUsername() %></span>&nbsp;&nbsp;<span><%=pms[i].getPcount() %>人</span>
+	    <br/><span><%=pms[i].getUsername() %></span>&nbsp;&nbsp;<font color="gray" size="1px"><%=pms[i].getPcount() %>人</font>
 	  </dd>
 	<%}}%>
 	</dl>
@@ -56,7 +57,7 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 	%>
 	  <dd>
 	    <img src="<%=pms[i].getExtAttr("ImageData") %>" class="img-rounded" width="60" height="60"/>
-	    <br/><span><%=pms[i].getUsername() %></span>&nbsp;&nbsp;<span><%=pms[i].getPcount() %>人</span>
+	    <br/><span><%=pms[i].getUsername() %></span>&nbsp;&nbsp;<font color="gray" size="1px"><%=pms[i].getPcount() %>人</font>
 	  </dd>
 	<%}}%>
 	</dl>

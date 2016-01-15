@@ -20,14 +20,17 @@
 <%
 long cId = HttpUtil.getAsLong(request, "cId");
 ISocialCircleValue sc = PartyAction.getSocialCircle(cId,true);
+if(sc == null){
+%>
+<body><h3>圈子可能已经被删除</h3></body>
+<%
+  return;
+}
 long userId = SessionManager.getUser().getID();
 String userName = SessionManager.getUser().getName();
 %>  
   <body>
     <div class="container">
-      <%if(sc == null){ %>
-        <h3>此圈不存在，可能已经被删除</h3>
-      <%}else{ %>
 		<div class="page-header">
 		  <table>
 		    <tr>
@@ -40,8 +43,6 @@ String userName = SessionManager.getUser().getName();
 		      <td><%=sc.getExtAttr("TypeName") %>圈</td>
 		    </tr>
 		  </table>
-		  	
-		  	
 		</div>
 		<div class="center-block">
 		  <button type="button" class="btn btn-link" id="btnEdit" data-toggle="modal" data-target="#myInfoModal">编辑我的圈信息</button>
@@ -73,7 +74,6 @@ String userName = SessionManager.getUser().getName();
 		    <button type="button" class="btn btn-default" id="btnQuit">退出圈子</button>
 		  </p>
 		</div>
-	  <%} %>
 	  
 	  
 		<div class="modal fade" id="myInfoModal" tabindex="-1" role="dialog" aria-labelledby="myInfoLabel" aria-hidden="true">
@@ -119,7 +119,6 @@ String userName = SessionManager.getUser().getName();
 </html>
 <script language="javascript">
 
-<%if(sc != null){ %>
   var shareMsg = {
 	    title: '<%=userName%>邀您加入<%=sc.getCname()%>', // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
@@ -334,5 +333,4 @@ function dealImg(serverId){
 	}); 
 }
 
-<%}%>
 </script>

@@ -507,7 +507,7 @@ public class PartySVImpl implements IPartySV{
 		String pTime = df.format(party.getStarttime());
 		party.setExtAttr("Start", pTime);
 		if(party.getEndtime() != null){
-		    pTime += " - " + df.format(party.getEndtime());
+		    pTime += " ~ " + df.format(party.getEndtime());
 			party.setExtAttr("End", df.format(party.getEndtime()));
 		}
 		else

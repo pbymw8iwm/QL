@@ -25,14 +25,14 @@ long partyId = HttpUtil.getAsLong(request, "partyId");
 IQPartyValue party = PartyAction.getParty(partyId,true);
 if(party == null){
 %>  
-<body><h3>聚会不存在，可能已经被删除</h3></body>
+<body><h3>聚会可能已经被删除</h3></body>
 <%
   return;
 }
 long userId = SessionManager.getUser().getID();
 String userName = SessionManager.getUser().getName();
 String td;
-boolean isPartyEditable = true;//userId == party.getCreater();
+boolean isPartyEditable = userId == party.getCreater();
 if(isPartyEditable)
   td = "<td width=\"10\">&gt;</td>";
 else
@@ -82,6 +82,7 @@ else
 		    </tr>
 		  </table>
 		</div>
+		<div class="text-right"><button type="button" class="btn btn-link" id="btnShare"><span class="glyphicon glyphicon-share-alt" aria-hidden="true">邀请</span></button></div>
 		<%@ include file="/party/_MemberInfo.jsp"%>
 		
 		<%if(isPartyEditable){ %>
@@ -114,11 +115,11 @@ else
 		        <form role="form" class="form-horizontal">
 				<div class="form-group">
 			      <label for="StartTime" class="col-xs-3 control-label">开始</label>
-			      <div class="col-xs-9"><input type="text" class="form-control" id="StartTime" name="StartTime" value="<%=party.getExtAttr("Start") %>" readonly></div>
+			      <div class="col-xs-9"><input type="text" class="form-control" id="StartTime" name="StartTime" readonly></div>
 			    </div>
 			    <div class="form-group">
 			      <label for="EndTime" class="col-xs-3 control-label">结束</label>
-			      <div class="col-xs-9"><input type="text" class="form-control" id="EndTime" name="EndTime" value="<%=party.getExtAttr("End") %>" readonly></div>
+			      <div class="col-xs-9"><input type="text" class="form-control" id="EndTime" name="EndTime" readonly></div>
 			    </div>
 			    </form>
 			  </div>
@@ -188,7 +189,10 @@ else
 			    </div>
 			    <div class="form-group">
 			      <label for="PCount" class="col-xs-3 control-label">人数</label>
-			      <div class="col-xs-9"><input type="number" class="form-control" id="PCount" name="PCount" value="<%=party.getExtAttr("SelfCount") %>"></div>
+			      <div class="col-xs-9">
+			        <input type="number" class="form-control" id="PCount" name="PCount" value="<%=party.getExtAttr("SelfCount") %>"
+			          onkeyup="this.value=this.value.replace(/\D/g,'1')" onafterpaste="this.value=this.value.replace(/\D/g,'1')">
+			      </div>
 			    </div>
 			    </form>
 			  </div>
@@ -268,6 +272,15 @@ $(document).ready(function(){
   $("#EndTime").on("dp.change", function (e) {
     $("#StartTime").data("DateTimePicker").maxDate(e.date);
   });
+  $("#StartTime").data("DateTimePicker").defaultDate("<%=party.getExtAttr("Start") %>");
+  $("#EndTime").data("DateTimePicker").defaultDate("<%=party.getExtAttr("End") %>");
+  
+  //给tr增加一个click事件以在ios上触发点击，否则编辑的modal出不来
+  $("tr").click(function(){});
+  
+  $("#btnShare").click(function(){
+    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
+  }); 
   
   $("#btnTheme").click(function(){
     var value = $("#Theme").val();
@@ -275,9 +288,11 @@ $(document).ready(function(){
       lastPartyInfo.Theme = value;
       partyInfo.Theme = value;
       $("#tdTheme").text(value);
+      save();
     }
     $('#mTheme').modal('hide');
   });
+  
   $("#btnTime").click(function(){
     var value = $("#StartTime").val();
     if(value == ""){
@@ -297,46 +312,69 @@ $(document).ready(function(){
         partyInfo.EndTime = partyInfo.EndTime + ":00";
       $("#tdEndTime").text(value);
     }
+    save();
     $('#mTime').modal('hide');
   });
+  
   $("#btnPlace").click(function(){
     var value = $("#GatheringPlace").val();
     if(value != lastPartyInfo.GatheringPlace){
       lastPartyInfo.GatheringPlace = value;
       partyInfo.GatheringPlace = value;
       $("#tdPlace").text(value);
+      save();
     }
     $('#mPlace').modal('hide');
   });
+  
   $("#btnRemarks").click(function(){
     var value = $("#Remarks").val();
     if(value != lastPartyInfo.Remarks){
       lastPartyInfo.Remarks = value;
       partyInfo.Remarks = value;
       $("#tdRemarks").text(value);
+      save();
     }
     $('#mRemarks').modal('hide');
   });
+  
   $("#btnSelf").click(function(){
+    var changed = false;
     var value = $("#PState").val();
     if(value != lastSelfInfo.State){
       lastSelfInfo.State = value;
       selfInfo.State = value;
-      $("#tdState").text($("#PState").text());
+      $("#tdState").text($("#PState option:selected").text());
+      changed = true;
     }
-    value = $("#PCount").val();
+    selfInfo.State = value;
+    
+    value = $("#PCount").val();//parseInt
+    if(value == "" || value < 0)
+      value = 0;
+    if(lastSelfInfo.State == 0)
+      value = 0;
+    else if(value == 0)
+      value = 1;
+    $("#PCount").val(value);
     if(value != lastSelfInfo.PCount){
       lastSelfInfo.PCount = value;
       selfInfo.PCount = value;
       $("#tdCount").text(value);
+      changed = true;
     }
+    selfInfo.PCount = value;
+    if(changed)
+      save();
     $('#mSelf').modal('hide');
   });
 });
 
-window.onbeforeunload = function(event) { 
+//直接关闭时这里不起作用
+//$(window).unload(save);
+
+function save() { 
   var isChanged = false;
-  alert(isChanged);
   for (var prop in partyInfo){
     isChanged = true;
     partyInfo.PartyId = <%=partyId%>;
@@ -348,21 +386,20 @@ window.onbeforeunload = function(event) {
 				async: true,
 				processData: false,
 				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=saveParty",
-				data: partyInfo, 
+				data: JSON.stringify(partyInfo), 
 				contentType: "text/html; charset=UTF-8",
 				success: function(data, textStatus){
+				  partyInfo = {};
 			    },
 			    error:function(httpRequest,errType,ex ){
 			    }
 	}); 
   }
-  alert(isChanged);
   isChanged = false;
   for (var prop in selfInfo){
     isChanged = true;
     break;
   }
-  alert(isChanged);
   if(isChanged){
     $.ajax({ 
 				type: "post", 
