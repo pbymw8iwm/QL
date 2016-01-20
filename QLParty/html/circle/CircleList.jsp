@@ -31,13 +31,25 @@ String userName = SessionManager.getUser().getName();
 		    <tr>
 		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 		      <td><%=sc.getExtAttr("TypeName") %>圈
-		  	&nbsp;&nbsp;&nbsp;&nbsp;<%=sc.getExtAttr("MemberCount") %>个成员
-		  	&nbsp;&nbsp;&nbsp;&nbsp;<%=sc.getExtAttr("PartyCount") %>个聚会
-		  	&nbsp;&nbsp;&nbsp;&nbsp;<a xname="aShare" cid="<%=sc.getCid()%>" ticket="<%=sc.getQrticket()%>">邀请</a></td>
+		  	&nbsp;&nbsp;&nbsp;&nbsp;<a data-toggle="modal" href="#mInfo" xname="aInfo" cid="<%=sc.getCid()%>" xtype="m"><%=sc.getExtAttr("MemberCount") %>个成员</a>
+		  	&nbsp;&nbsp;&nbsp;&nbsp;<a data-toggle="modal" href="#mInfo" xname="aInfo" cid="<%=sc.getCid()%>" xtype="p"><%=sc.getExtAttr("PartyCount") %>个聚会</a>
+		  	&nbsp;&nbsp;&nbsp;&nbsp;<a xname="aShare" cid="<%=sc.getCid()%>"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 		    </tr>
 		  </table>
 		</div>
 	  <%} %>
+	  
+	  <div class="modal fade" id="mInfo" tabindex="-1" role="dialog" aria-labelledby="mInfoLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title" id="mInfoLabel"></h4>
+		      </div>
+		      <div class="modal-body" id="divInfo"></div>
+		    </div>
+		  </div>
+		</div>
 	</div>
   </body>
 </html>
@@ -53,16 +65,57 @@ wx.ready(function(){
 wx.error(function(res){
 //    alert(res.errMsg);
 });
-  
+
+var lastType = null;
+var lastId = null;  
 $(document).ready(function(){
+  $("[xname='aInfo']").click(function(){
+    var cId = $(this).attr("cid");
+    var type = $(this).attr("xtype");
+    if(lastType == type && lastId == cId)
+      return;
+    lastType = type;
+    lastId = cId;
+    if(type == "m"){
+      $("#mInfoLabel").text("圈友信息");
+      $("#divInfo").empty();
+      $("#divInfo").load("<%=request.getContextPath()%>/circle/_MemberInfo.jsp?t=1&cId="+cId);
+    }
+    else{
+      $("#mInfoLabel").text("聚会信息");
+      $("#divInfo").empty();
+      $("#divInfo").load("<%=request.getContextPath()%>/party/_PartyList.jsp?cId="+cId);
+    }
+  });
+
   $("[xname='aShare']").click(function(){
-    var cName = $("#a"+$(this).attr("cid")).text();
-    var ticket = $(this).attr("ticket");
-    var img = $("#cImg"+$(this).attr("cid")).attr("src");
+    var cId = $(this).attr("cid");
+    var cName = $("#a"+cId).text();
+    var img = $("#cImg"+cId).attr("src");
+    var cLink = "";
+    $.ajax({ 
+                cache: false,
+				async: false,
+				type: "get", 
+				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=getCircleShareLink&cId="+cId,
+				contentType: "text/html; charset=UTF-8",
+				success: function(data, textStatus){
+				  if(textStatus == "success"){
+				    if(data.flag == true){
+				    	cLink = data.msg;
+				    }
+				    else
+				      alert(data.msg);
+				  }
+	      },
+	      error:function(httpRequest,errType,ex ){
+	        alert(ex);
+	      }
+		});
     var shareMsg = {
 	    title: '<%=userName%>邀您加入'+cName, // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
-	    link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp?userName=<%=userName%>&cName='+cName+'&ticket='+ticket+'&cImg='+encodeURIComponent(img), // 分享链接
+	    link: cLink, // 分享链接
 	    imgUrl: img, // 分享图标
 	};
     wx.onMenuShareAppMessage(shareMsg);

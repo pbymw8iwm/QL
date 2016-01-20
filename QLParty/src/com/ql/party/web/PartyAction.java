@@ -21,11 +21,13 @@ import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.PartyBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.ivalues.ICircleMemberValue;
+import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.sysmgr.RemoteResouseManager;
+import com.ql.party.wechat.WechatOpImpl;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.WechatCommons;
 import com.ql.wechat.WechatUtils;
@@ -81,13 +83,59 @@ public class PartyAction extends QLBaseAction{
 		return PartyServiceFactory.getPartySV().getParty(partyId, isExtInfo);
 	}
 	
+	/**
+	 * 查询聚会的圈友
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
 	public static IQPartyMemberValue[] getPartyMembers(long partyId)throws Exception{
 		return PartyServiceFactory.getPartySV().getPartyMembers(partyId);
+	}
+	
+	/**
+	 * 查询聚会
+	 * @param cId 0：查询未结束的聚会，非0：查询此圈的聚会
+	 * @return
+	 * @throws Exception
+	 */
+	public static IQPartyValue[] getPartys(long cId)throws Exception{
+		if(cId == 0)
+			return PartyServiceFactory.getPartySV().getPartys(SessionManager.getUser().getID());
+		return PartyServiceFactory.getPartySV().getPartys(cId, SessionManager.getUser().getID());
+	}
+	
+	public static IPartyPhotoValue[] getPhotoes(long partyId)throws Exception{
+		return PartyServiceFactory.getPartySV().getPhotoes(partyId);
 	}
 
 	/*************************************************
 	 * action
 	 *************************************************/
+	
+	public void getCircleShareLink(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long cId = HttpUtil.getAsLong(request, "cId");
+			String link = WechatCommons.getUrlView(WechatOpImpl.Type_JoinCircle+cId);
+	        HttpJsonUtil.showInfo(response,link);
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	public void getPartyShareLink(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			long pId = HttpUtil.getAsLong(request, "pId");
+			String link = WechatCommons.getUrlView(WechatOpImpl.Type_JoinParty+pId);
+	        HttpJsonUtil.showInfo(response,link);
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
 		
 		/********************************************
 		 * 圈子
@@ -104,7 +152,7 @@ public class PartyAction extends QLBaseAction{
 			JsonUtil.mapToBean(map, sc);
 			sc.setCreater(SessionManager.getUser().getID());
 			long cId = PartyServiceFactory.getPartySV().saveSocialCircle(sc);
-			remoteImg(cId,mediaId);	
+			remoteCircleImg(cId,mediaId);	
 	        HttpJsonUtil.showInfo(response,cId+"");
 	    }
 	    catch(Exception ex){
@@ -118,7 +166,7 @@ public class PartyAction extends QLBaseAction{
 		try{
 			String mediaId = HttpUtil.getAsString(request, "mediaId");
 			long cId = HttpUtil.getAsLong(request, "cId");
-			remoteImg(cId,mediaId);			
+			remoteCircleImg(cId,mediaId);			
 	        HttpJsonUtil.showInfo(response,"处理成功!");
 	    }
 	    catch(Exception ex){
@@ -203,7 +251,7 @@ public class PartyAction extends QLBaseAction{
 	    }
 	}
 	
-	private void remoteImg(long cId,String mediaId)throws Exception{
+	private void remoteCircleImg(long cId,String mediaId)throws Exception{
 		//从微信服务器下载
 		if(log.isDebugEnabled())
 			log.debug("mediaId:"+mediaId);
@@ -268,4 +316,43 @@ public class PartyAction extends QLBaseAction{
 	      HttpJsonUtil.showError(response,ex.getMessage());
 	    }
 	}
+	
+	public void addPartyPhoto(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			String mediaIds = HttpUtil.getStringFromBufferedReader(request);
+			long partyId = HttpUtil.getAsLong(request, "partyId");
+			long cId = HttpUtil.getAsLong(request, "cId");
+			long userId = SessionManager.getUser().getID();
+			PartyServiceFactory.getPartySV().addPhotoes(partyId, cId, userId, mediaIds.split(","));
+	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
+	public void delPartyPhoto(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			String ids = HttpUtil.getStringFromBufferedReader(request);
+			String[] sPIds = ids.split(";")[0].split(",");
+			String[] sUIds = ids.split(";")[1].split(",");
+			long[] photoIds = new long[sPIds.length];
+			long[] userIds = new long[sPIds.length];
+			for(int i=0;i<photoIds.length;i++){
+				photoIds[i] = Long.parseLong(sPIds[i]);
+				userIds[i] = Long.parseLong(sUIds[i]);
+			}
+			
+			long partyId = HttpUtil.getAsLong(request, "partyId");
+			long cId = HttpUtil.getAsLong(request, "cId");
+			PartyServiceFactory.getPartySV().delPhotos(partyId, cId, photoIds, userIds);
+	        HttpJsonUtil.showInfo(response,"处理成功!");
+	    }
+	    catch(Exception ex){
+	      log.error(ex.getMessage(),ex);
+	      HttpJsonUtil.showError(response,ex.getMessage());
+	    }
+	}
+	
 }

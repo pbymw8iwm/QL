@@ -27,7 +27,8 @@ wx.config({
         'onMenuShareAppMessage',
         'onMenuShareTimeline',
         'chooseImage',
-        'uploadImage'
+        'uploadImage',
+        'previewImage'
       ]
   });
  

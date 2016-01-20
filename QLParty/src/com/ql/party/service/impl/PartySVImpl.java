@@ -1,5 +1,6 @@
 package com.ql.party.service.impl;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.complex.cache.ICache;
 import com.mysql.jdbc.StringUtils;
 import com.ql.cache.WechatUserCacheImpl;
+import com.ql.common.CommonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.bo.CircleMemberBean;
@@ -19,6 +21,7 @@ import com.ql.party.bo.CircleMemberEngine;
 import com.ql.party.bo.PartyBean;
 import com.ql.party.bo.PartyEngine;
 import com.ql.party.bo.PartyMemberBean;
+import com.ql.party.bo.PartyPhotoBean;
 import com.ql.party.bo.QPartyBean;
 import com.ql.party.bo.QPartyEngine;
 import com.ql.party.bo.QPartyMemberBean;
@@ -26,17 +29,18 @@ import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.bo.SocialCircleEngine;
 import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.IPartyMemberValue;
+import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IPartyValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
-import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.service.interfaces.IPartySV;
 import com.ql.party.sysmgr.PartyCommon;
 import com.ql.party.sysmgr.RemoteResouseManager;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.WechatCommons;
+import com.ql.wechat.WechatUtils;
 
 public class PartySVImpl implements IPartySV{
 
@@ -319,7 +323,7 @@ public class PartySVImpl implements IPartySV{
 	 */
 	private void setCircleInfo(ISocialCircleValue sc, boolean isExtInfo)throws Exception{
 		//设置圈头像
-		sc.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+sc.getCid()+"-200?_="+Math.random());
+		sc.setImagedata(RemoteResouseManager.Domain+"/c_"+sc.getCid()+"-200?_="+Math.random());
 		//设置圈子类型名称
 		sc.setExtAttr("TypeName", getCircleTypeName(sc.getCtype()+""));
 		//检查二维码是否过期
@@ -341,8 +345,9 @@ public class PartySVImpl implements IPartySV{
 		//查询成员数
 		int countM = getCircleMemberCount(sc.getCid());
 		sc.setExtAttr("MemberCount", countM);
-		//TODO 查询聚会数
-		sc.setExtAttr("PartyCount", 0);
+		//查询聚会数
+		int countP = getPartyCount(sc.getCid());
+		sc.setExtAttr("PartyCount", countP);
 	}
 		
 	/**
@@ -495,13 +500,175 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	/**
+	 * 查询未结束的聚会
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue[] getPartys(long userId)throws Exception{
+		//当前用户所在圈中未结束的聚会
+		String sql = QPartyBean.getObjectTypeStatic().getMapingEnty();
+		sql += " and exists (select * from CircleMember cm where p.CId = cm.CId and cm.userid = :userId )"
+            + " and (p.EndTime >= CURDATE() or p.EndTime is null) order by p.StartTime asc ";
+		Map param = new HashMap();
+		param.put("userId", userId);
+		IQPartyValue[] sc = (QPartyBean[])QLServiceFactory.getQLDAO().qryDatasFromSql(sql, param, QPartyBean.class, QPartyBean.getObjectTypeStatic());
+		if(sc == null || sc.length == 0)
+			return sc;
+		//当前用户参与的聚会
+		String cond = IPartyMemberValue.S_Userid + " = :userId ";
+		IPartyMemberValue[] pms = (PartyMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, PartyMemberBean.class, PartyMemberBean.getObjectTypeStatic());
+		
+		//标识是否参与
+		for(IQPartyValue p:sc){
+			setPartyInfo(p, false);
+			for(IPartyMemberValue pm : pms){
+				if(pm.getPartyid() == p.getPartyid()){
+					p.setExtAttr("PState", pm.getState());
+					break;
+				}
+			}
+		}
+		return sc;
+	}
+	
+	/**
+	 * 查询圈子的全部聚会，并标识当前用户是否参加
+	 * @param cId
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue[] getPartys(long cId,long userId)throws Exception{
+		//圈子的聚会
+		String sql = QPartyBean.getObjectTypeStatic().getMapingEnty();
+		sql += " and p.CId = :cId order by p.StartTime desc ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		param.put("userId", userId);
+		IQPartyValue[] sc = (QPartyBean[])QLServiceFactory.getQLDAO().qryDatasFromSql(sql, param, QPartyBean.class, QPartyBean.getObjectTypeStatic());
+		if(sc == null || sc.length == 0)
+			return sc;
+		//当前用户参与的聚会
+		String cond = IPartyMemberValue.S_Userid + " = :userId and "
+				    + IPartyMemberValue.S_Cid + " = :cId ";
+		IPartyMemberValue[] pms = (PartyMemberBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, PartyMemberBean.class, PartyMemberBean.getObjectTypeStatic());
+		
+		//标识是否参与
+		for(IQPartyValue p:sc){
+			setPartyInfo(p, false);
+			for(IPartyMemberValue pm : pms){
+				if(pm.getPartyid() == p.getPartyid()){
+					p.setExtAttr("PState", pm.getState());
+					break;
+				}
+			}
+		}
+		return sc;
+	}
+	
+	/**
+	 * 查询圈子的聚会数
+	 * @param cId
+	 * @return
+	 * @throws Exception
+	 */
+	public int getPartyCount(long cId)throws Exception{
+		String cond = IPartyValue.S_Cid + " = :cId and "
+				+ IPartyValue.S_State + " > 0 ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		return QLServiceFactory.getQLDAO().getCount(cond, param, PartyBean.getObjectTypeStatic());
+	}
+	
+	/**
+	 * 查询聚会的照片
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
+	public IPartyPhotoValue[] getPhotoes(long partyId)throws Exception{
+		String cond = IPartyPhotoValue.S_Partyid + " = :partyId and "
+				+ IPartyPhotoValue.S_State + " > 0 ";
+		Map param = new HashMap();
+		param.put("partyId", partyId);
+		IPartyPhotoValue[] photo = (PartyPhotoBean[])QLServiceFactory.getQLDAO().qryDatas(cond, param, PartyPhotoBean.class, PartyPhotoBean.getObjectTypeStatic());
+		for(IPartyPhotoValue p:photo){
+			p.setPhotodata(RemoteResouseManager.Domain+"/"+getRemotePhotoId(p.getPartyid(),p.getCid(),p.getUserid(),p.getPhotoid()));
+		}
+		return photo;
+	}
+	
+	/**
+	 * 上传照片
+	 * @param partyId
+	 * @param cId
+	 * @param userId
+	 * @param mediaIds
+	 * @throws Exception
+	 */
+	public void addPhotoes(long partyId,long cId,long userId,String[] mediaIds)throws Exception{
+		PartyPhotoBean[] pps = new PartyPhotoBean[mediaIds.length];
+		for(int i=0;i<pps.length;i++){
+			long photoId = QLServiceFactory.getQLDAO().getNewId(PartyPhotoBean.getObjectTypeStatic()).longValue();
+			remotePhoto(getRemotePhotoId(partyId, cId, userId, photoId),mediaIds[i]);
+			pps[i] = new PartyPhotoBean();
+			pps[i].setPhotoid(photoId);
+			pps[i].setPartyid(partyId);
+			pps[i].setCid(cId);
+			pps[i].setUserid(userId);
+		}
+		QLServiceFactory.getQLDAO().saveDatas(pps);
+	}
+	
+	/**
+	 * 删除照片
+	 * @param partyId
+	 * @param cId
+	 * @param photoIds
+	 * @param userIds
+	 * @throws Exception
+	 */
+	public void delPhotos(long partyId,long cId,long[] photoIds,long[] userIds)throws Exception{
+		PartyPhotoBean[] pps = new PartyPhotoBean[photoIds.length];
+		for(int i=0;i<photoIds.length;i++){
+			pps[i] = new PartyPhotoBean();
+			pps[i].setPhotoid(photoIds[i]);
+			pps[i].setStsToOld();
+			pps[i].delete();
+			
+			try{
+				RemoteResouseManager.delete(getRemotePhotoId(partyId, cId, userIds[i], photoIds[i]));
+			}
+			catch(Exception e){
+				log.error(e.getMessage(),e);
+			}
+		}
+		QLServiceFactory.getQLDAO().saveDatas(pps);
+	}
+	
+	private void remotePhoto(String remotePhotoId,String mediaId)throws Exception{
+		//从微信服务器下载
+		if(log.isDebugEnabled())
+			log.debug("remotePhotoId:"+remotePhotoId+" mediaId:"+mediaId);
+		InputStream is = WechatUtils.httpRequest(WechatCommons.getUrlMediaGet(mediaId), WechatCommons.HttpGet, null);
+		byte[] datas = CommonUtil.readBytes(is);
+		//上传到七牛
+		RemoteResouseManager.upload(datas, remotePhotoId);
+	}
+	
+	private String getRemotePhotoId(long partyId,long cId,long userId,long photoId){
+		return "p_"+partyId+"_"+cId+"_"+userId+"_"+photoId;
+	}
+	
+	/**
 	 * 设置查询的聚会的附加信息
 	 * @param party
 	 * @throws Exception
 	 */
 	private void setPartyInfo(IQPartyValue party, boolean isExtInfo)throws Exception{
 		//设置圈头像
-		party.setImagedata("http://"+RemoteResouseManager.Domain+"/c_"+party.getCid()+"-200?_="+Math.random());
+		party.setImagedata(RemoteResouseManager.Domain+"/c_"+party.getCid()+"-200?_="+Math.random());
 		//处理时间
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String pTime = df.format(party.getStarttime());
@@ -556,6 +723,6 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	public static void main(String[] args)throws Exception {
-		PartyServiceFactory.getPartySV().getPartyMembers(1);
+//		PartyServiceFactory.getPartySV().getPartyMembers(1);
 	}
 }

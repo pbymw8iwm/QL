@@ -82,9 +82,14 @@ else
 		    </tr>
 		  </table>
 		</div>
+		<div class="text-center">
+			<a href="<%=request.getContextPath()%>/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>">
+	   		  <span class="glyphicon glyphicon-picture" aria-hidden="true" style="padding-top: 2px;"></span>时光留驻
+	   		</a>
+   		</div>
 		<div class="text-right"><button type="button" class="btn btn-link" id="btnShare"><span class="glyphicon glyphicon-share-alt" aria-hidden="true">邀请</span></button></div>
 		<%@ include file="/party/_MemberInfo.jsp"%>
-		
+   		      
 		<%if(isPartyEditable){ %>
 		<div class="modal fade" id="mTheme" tabindex="-1" role="dialog" aria-labelledby="mThemeLabel" aria-hidden="true">
 		  <div class="modal-dialog">
@@ -279,9 +284,9 @@ $(document).ready(function(){
   $("tr").click(function(){});
   
   $("#btnShare").click(function(){
-    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
+    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友参加聚会！");
   }); 
-  
+    
   $("#btnTheme").click(function(){
     var value = $("#Theme").val();
     if(value != lastPartyInfo.Theme){

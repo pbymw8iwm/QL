@@ -2,6 +2,7 @@ package com.ql.party.service.interfaces;
 
 import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.ivalues.ICircleMemberValue;
+import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IPartyValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
@@ -179,4 +180,57 @@ public interface IPartySV {
 	 * @throws Exception
 	 */
 	public IQPartyMemberValue[] getPartyMembers(long partyId)throws Exception;
+	
+	/**
+	 * 查询未结束的聚会，并标识当前用户是否参加
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue[] getPartys(long userId)throws Exception;
+	
+	/**
+	 * 查询圈子的全部聚会，并标识当前用户是否参加
+	 * @param cId
+	 * @param userId
+	 * @return
+	 * @throws Exception
+	 */
+	public IQPartyValue[] getPartys(long cId,long userId)throws Exception;
+	
+	/**
+	 * 查询圈子的聚会数
+	 * @param cId
+	 * @return
+	 * @throws Exception
+	 */
+	public int getPartyCount(long cId)throws Exception;
+	
+	/**
+	 * 查询聚会的照片
+	 * @param partyId
+	 * @return
+	 * @throws Exception
+	 */
+	public IPartyPhotoValue[] getPhotoes(long partyId)throws Exception;
+	
+	/**
+	 * 上传照片
+	 * @param partyId
+	 * @param cId
+	 * @param userId
+	 * @param mediaIds
+	 * @throws Exception
+	 */
+	public void addPhotoes(long partyId,long cId,long userId,String[] mediaIds)throws Exception;
+	
+	/**
+	 * 删除照片
+	 * @param partyId
+	 * @param cId
+	 * @param photoIds
+	 * @param userIds
+	 * @throws Exception
+	 */
+	public void delPhotos(long partyId,long cId,long[] photoIds,long[] userIds)throws Exception;
 }

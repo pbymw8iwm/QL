@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
@@ -21,6 +22,7 @@ public class RemoteResouseManager {
 	private static String Bucket = null;
 	private static Auth S_Auth = null;
 	private static UploadManager S_UploadManager = new UploadManager();
+	private static BucketManager S_BucketManager;
 	
 	static{
 		try{
@@ -32,9 +34,10 @@ public class RemoteResouseManager {
 			String AK = pps.getProperty("AK");
 			String SK = pps.getProperty("SK");
 			S_Auth = Auth.create(AK, SK);
+			S_BucketManager = new BucketManager(S_Auth);
 		}
 		catch(Exception ex){
-			ex.printStackTrace();
+			log.error(ex.getMessage(),ex);
 		}
 	}
 	
@@ -70,4 +73,16 @@ public class RemoteResouseManager {
 	    }
 	}
 
+	public static void delete(String key)throws Exception{
+		S_BucketManager.delete(Bucket, key);
+	}
+	
+	public static void main(String[] args)throws Exception {
+		try{
+		delete("1_1");
+		}
+		catch(QiniuException e){
+			log.error(e.getMessage(),e);
+		}
+	}
 }

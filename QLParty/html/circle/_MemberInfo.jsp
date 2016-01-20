@@ -6,6 +6,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 <%
 long cId = HttpUtil.getAsLong(request, "cId");
+long isSub = HttpUtil.getAsLong(request, "t");
 ICircleMemberValue[] cms = PartyAction.getCircleMembers(cId);
 int rows = cms.length/4;
 if(cms.length%4 > 0)
@@ -21,13 +22,13 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 <%
 for(int i=0;i<cms.length;i++){
 %>
-  <dd xname="mi" xid="<%=i%>" data-toggle="modal" data-target="#infoModal">
+  <dd <%if(isSub == 0){ %> xname="mi" xid="<%=i%>" data-toggle="modal" data-target="#infoModal"<%} %>>
     <img src="<%=cms[i].getExtAttr("ImageData") %>" class="img-rounded" width="60" height="60"/>
     <br/><span id="s<%=cms[i].getUserid()%>"><%=cms[i].getUsername() %></span>
   </dd>
 <%}%>
 </dl>
-
+<%if(isSub == 0){ %>
 		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
@@ -45,7 +46,7 @@ for(int i=0;i<cms.length;i++){
 		    </div>
 		  </div>
 		</div>
-
+<%} %>
 <script language="javascript">
 
 var mInfo = [

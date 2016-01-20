@@ -64,6 +64,8 @@ CREATE TABLE PartyPhoto(
 	DoneDate datetime NULL
 );
 
+create index IDX_PARTYPHOTO_1 on PartyPhoto (PartyId);
+
 CREATE TABLE PartyMsg(
 	MsgId bigint Primary Key,
     PartyId bigint NULL,

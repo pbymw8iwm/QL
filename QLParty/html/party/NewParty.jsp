@@ -55,7 +55,7 @@ else
 			   </div>
 			   <div class="form-group">
 			      <label for="EndTime" class="col-xs-2 control-label">结束</label>
-			      <div class="col-xs-10"><input type="text" class="form-control" id="EndTime" name="EndTime" placeholder="请选择聚会结束时间" readonly></div>
+			      <div class="col-xs-10"><input type="text" class="form-control" id="EndTime" name="EndTime" placeholder="请选择聚会结束时间(可空)" readonly></div>
 			   </div>
 			   <div class="form-group">
 			      <label for="GatheringPlace" class="col-xs-2 control-label">地点</label>

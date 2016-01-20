@@ -63,7 +63,7 @@ String userName = SessionManager.getUser().getName();
 		  <div class="panel panel-info" id="divParty">
 		    <div class="panel-heading">
 		      <div class="row">
-			    <a data-toggle="collapse" data-parent="#accordion" href="#cParty"><div class="col-xs-10"><h4>聚会(<%=sc.getExtAttr("PartyCount") %>个)</h4></div></a>
+			    <a data-toggle="collapse" data-parent="#accordion" href="#cParty" id="aParty"><div class="col-xs-10"><h4>聚会(<%=sc.getExtAttr("PartyCount") %>个)</h4></div></a>
 			    <div class="col-xs-2"><button type="button" class="btn btn-link" id="btnParty"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></div>
 			  </div>
 		    </div>
@@ -163,6 +163,15 @@ $(document).ready(function(){
     	$("#cMember").load("<%=request.getContextPath()%>/circle/_MemberInfo.jsp?cId=<%=cId%>");
   });
   
+  $("#aParty").click(function(){
+    if($("#cParty").html() == ""){
+      if(<%=sc.getExtAttr("PartyCount") %> == 0)
+        $("#cParty").text("无");
+      else
+        $("#cParty").load("<%=request.getContextPath()%>/party/CurrentParty.jsp?cId=<%=cId%>");
+    }
+  });
+  
   $("#btnEdit").click(function(){
     if(myInfo != null)
       return;
@@ -212,7 +221,6 @@ $(document).ready(function(){
 	      return;
 	    }
 	    var datas = JSON.stringify($('#frmInfo').serializeObject());
-	    alert(datas);
 	    $.ajax({ 
 				type: "post", 
 				async: false,

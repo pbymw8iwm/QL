@@ -63,6 +63,6 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 	</dl>
   </div>
 </div>
-<p class="text-right">确定出席：<%=count %>人&nbsp;&nbsp;</p>
+<p class="text-right">确定出席(含家属)：<%=count %>人&nbsp;&nbsp;</p>
 
 
