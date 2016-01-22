@@ -4,7 +4,7 @@
   	<table class="table">
    		<caption>
    		  <div class="row">
-   		    <a href="<%=request.getContextPath()%>/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>"/>
+   		    <a href="<%=request.getContextPath()%>/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>">
    		    <div class="col-xs-10">
    		      <%if(cId <= 0){ %><img src="<%=party.getImagedata() %>" class="img-circle" width="50" height="50"/>&nbsp;&nbsp;<%} %><strong><%=party.getTheme() %></strong>
    		    </div>
