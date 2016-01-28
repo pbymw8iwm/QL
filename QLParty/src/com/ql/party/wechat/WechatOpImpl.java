@@ -44,12 +44,12 @@ public class WechatOpImpl implements IWechatOp {
             	wechatUser = QLServiceFactory.getQLSV().getUser(openId);
             }
             if(wechatUser.isNew()){
-            	result = "欢迎使用聚会助手! 初次使用可查看帮助";
+            	result = "欢迎使用聚会助手! \n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
             }
             else if(wechatUser.getState() == 0){
         		wechatUser.setState(1);
         		isRecover = true;
-        		result = "欢迎回来^_^";
+        		result = "欢迎回来^_^\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
         	}
             if(wechatUser.isNew() || wechatUser.isModified()){
             	//获取微信用户信息
@@ -149,7 +149,7 @@ public class WechatOpImpl implements IWechatOp {
         	log.error(ex.getMessage(),ex);
         }
         if(result == null)
-        	result = "欢迎使用聚会助手！";
+        	result = "欢迎使用聚会助手！\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
 		return result;
 	}
 	
@@ -159,7 +159,7 @@ public class WechatOpImpl implements IWechatOp {
 	 * @return
 	 */
 	public String processMsg(ReceiveXmlEntity xmlEntity){
-		return "欢迎使用聚会助手！";
+		return "欢迎使用聚会助手！\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
 	}
 	
 	private String dealScan(String param,IWechatUserValue user)throws Exception{
@@ -171,7 +171,7 @@ public class WechatOpImpl implements IWechatOp {
 			if(PartyServiceFactory.getPartySV().isJoinedCircle(cId, user.getUserid()) == false)
 				PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
 			ISocialCircleValue sc = PartyServiceFactory.getPartySV().getSocialCircle(cId, false);
-			return "您加入了圈子【"+sc.getCname()+"】，可点击菜单 【圈子】->【我的圈子】查看，也可点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
+			return "您加入了圈子【"+sc.getCname()+"】，\n请点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入";
 		}
 		else if(index == PartyCommon.TypeParty){
 			//聚会
@@ -185,7 +185,7 @@ public class WechatOpImpl implements IWechatOp {
 					PartyServiceFactory.getPartySV().joinSocialCircle(cId, user);
 				PartyServiceFactory.getPartySV().joinParty(partyId, cId, userId);
 			}
-			return "您加入了"+party.getUsername()+"组织的聚会，可点击菜单【聚会】->【当前聚会】查看，也可点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_PartyInfo+partyId)+"'>这里</a>进入";
+			return "您加入了"+party.getUsername()+"发起的聚会【"+party.getTheme()+"】，\n请点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_PartyInfo+partyId)+"'>这里</a>进入";
 			
 		}
 		return null;
@@ -198,35 +198,23 @@ public class WechatOpImpl implements IWechatOp {
 	 * @return
 	 */
 	public String getOpUrl(String param, IWechatUserValue wechatUser){
-		String url = null;
-		if(Type_NewParty.equals(param))
-			url = "party/NewParty.jsp";
-		else if(Type_CurrentParty.equals(param))
-			url = "party/CurrentParty.jsp";
-		else if(Type_PartyList.equals(param))
-			url = "party/PartyList.jsp";
-		else if(Type_NewCircle.equals(param))
-			url = "circle/NewCircle.jsp";
-		else if(Type_CircleList.equals(param))
-			url = "circle/CircleList.jsp";
-		else if(Type_Feedback.equals(param))
-			url = "help/Feedback.jsp";
-		else if(param.startsWith(Type_CircleInfo)){
+		String url = "Main.jsp";
+		if(param.startsWith(Type_CircleInfo)){
 			String strCId = param.substring(Type_CircleInfo.length());
-        	url = "circle/CircleInfo.jsp?cId="+strCId;
+        	url += "?cId="+strCId+"#ci";
 		}
 		else if(param.startsWith(Type_PartyInfo)){
 			String strPId = param.substring(Type_PartyInfo.length());
-        	url = "party/PartyInfo.jsp?partyId="+strPId;
+        	url += "?partyId="+strPId+"#pi";
 		}
 		else if(param.startsWith(Type_JoinCircle)){
 			String strCId = param.substring(Type_JoinCircle.length());
 			try {
 				boolean isM = PartyServiceFactory.getPartySV().isJoinedCircle(Long.parseLong(strCId), wechatUser.getUserid());
 				//已经加入圈子
-				if(isM)
-					url = "circle/CircleInfo.jsp?cId="+strCId;
-				else
+//				if(isM)
+//					url += "?cId="+strCId+"#ci";
+//				else
 					url = "circle/CircleQR.jsp?cId="+strCId;
 			} 
 			catch (Exception e) {
@@ -238,9 +226,9 @@ public class WechatOpImpl implements IWechatOp {
 			try {
 				boolean isM = PartyServiceFactory.getPartySV().isJoinedParty(Long.parseLong(strPId), wechatUser.getUserid());
 				//已经加入聚会
-				if(isM)
-					url = "party/PartyInfo.jsp?partyId="+strPId;
-				else
+//				if(isM)
+//					url += "?partyId="+strPId+"#pi";
+//				else
 					url = "party/PartyQR.jsp?partyId="+strPId;
 			} 
 			catch (Exception e) {

@@ -6,36 +6,33 @@ $("[xname='aLink']").click(function(){
 });
 
 function gotoPage(url,id){
-	var isFound = false;
-	  for(var i=_pageStack.length-1;i>=0;i--){
+	//如果是当前页面，原来不处理，现在就当是刷新
+	for(var i=_pageStack.length-1;i>=0;i--){
 		  if(_pageStack[i].id == id && _pageStack[i].div != null){
-			  isFound = true;
+			  _pageStack[i].div.remove();
+			  _pageStack[i].div = null;
 			  break;
 		  }
 	  }
-	  if(location.hash != id || isFound == false){
-		  for(var i=_pageStack.length-1;i>=0;i--){
-			  if(_pageStack[i].id == id && _pageStack[i].div != null){
-				  _pageStack[i].div.remove();
-				  _pageStack[i].div = null;
-				  break;
-			  }
-		  }
-		  var div;
-		  if(url != null){
-			  div = $("<div class='page'></div>");
-			  div.load(_gModuleName+url);
-		  }
-		  else{
-			  div = $($(id).html());
-		  }
-		  div.addClass("slideIn");
-	      $("#container").append(div);
-		  location.hash = id;
-		  _isGo = true;
-	      _pageStack.push({id:id,div:div});	
+	  var div;
+	  if(url != null){
+		  div = $("<div class='page'></div>");
+		  div.load(_gModuleName+url);
 	  }
-	  toTop();
+	  else{
+		  div = $($(id).html());
+	  }
+	  div.addClass("slideIn");
+    $("#container").append(div);
+    if(location.hash == id){
+    	_pageStack[_pageStack.length-1].div = div;
+    }
+    else{
+    	location.hash = id;
+		_isGo = true;
+	    _pageStack.push({id:id,div:div});	
+    }
+    toTop();
 }
 
 $(window).on('hashchange', function (e) {
@@ -95,10 +92,24 @@ function toTop(){
 }
 
 function init(){
-	if(location.hash != "")
-		location.hash = "";
+	var hash = location.hash;
+	var url = null;
+	if(hash == "#pi")
+		url = "/party/PartyInfo.jsp?partyId="+getParam("partyId");
+	else if(hash == "#ci")
+		url = "/circle/CircleInfo.jsp?cId="+getParam("cId");
+	else{
+		url = "/party/CurrentParty.jsp";
+		hash = "#pc";
+		location.hash = hash;
+	}
+	if(url != null)
+		gotoPage(url,hash);
+		
 
 	//$("#container").load(_gModuleName+"/circle/CircleInfo.jsp?cId=11");
 }
 
-init();
+$(document).ready(function(){
+	init();
+});

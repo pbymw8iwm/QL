@@ -44,7 +44,7 @@ else{
     <%@ include file="/CommonHead.jsp"%>
   </head>
   <body>
-<div style="background-color:#4A4A4A;width:100%;height:100%;padding-top:50px">
+<div style="background-color:#5bc0de;width:100%;height:100%;padding-top:50px">
   <div style="border-radius: 6px;background-color:#ffffff;width:80%;margin-right:auto;margin-left:auto;padding-top:10px;padding-bottom:10px">
     <table style="margin-top:10px;margin-left:10px">
       <tr>

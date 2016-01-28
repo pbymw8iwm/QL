@@ -59,7 +59,6 @@ else
 	                </div>
 	            </div>
 	            <div class="weui_cell">
-	                <div class="weui_cell_hd"><label class="weui_label">备注</label></div>
 	                <div class="weui_cell_bd weui_cell_primary">
 	                    <textarea class="weui_textarea" name="Remarks" placeholder="请输入备注说明" rows="3"></textarea>
 	                </div>

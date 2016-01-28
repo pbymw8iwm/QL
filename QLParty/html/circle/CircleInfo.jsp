@@ -41,7 +41,7 @@ boolean isManager = userId == sc.getCreater();
 	          </div>
 	          <div class="weui_cell_ft"><img src="<%=request.getContextPath() %>/images/barcode-2d.png"/></div>
           </a>
-          <a class="weui_cell" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>","#cm");'>
+          <a class="weui_cell" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#cm");'>
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p>圈友</p>
 	          </div>

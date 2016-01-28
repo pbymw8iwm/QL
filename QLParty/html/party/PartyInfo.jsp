@@ -57,6 +57,14 @@ boolean isManager = userId == party.getCreater();
     </div>
     
     <div class="weui_cells">
+       <a class="weui_cell" href='javascript:gotoPage("/party/MemberInfo.jsp?partyId=<%=party.getPartyid()%>&partyName=<%=party.getTheme() %>","#pm");'>
+              <div class="weui_cell_bd weui_cell_primary">
+	            <p>出席者</p>
+	          </div>
+	          <div class="weui_cell_ft">
+		          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+	          </div>
+          </a>
        <a class="weui_cell weui_cells_access">
 	      <div class="weui_cell_bd weui_cell_primary">
 	         <p>我</p>
@@ -66,9 +74,9 @@ boolean isManager = userId == party.getCreater();
     </div>
     
     <div class="weui_cells">
-       <a class="weui_cell" href='javascript:gotoPage("/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>","#pp");'>
+       <a class="weui_cell" href='javascript:gotoPage("/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>&partyName=<%=party.getTheme() %>","#pp");'>
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>时光留驻</p>
+	         <p>相册</p>
 	      </div>
 	      <div class="weui_cell_ft"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span></div>
        </a>

@@ -147,7 +147,7 @@ p {
 	padding-top: 5px;
 	margin:0;
 	width:100%;
-	height:30px;
+	height: 20px;
 }
 
 .page-header-group .left{
@@ -200,6 +200,10 @@ p {
   color: #737373;
 }
 
+.txt-info{
+	color: #5bc0de;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -230,7 +234,7 @@ p {
 }
 .navbar-fixed-bottom {
   bottom: 0;
-  margin-bottom: 45px;
+  margin-bottom: 50px;
   border-width: 1px 0 0;
 }
 
