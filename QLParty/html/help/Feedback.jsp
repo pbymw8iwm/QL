@@ -16,3 +16,6 @@
 	</div>
   </body>
 </html>
+<script language="javascript">
+window.location = "<%=request.getContextPath()%>/Main.jsp";
+</script>

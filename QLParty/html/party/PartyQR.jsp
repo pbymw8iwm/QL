@@ -17,7 +17,7 @@ if(party == null){
 }
 %> 
   <head>
-    <title>邀您参加聚会</title>
+    <title>邀请您参加聚会</title>
 	
     <meta http-equiv="keywords" content="聚会助手  社交圈">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">

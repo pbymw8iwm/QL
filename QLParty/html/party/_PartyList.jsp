@@ -1,98 +1,38 @@
-<%@page import="com.ai.appframe2.common.SessionManager"%>
-<%@page import="com.ql.party.ivalues.IQPartyValue"%>
-<%@page import="com.ql.party.web.PartyAction"%>
-<%@page import="com.ai.appframe2.web.HttpUtil"%>
+
 <%@ page contentType="text/html;charset=UTF-8"%>
-
-<style type="text/css">
-a:hover,
-a:focus {  
-  text-decoration: none;
-}
-</style>
-<%
-long cId = HttpUtil.getAsLong(request, "cId");
-IQPartyValue[] partys = PartyAction.getPartys(cId);
-boolean hasData = false;
-%>  
-<div class="container">
-	  <div class="page-header">
-        <h3>参与的</h3>
-      </div>
-      <%for(IQPartyValue party : partys){ 
-          if(party.getExtAttr("PState") == null)
-            continue;
-          hasData = true;
-      %>
-      <%@ include file="/party/_PartyInfo.jsp"%>
-      <%} %>
-      <%if(hasData == false){ %>
-      无
-      <%} %>
-	  <div class="page-header">
-        <h3>未参与</h3>
-      </div>
-      <%
-        hasData = false;
-        for(IQPartyValue party : partys){ 
-          if(party.getExtAttr("PState") != null)
-            continue;
-          hasData = true;
-      %>
-      <%@ include file="/party/_PartyInfo.jsp"%>
-      <%} %>
-      <%if(hasData == false){ %>
-      无
-      <%} %>
-</div>
-<script language="javascript">
-
-wx.ready(function(){
-  wx.hideOptionMenu();
-  wx.showMenuItems({
-    menuList: ['menuItem:share:appMessage','menuItem:share:timeline'] // 要显示的菜单项，所有menu项见附录3
-  });
-
-});
-wx.error(function(res){
-//    alert(res.errMsg);
-});
-  
-$(document).ready(function(){
-  $("[xname='btnShare']").click(function(){
-    var pId = $(this).attr("xid");
-    var theme = $(this).attr("theme");
-    var img = $(this).attr("img");
-    var cLink = "";
-    $.ajax({ 
-                cache: false,
-				async: false,
-				type: "get", 
-				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=getPartyShareLink&pId="+pId,
-				contentType: "text/html; charset=UTF-8",
-				success: function(data, textStatus){
-				  if(textStatus == "success"){
-				    if(data.flag == true){
-				    	cLink = data.msg;
-				    }
-				    else
-				      alert(data.msg);
-				  }
-	      },
-	      error:function(httpRequest,errType,ex ){
-	        alert(ex);
-	      }
-		});
-    var shareMsg = {
-	    title: '<%=SessionManager.getUser().getName()%>邀您参加聚会', // 分享标题
-	    desc: theme, // 分享描述
-	    link: cLink, // 分享链接
-	    imgUrl: img, // 分享图标
-	};
-    wx.onMenuShareAppMessage(shareMsg);
-    wx.onMenuShareTimeline(shareMsg);
-    
-    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友参加聚会！");
-  }); 
-});
-</script>
+		<div class="page-group">
+    	  <div class="weui_cell">
+	          <%if(cId <= 0){ %><div class="weui_cell_hd"><img src="<%=party.getImagedata() %>" class="img-circle" style="width:50px;margin-right:8px;display:block"/></div><%} %>
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p><a href='javascript:gotoPage("/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'><%=party.getTheme() %></a></p>
+	          </div>
+	          <div class="weui_cell_ft">
+		          <a xname="piShare" data-id="<%=party.getPartyid()%>" data-theme="<%=party.getTheme()%>" data-img="<%=party.getImagedata()%>">
+	   		        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+	   		      </a>
+	          </div>
+          </div>
+          <div class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p><%=party.getCname() %>&nbsp;&nbsp;-&nbsp;&nbsp;<%=party.getUsername() %></p>
+	          </div>
+          </div>
+          <div class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p><%=party.getExtAttr("PTime") %></p>
+	          </div>
+          </div>
+          <div class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p><%=party.getGatheringplace() %></p>
+	          </div>
+          </div>
+          <a class="weui_cell" href='javascript:gotoPage("/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>","#pp");'>
+              <div class="weui_cell_bd weui_cell_primary">
+	            <p>时光留驻</p>
+	          </div>
+	          <div class="weui_cell_ft">
+		          <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
+	          </div>
+          </a>
+        </div>

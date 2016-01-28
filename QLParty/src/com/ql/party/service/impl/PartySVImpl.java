@@ -1,6 +1,7 @@
 package com.ql.party.service.impl;
 
 import java.io.InputStream;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.ql.party.bo.PartyPhotoBean;
 import com.ql.party.bo.QPartyBean;
 import com.ql.party.bo.QPartyEngine;
 import com.ql.party.bo.QPartyMemberBean;
+import com.ql.party.bo.QSocialCircleBean;
 import com.ql.party.bo.SocialCircleBean;
 import com.ql.party.bo.SocialCircleEngine;
 import com.ql.party.ivalues.ICircleMemberValue;
@@ -33,6 +35,7 @@ import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IPartyValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
+import com.ql.party.ivalues.IQSocialCircleValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.interfaces.IPartySV;
 import com.ql.party.sysmgr.PartyCommon;
@@ -211,6 +214,29 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	/**
+	 * 根据圈子编号和用户查询圈子
+	 * @param cId
+	 * @param userId
+	 * @param isExtInfo
+	 * @return
+	 * @throws Exception
+	 */
+	public IQSocialCircleValue getSocialCircle(long cId, long userId, boolean isExtInfo)throws Exception{
+		String sql = QSocialCircleBean.getObjectTypeStatic().getMapingEnty();
+		sql += " and s." + IQSocialCircleValue.S_Cid + " = :cId and m." + IQSocialCircleValue.S_Userid + " = :userId ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		param.put("userId", userId);
+		IQSocialCircleValue[] sc = (QSocialCircleBean[])QLServiceFactory.getQLDAO().qryDatasFromSql(sql, param, QSocialCircleBean.class, QSocialCircleBean.getObjectTypeStatic());
+		if(sc != null && sc.length > 0){
+			setCircleInfo(sc[0],isExtInfo);
+			return sc[0];
+		}
+		else
+			return null;
+	}
+	
+	/**
 	 * 查询用户所有的圈子
 	 * @param userId
 	 * @param isExtInfo 是否查询附加信息
@@ -340,6 +366,8 @@ public class PartySVImpl implements IPartySV{
 				QLServiceFactory.getQLDAO().saveData(SocialCircleEngine.transfer(sc));
 			}
 		}
+		//
+		sc.setExtAttr("QRExpiryDate", getExpireDate(sc.getQrdate()));
 		if(isExtInfo == false)
 			return;
 		//查询成员数
@@ -696,6 +724,8 @@ public class PartySVImpl implements IPartySV{
 				QLServiceFactory.getQLDAO().saveData(QPartyEngine.transfer(party));
 			}
 		}
+		//
+		party.setExtAttr("QRExpiryDate", getExpireDate(party.getQrdate()));
 		if(isExtInfo == false)
 			return;
 		
@@ -720,6 +750,11 @@ public class PartySVImpl implements IPartySV{
 			party.setExtAttr("SelfStateName", "不参加");
 			party.setExtAttr("SelfCount", 0);
 		}
+	}
+	
+	private String getExpireDate(Timestamp st){
+		SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
+		return df.format(new Timestamp(st.getTime() + 24*3600*1000*29L));
 	}
 	
 	public static void main(String[] args)throws Exception {

@@ -3,17 +3,7 @@
 <%@page import="com.ql.party.web.PartyAction"%>
 <%@page import="com.ai.appframe2.web.HttpUtil"%>
 <%@ page contentType="text/html;charset=UTF-8"%>
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>精彩时刻</title>
-	
-    <meta http-equiv="keywords" content="聚会助手  社交圈">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    
-    <%@ include file="/CommonHead.jsp"%>
-    <%@ include file="/WechatJsHead.jsp"%>
-  </head>
+
 
 <%
 long partyId = HttpUtil.getAsLong(request, "partyId");
@@ -34,7 +24,6 @@ dl { width:100%;height:<%=height%>px;border:0px;margin:0;font-size:14px;}
 dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;padding-top: 7px;}
 </style>
   
-  <body >
     <div class="container">
 		<dl>
 		<%for(IPartyPhotoValue ph:phs){ %>
@@ -50,17 +39,34 @@ dl dd {width:25%; height:100px; border:0px; float:left;text-align:center ;paddin
 		  <dd><button type="button" class="btn btn-default btn-lg" id="btnDel" style="width:70px;height:70px;"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button></dd>
 		</dl>
 		
-		<div class="navbar-fixed-bottom text-center sr-only" id="divInfo">
-		  正在上传，请等待。。。
-		</div>
+		<!-- loading toast -->
+    <div id="loadingToast" class="weui_loading_toast" style="display:none;">
+        <div class="weui_mask_transparent"></div>
+        <div class="weui_toast">
+            <div class="weui_loading">
+                <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+                <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+            </div>
+            <p class="weui_toast_content">上传中</p>
+        </div>
+    </div>
 		<div class="navbar-fixed-bottom text-center sr-only" id="divDel">
-		   <button type="button" class="btn btn-success" id="btnSave">删除</button>&nbsp;&nbsp;&nbsp;&nbsp;
-		   <button type="button" class="btn btn-default" id="btnCancel">取消</button>
+		   <a class="weui_btn weui_btn_mini weui_btn_warn" id="btnSave">删除</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		   <a class="weui_btn weui_btn_mini weui_btn_default" id="btnCancel">取消</a>
 		   <br/><br/>
 		</div>
 	</div>
-  </body>
-</html>
+
 
 <script language="javascript">
 
@@ -96,7 +102,7 @@ $(document).ready(function(){
 	    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有  
 	    sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
 	    success: function (res) {
-	        $("#divInfo").removeClass("sr-only");
+	        $('#loadingToast').show();
 	        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 	        uploadImg(localIds);
 	    }
@@ -122,13 +128,12 @@ $(document).ready(function(){
       users.push($(this).attr("xuser"));
     });
     if(ids.length == 0){
-      alert("请选择要删除的照片\n\n聚会创建者可删除任意照片\n普通圈友只可删除自己上传的照片");
+      showDialogInfo("请选择要删除的照片<br/><br/>聚会创建者可删除任意照片<br/>普通圈友只可删除自己上传的照片");
       return;
     }
-    if(confirm("确定删除所选照片？") == false)
-      return;
-    var datas = ids.join(",")+";"+users.join(",");
-	$.ajax({ 
+    showDialogConfirm("确定删除所选照片？",function(){
+        var datas = ids.join(",")+";"+users.join(",");
+	    $.ajax({ 
 				type: "post", 
 				async: false,
 				processData: false,
@@ -147,7 +152,8 @@ $(document).ready(function(){
 	      error:function(httpRequest,errType,ex ){
 	        alert(ex);
 	      }
-	}); 
+	   }); 
+	});
   }); 
 });
 
@@ -156,7 +162,7 @@ function uploadImg(localIds){
   if(localId != null){
       wx.uploadImage({
 					    localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
-					    isShowProgressTips: 1, // 默认为1，显示进度提示
+					    isShowProgressTips: 0, // 默认为1，显示进度提示
 					    success: function (res) {
 					        mediaIds.push(res.serverId); // 返回图片的服务器端ID
 					        uploadImg(localIds);

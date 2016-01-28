@@ -6,6 +6,7 @@ import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IPartyValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
+import com.ql.party.ivalues.IQSocialCircleValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 
 public interface IPartySV {
@@ -68,6 +69,16 @@ public interface IPartySV {
 	 * @throws Exception
 	 */
 	public ISocialCircleValue getSocialCircle(long cId, boolean isExtInfo)throws Exception;
+	
+	/**
+	 * 根据圈子编号和用户查询圈子
+	 * @param cId
+	 * @param userId
+	 * @param isExtInfo
+	 * @return
+	 * @throws Exception
+	 */
+	public IQSocialCircleValue getSocialCircle(long cId, long userId, boolean isExtInfo)throws Exception;
 	
 	/**
 	 * 查询用户所有的圈子

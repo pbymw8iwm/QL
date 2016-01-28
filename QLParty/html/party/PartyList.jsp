@@ -1,17 +1,8 @@
-<%@page import="com.ql.party.ivalues.ISocialCircleValue"%>
+<%@page import="com.ql.party.ivalues.IQPartyValue"%>
 <%@page import="com.ql.party.web.PartyAction"%>
+<%@page import="com.ai.appframe2.web.HttpUtil"%>
 <%@ page contentType="text/html;charset=UTF-8"%>
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>聚会列表</title>
-	
-    <meta http-equiv="keywords" content="聚会助手  社交圈">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    
-    <%@ include file="/CommonHead.jsp"%>
-    <%@ include file="/WechatJsHead.jsp"%>
-  </head>
+
 <style type="text/css">
 a:hover,
 a:focus {  
@@ -19,41 +10,41 @@ a:focus {
 }
 </style>
 <%
-ISocialCircleValue[] scs = PartyAction.getSocialCircles(false);
-%>    
-  <body>
-    <div class="container">
-    <br/>
-	  <%if(scs == null || scs.length == 0){ %>
-	  无
-	  <%}else{ %>
-	  <div class="panel-group" id="accordionP">
-	    <%for(ISocialCircleValue sc : scs){ %>
-	    <div class="panel panel-info">
-		    <div class="panel-heading">
-		      <a data-toggle="collapse" data-parent="#accordionP" href="#collapseP<%=sc.getCid()%>" xname="aInfo" cid="<%=sc.getCid()%>">
-		        <h4 class="panel-title"><img src="<%=sc.getImagedata() %>" class="img-rounded" width="50" height="50"/>&nbsp;&nbsp;<%=sc.getCname() %></h4>
-		      </a>
-		    </div>
-		    <div id="collapseP<%=sc.getCid()%>" class="panel-collapse collapse"></div>
-	    </div>
-	    <%} %>
-	  </div>
-	  <%} %>
-	</div>
-  </body>
-</html>
+long cId = HttpUtil.getAsLong(request, "cId");
+IQPartyValue[] partys = PartyAction.getPartys(cId);
+boolean hasData = false;
+%>  
 
-<script language="javascript">
-$(document).ready(function(){
-$("[xname='aa']").click(function(){
-$("#tt").load("<%=request.getContextPath()%>/index.jsp");
-});
-  $("[xname='aInfo']").click(function(){
-    var cId = $(this).attr("cid");
-    var div = $("#collapseP"+cId);
-    if(div.html() == "")
-      div.load("<%=request.getContextPath()%>/party/_PartyList.jsp?cId="+cId);
-  });
-});
-</script>
+  <div class="bd">
+    <div class="weui_cells_title">参与的</div>
+    <div class="weui_cells">
+      <%for(IQPartyValue party : partys){ 
+          if(party.getExtAttr("PState") == null)
+            continue;
+          hasData = true;
+      %>
+      <%@ include file="/party/_PartyList.jsp"%>
+      <%} %>
+      <%if(hasData == false){ %>
+      <div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div>
+      <%} %>
+	</div>
+	
+	<div class="weui_cells_title">未参与</div>
+    <div class="weui_cells">
+      <%
+        hasData = false;
+        for(IQPartyValue party : partys){ 
+          if(party.getExtAttr("PState") != null)
+            continue;
+          hasData = true;
+      %>
+      <%@ include file="/party/_PartyList.jsp"%>
+      <%} %>
+      <%if(hasData == false){ %>
+      <div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div>
+      <%} %>
+	</div>
+  </div>
+
+<script src="<%=request.getContextPath()%>/party/PartyList.js" language="JavaScript"></script>

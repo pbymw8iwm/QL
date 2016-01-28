@@ -24,6 +24,7 @@ import com.ql.party.ivalues.ICircleMemberValue;
 import com.ql.party.ivalues.IPartyPhotoValue;
 import com.ql.party.ivalues.IQPartyMemberValue;
 import com.ql.party.ivalues.IQPartyValue;
+import com.ql.party.ivalues.IQSocialCircleValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.sysmgr.RemoteResouseManager;
@@ -51,6 +52,16 @@ public class PartyAction extends QLBaseAction{
 	 */
 	public static ISocialCircleValue getSocialCircle(long cId,boolean isExtInfo)throws Exception{
 		return PartyServiceFactory.getPartySV().getSocialCircle(cId, isExtInfo);
+	}
+
+	/**
+	 * 查询圈子
+	 * @param cId
+	 * @return
+	 * @throws Exception
+	 */
+	public static IQSocialCircleValue getSocialCircleByUser(long cId,boolean isExtInfo)throws Exception{
+		return PartyServiceFactory.getPartySV().getSocialCircle(cId, SessionManager.getUser().getID(), isExtInfo);
 	}
 	
 	/**
@@ -144,7 +155,7 @@ public class PartyAction extends QLBaseAction{
 	//创建圈子
 	public void createCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
-			String mediaId = HttpUtil.getAsString(request, "mediaId");
+			/*String mediaId = HttpUtil.getAsString(request, "mediaId");
 			String json = HttpUtil.getStringFromBufferedReader(request);
 			Map map = JsonUtil.getMapFromJsObject(json);
 			
@@ -153,7 +164,8 @@ public class PartyAction extends QLBaseAction{
 			sc.setCreater(SessionManager.getUser().getID());
 			long cId = PartyServiceFactory.getPartySV().saveSocialCircle(sc);
 			remoteCircleImg(cId,mediaId);	
-	        HttpJsonUtil.showInfo(response,cId+"");
+	        HttpJsonUtil.showInfo(response,cId+"");*/
+			HttpJsonUtil.showInfo(response,"11");
 	    }
 	    catch(Exception ex){
 	      log.error(ex.getMessage(),ex);

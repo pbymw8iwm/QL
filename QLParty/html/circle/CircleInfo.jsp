@@ -2,125 +2,133 @@
 <%@page import="com.ai.appframe2.common.SessionManager"%>
 <%@page import="com.ql.wechat.WechatCommons"%>
 <%@page import="com.ql.party.web.PartyAction"%>
-<%@page import="com.ql.party.ivalues.ISocialCircleValue"%>
+<%@page import="com.ql.party.ivalues.IQSocialCircleValue"%>
 <%@page import="com.ai.appframe2.web.HttpUtil"%>
 <%@ page contentType="text/html;charset=UTF-8"%>
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>圈子信息</title>
-	
-    <meta http-equiv="keywords" content="聚会助手  社交圈">
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    
-    <%@ include file="/CommonHead.jsp"%>
-    <%@ include file="/WechatJsHead.jsp"%>
-  </head>
+
 
 <%
 long cId = HttpUtil.getAsLong(request, "cId");
-ISocialCircleValue sc = PartyAction.getSocialCircle(cId,true);
+IQSocialCircleValue sc = PartyAction.getSocialCircleByUser(cId,true);
 if(sc == null){
 %>
-<body><h3>圈子可能已经被删除</h3></body>
+<h3>您未加入此圈子，或者圈子已经被删除</h3>
 <%
   return;
 }
 long userId = SessionManager.getUser().getID();
 String userName = SessionManager.getUser().getName();
+boolean isManager = userId == sc.getCreater();
 %>  
-  <body>
-    <div class="container">
-		<div class="page-header">
-		  <table>
-		    <tr>
-		      <td rowspan="2"><img id="cImg" src="<%=sc.getImagedata() %>" class="img-thumbnail" width="100" height="100"/></td>
-		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		      <td><h3><%=sc.getCname() %></h3></td>
-		    </tr>
-		    <tr>
-		      <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		      <td><%=sc.getExtAttr("TypeName") %>圈</td>
-		    </tr>
-		  </table>
-		</div>
-		<div class="center-block">
-		  <button type="button" class="btn btn-link" id="btnEdit" data-toggle="modal" data-target="#myInfoModal">编辑我的圈信息</button>
-		  <%if(userId == sc.getCreater()){ %>  
-		  <button type="button" class="btn btn-link" id="btnChange">转让圈主</button>
-		  <%} %>
-		</div>
-		<div class="panel-group" id="accordion">
-		  <div class="panel panel-info" id="divMember">
-		    <div class="panel-heading">
-		      <div class="row">
-			    <a data-toggle="collapse" data-parent="#accordion" href="#cMember" id="aMember"><div class="col-xs-10"><h4>圈友(<%=sc.getExtAttr("MemberCount") %>个)</h4></div></a>
-			    <div class="col-xs-2"><button type="button" class="btn btn-link" id="btnShare"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button></div>
-			  </div>
-		    </div>
-		    <div id="cMember" class="panel-collapse collapse"></div>
-		  </div>
-		  <div class="panel panel-info" id="divParty">
-		    <div class="panel-heading">
-		      <div class="row">
-			    <a data-toggle="collapse" data-parent="#accordion" href="#cParty" id="aParty"><div class="col-xs-10"><h4>聚会(<%=sc.getExtAttr("PartyCount") %>个)</h4></div></a>
-			    <div class="col-xs-2"><button type="button" class="btn btn-link" id="btnParty"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></div>
-			  </div>
-		    </div>
-		    <div id="cParty" class="panel-collapse collapse"></div>
-		  </div>
-		  <br/>
-		  <p class="text-right">
-		    <button type="button" class="btn btn-default" id="btnQuit">退出圈子</button>
-		  </p>
-		</div>
-	  
-	  
-		<div class="modal fade" id="myInfoModal" tabindex="-1" role="dialog" aria-labelledby="myInfoLabel" aria-hidden="true">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		        <h4 class="modal-title" id="myInfoLabel">我的圈信息</h4>
-		      </div>
-		      <div class="modal-body">
-				<form role="form" class="form-horizontal" id="frmInfo" name="frmInfo">
-				   <div class="sr-only">
-				     <input type="text" maxlength="10" class="form-control" id="CId" name="CId" value="<%=cId%>"/>
-				     <input type="text" maxlength="10" class="form-control" id="UserId" name="UserId" value="<%=userId%>"/>
-				   </div>
-				   <div class="form-group">
-				      <label for="UserName" class="col-xs-3 control-label">昵称</label>
-				      <div class="col-xs-9"><input type="text" maxlength="10" class="form-control" id="UserName" name="UserName" placeholder="请输入昵称"></div>
-				   </div>
-				   <div class="form-group">
-				      <label for="CType" class="col-xs-3 control-label">电话</label>
-				      <div class="col-xs-9"><input type="tel" class="form-control" id="Phone" name="Phone" placeholder="请输入电话"></div>
-				   </div>
-				   <div class="form-group">
-				      <label for="Job" class="col-xs-3 control-label">工作</label>
-				      <div class="col-xs-9"><input type="text" maxlength="30" class="form-control" id="Job" name="Job" placeholder="请输入工作"></div>
-				   </div>
-				   <div class="form-group">
-				      <label for="City" class="col-xs-3 control-label">地址</label>
-				      <div class="col-xs-9"><input type="text" maxlength="30" class="form-control" id="City" name="City" placeholder="请输入地址"></div>
-				   </div>
-				</form>
-			  </div>
-			    <div class="modal-footer">
-			        <button type="button" class="btn btn-sm btn-success" id="btnSave">保存</button>
-			        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">取消</button>
-			    </div>
-		    </div>
-		  </div>
-		</div>
-	</div>
-  </body>
-</html>
+
+  <div class="page-header-group">
+    <span class="left">圈子信息</span>
+    <a class="right" href="javascript:ciShare();"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a>
+  </div>
+    <div class="bd">
+        <div class="weui_cells <%if(isManager){ %>weui_cells_access<%}%>">
+          <a id="ciImg" class="weui_cell" href="javascript:;">
+              <div class="weui_cell_hd"><img src="<%=sc.getImagedata() %>" style="width:80px;height:80px;margin-right:10px;display:block"></div>
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p><%=sc.getCname() %></p>
+	            <p><span class="help-block" ><%=sc.getExtAttr("TypeName") %></span></p>
+	          </div>
+	          <div class="weui_cell_ft"></div>
+          </a>
+          <a class="weui_cell" href="javascript:gotoPage(null,'#ciqr');">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>圈名片</p>
+	          </div>
+	          <div class="weui_cell_ft"><img src="<%=request.getContextPath() %>/images/barcode-2d.png"/></div>
+          </a>
+          <a class="weui_cell" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>","#cm");'>
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>圈友</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getExtAttr("MemberCount") %>人</div>
+          </a>
+          <a class="weui_cell" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>","#pl");'>
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>聚会</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getExtAttr("PartyCount") %>个</div>
+          </a>
+        </div>
+        <div class="weui_cells_title">我的圈信息</div>
+        <div class="weui_cells weui_cells_access">
+          <a class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>昵称</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getUsername() %></div>
+          </a>
+          <a class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>电话</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getPhone()==null?"":sc.getPhone() %></div>
+          </a>
+          <a class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>工作</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getJob()==null?"":sc.getJob() %></div>
+          </a>
+          <a class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>地址</p>
+	          </div>
+	          <div class="weui_cell_ft"><%=sc.getCity()==null?"":sc.getCity() %></div>
+          </a>
+        </div>
+        <%if(isManager){ %>
+        <div class="weui_cells weui_cells_access">
+          <div class="weui_cell">
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <p>转让圈主</p>
+	          </div>
+	          <div class="weui_cell_ft"></div>
+          </div>
+        </div>
+        <%} %>
+        <div class="weui_cells"></div>
+        <div class="bd spacing">
+          <a href="javascript:;" class="weui_btn weui_btn_warn" id="btnCIQuit">退出圈子</a>
+        </div>
+    </div>
+
+<script type="text/html" id="ciqr">
+<div class="page" style="background-color:#4A4A4A;width:100%;height:100%;padding-top:50px">
+  <div style="border-radius: 6px;background-color:#ffffff;width:80%;margin-right:auto;margin-left:auto;padding-top:10px;padding-bottom:10px">
+    <table style="margin-top:10px;margin-left:10px">
+      <tr>
+        <td rowspan="2"><img src="<%=sc.getImagedata() %>" style="width:60px;height:60px;margin-right:10px;"></td>
+        <td style="padding-top:10px"><strong><%=sc.getCname() %></strong></td>
+      </tr>
+      <tr>
+        <td><span class="help-block" ><%=sc.getExtAttr("TypeName") %></span></td>
+      </tr>
+    </table>
+    <p class="text-center">
+		<img src="<%=WechatCommons.Url_ShowQr + sc.getQrticket()%>" style="width:220px;height:220px;padding-top:10px"/>
+		<br/>
+		扫码加入此圈，参与聚会，分享照片
+		<br/>
+		<span class="help-block" style="font-size:10px;">当前二维码将于<%=sc.getExtAttr("QRExpiryDate") %>失效</span>
+	</p>
+  </div>
+  <br/>
+  <div class="bd" style="width:80%;margin-right:auto;margin-left:auto;">
+    <a href="javascript:ciShare();" class="weui_btn weui_btn_primary">邀请</a>
+  </div>
+</div>
+</script>
+    
+
 <script language="javascript">
 
-  var shareMsg = {
-	    title: '<%=userName%>邀您加入<%=sc.getCname()%>', // 分享标题
+  var shareCIMsg = {
+	    title: '邀请您加入<%=sc.getCname()%>', // 分享标题
 	    desc: '加入圈子，参与聚会，分享照片', // 分享描述
 	    link: '<%=WechatCommons.getUrlView(WechatOpImpl.Type_JoinCircle+sc.getCid())%>', // 分享链接
 	    //link: 'http://<%=WechatCommons.ServerIp%>/circle/CircleQR.jsp?userName=<%=userName%>&cName=<%=sc.getCname()%>&ticket=<%=sc.getQrticket()%>&cImg='+encodeURIComponent('<%=sc.getImagedata()%>'), // 分享链接
@@ -135,32 +143,19 @@ String userName = SessionManager.getUser().getName();
 	    }
 	};
 	
-wx.ready(function(){
-  wx.hideOptionMenu();
-  wx.showMenuItems({
-    menuList: ['menuItem:share:appMessage','menuItem:share:timeline'] // 要显示的菜单项，所有menu项见附录3
-  });
-
-  wx.onMenuShareAppMessage(shareMsg);
-  wx.onMenuShareTimeline(shareMsg);
-});
-wx.error(function(res){
-//    alert(res.errMsg);
-});
   
 var myInfo = null;  
 $(document).ready(function(){
-  $("#btnShare").click(function(){
-    alert("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
-  }); 
-  
+  wx.onMenuShareAppMessage(shareCIMsg);
+  wx.onMenuShareTimeline(shareCIMsg);
+
   $("#btnParty").click(function(){
     window.location = "<%=request.getContextPath()%>/party/NewParty.jsp?cId=<%=cId%>&cName=<%=sc.getCname() %>";
   }); 
   
   $("#aMember").click(function(){
     if($("#cMember").html() == "")
-    	$("#cMember").load("<%=request.getContextPath()%>/circle/_MemberInfo.jsp?cId=<%=cId%>");
+    	$("#cMember").load("<%=request.getContextPath()%>/circle/MemberInfo.jsp?cId=<%=cId%>");
   });
   
   $("#aParty").click(function(){
@@ -176,7 +171,7 @@ $(document).ready(function(){
     if(myInfo != null)
       return;
     
-    //_MemberInfo.jsp中是否查询过用户信息，mInfo是其中的变量
+    //MemberInfo.jsp中是否查询过用户信息，mInfo是其中的变量
     if(typeof(mInfo) != "undefined"){
       for(var i=0;i<mInfo.length;i++){
         if(mInfo[i].UserId == <%=userId%>){
@@ -259,8 +254,8 @@ $(document).ready(function(){
 			}); 
   });
   
-  $("#btnQuit").click(function(){
-    if(confirm("确定退出当前圈子？")){
+  $("#btnCIQuit").click(function(){
+    showDialogConfirm("确定退出当前圈子？",function(){
       $.ajax({ 
 				type: "post", 
 				async: false,
@@ -279,13 +274,13 @@ $(document).ready(function(){
 	      error:function(httpRequest,errType,ex ){
 	        alert(ex);
 	      }
-	  }); 
-    }
+	  });
+    });
   }); 
 
 
-<%if(userId == sc.getCreater()){ %>  
-  $("#cImg").click(function(){
+<%if(isManager){ %>  
+  $("#ciImg").click(function(){
     wx.chooseImage({
 	    count: 1, // 默认9
 	    sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
@@ -294,13 +289,13 @@ $(document).ready(function(){
 	        var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 	        jQuery(function(){
 	          $.each( localIds, function(i, n){
-	              $("#cImg").attr("src",n);
+	              $("#ciImg").attr("src",n);
 	              wx.uploadImage({
 					    localId: n, // 需要上传的图片的本地ID，由chooseImage接口获得
 					    isShowProgressTips: 1, // 默认为1，显示进度提示
 					    success: function (res) {
 					        var serverId = res.serverId; // 返回图片的服务器端ID
-					        dealImg(serverId);
+					        ciDealImg(serverId);
 					    }
 				  });
 	            });
@@ -315,7 +310,13 @@ $(document).ready(function(){
 <%}%>
 });
 
-function dealImg(serverId){
+function ciShare(){
+    wx.onMenuShareAppMessage(shareCIMsg);
+    wx.onMenuShareTimeline(shareCIMsg);
+    showDialogInfo("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友加入圈子！");
+}
+
+function ciDealImg(serverId){
 	$.ajax({ 
 				type: "post", 
 				async: false,
@@ -326,10 +327,10 @@ function dealImg(serverId){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      var r = Math.random();
-				      shareMsg.imgUrl = shareMsg.imgUrl + r;
-				      //shareMsg.link = shareMsg.link + r;
-					  wx.onMenuShareAppMessage(shareMsg);
-					  wx.onMenuShareTimeline(shareMsg);
+				      shareCIMsg.imgUrl = shareCIMsg.imgUrl + r;
+				      //shareCIMsg.link = shareCIMsg.link + r;
+					  wx.onMenuShareAppMessage(shareCIMsg);
+					  wx.onMenuShareTimeline(shareCIMsg);
 				    }
 				    else
 				      alert(data.msg);

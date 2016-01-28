@@ -176,6 +176,9 @@ public class JsonUtil {
 						c.setTimeInMillis(DataType.getAsLong(strTime)); 
 						dc.set(keys[i], c.getTime());
 					}
+					else if(tmp.indexOf("T") > 0){
+						dc.set(keys[i], tmp.replaceFirst("T", " "));
+					}
 					else
 						dc.set(keys[i], obj);
 				}
