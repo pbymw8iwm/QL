@@ -47,7 +47,7 @@ boolean isManager = userId == sc.getCreater();
 	          </div>
 	          <div class="weui_cell_ft"><%=sc.getExtAttr("MemberCount") %>人</div>
           </a>
-          <a class="weui_cell" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>","#pl");'>
+          <a class="weui_cell" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'>
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p>聚会</p>
 	          </div>

@@ -6,12 +6,18 @@
 
 <%
 long cId = HttpUtil.getAsLong(request, "cId");
+String cName = HttpUtil.getAsString(request, "cName");
 IQPartyValue[] partys = PartyAction.getPartys(cId);
 boolean hasData = false;
 %>  
 
-  <div class="page-header-border">圈聚会</div>
-  <div class="bd">
+<div class="page-header-group">
+<div class="border">
+		    <span class="left"><%=cName %> - 聚会</span>
+		    <div class="right"></div>
+		  </div>
+	    </div>
+  <div class="bd" style="padding-top:15px;">
   <%
     SimpleDateFormat df = new SimpleDateFormat("M.d");
     int year = 0;
@@ -52,7 +58,7 @@ boolean hasData = false;
   
   <div class="weui_cells"></div>
   <div class="bd spacing">
-			   <a href='javascript:gotoPage("/party/NewParty.jsp?cId=<%=cId%>","#pn");' class="weui_btn weui_btn_primary">创建聚会</a>
+			   <a href='javascript:gotoPage("/party/NewParty.jsp?cId=<%=cId%>&cName=<%=cName %>","#pn");' class="weui_btn weui_btn_primary">创建聚会</a>
   </div>
 </div>
 

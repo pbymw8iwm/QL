@@ -11,7 +11,6 @@ boolean hasData = false;
   <div class="page-header-border">当前聚会</div>
   <div class="bd">
     <div class="weui_cells_title">参与的</div>
-    <div class="weui_cells">
       <%for(IQPartyValue party : partys){ 
           if(party.getExtAttr("PState") == null)
             continue;
@@ -20,12 +19,10 @@ boolean hasData = false;
       <%@ include file="/party/_Partys.jsp"%>
       <%} %>
       <%if(hasData == false){ %>
-      <div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div>
+      <div class="weui_cells"><div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div></div>
       <%} %>
-	</div>
 	
 	<div class="weui_cells_title">未参与</div>
-    <div class="weui_cells">
       <%
         hasData = false;
         for(IQPartyValue party : partys){ 
@@ -36,9 +33,8 @@ boolean hasData = false;
       <%@ include file="/party/_Partys.jsp"%>
       <%} %>
       <%if(hasData == false){ %>
-      <div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div>
+      <div class="weui_cells"><div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div></div>
       <%} %>
-	</div>
   </div>
 
 <script src="<%=request.getContextPath()%>/party/Partys.js" language="JavaScript"></script>

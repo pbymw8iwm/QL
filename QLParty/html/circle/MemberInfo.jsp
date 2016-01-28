@@ -21,7 +21,7 @@ int height = rows * 100;
 </style>
 
 <div class="page-header-group">
-		    <span class="left"><%=cName %></span>
+		    <span class="left"><%=cName %> - 圈友</span>
 		    <div class="right">
 	        </div>
 	    </div>
@@ -34,9 +34,9 @@ int height = rows * 100;
 		            <p><%=cms[i].getUsername() %></p>
 		          </div>
 		          <div class="weui_cell_ft">
-		            <small><%=StringUtils.isNotBlank(cms[i].getPhone())?cms[i].getPhone():"&nbsp;" %><br/>
-		            	<%=StringUtils.isNotBlank(cms[i].getCity())?cms[i].getCity():"&nbsp;" %><br/>
-		            	<%=StringUtils.isNotBlank(cms[i].getJob())?cms[i].getJob():"&nbsp;" %></small>
+		            <small><%if(StringUtils.isNotBlank(cms[i].getPhone())){%><%=cms[i].getPhone() %><br/><%} %>
+		                <%if(StringUtils.isNotBlank(cms[i].getJob())){%><%=cms[i].getJob() %><br/><%} %>
+		                <%if(StringUtils.isNotBlank(cms[i].getCity())){%><%=cms[i].getCity() %><%} %></small>
 		          </div>
 	          </div>
 	      <%}%>

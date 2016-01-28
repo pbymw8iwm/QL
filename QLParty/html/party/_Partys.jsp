@@ -1,6 +1,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8"%>
-		<div class="page-group">
+		<div class="weui_cells">
     	  <div class="weui_cell">
 	          <div class="weui_cell_hd"><img src="<%=party.getImagedata() %>" class="img-circle" style="width:50px;margin-right:8px;display:block"/></div>
 	          <div class="weui_cell_bd weui_cell_primary">

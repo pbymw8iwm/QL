@@ -110,6 +110,4 @@ function init(){
 	//$("#container").load(_gModuleName+"/circle/CircleInfo.jsp?cId=11");
 }
 
-$(document).ready(function(){
-	init();
-});
+init();

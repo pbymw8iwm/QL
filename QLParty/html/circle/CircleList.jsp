@@ -18,7 +18,7 @@ ISocialCircleValue[] scs = PartyAction.getSocialCircles(true);
 		    <tr>
 		      <td><%=sc.getExtAttr("TypeName") %>
 		  	<a style="margin-left:8px" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#cm");'><%=sc.getExtAttr("MemberCount") %>个成员</a>
-		  	<a style="margin-left:8px" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>","#pl");'><%=sc.getExtAttr("PartyCount") %>个聚会</a>
+		  	<a style="margin-left:8px" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'><%=sc.getExtAttr("PartyCount") %>个聚会</a>
 		  	<a style="margin-left:8px" href='javascript:;' xname="clShare" data-id="<%=sc.getCid()%>"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 		    </tr>
 		  </table>
