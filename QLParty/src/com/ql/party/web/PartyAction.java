@@ -7,16 +7,20 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ai.appframe2.common.SessionManager;
+import com.ai.appframe2.complex.cache.CacheFactory;
 import com.ai.appframe2.web.HttpUtil;
 import com.ql.action.QLBaseAction;
+import com.ql.cache.WechatUserCacheImpl;
 import com.ql.common.CommonUtil;
 import com.ql.common.HttpJsonUtil;
 import com.ql.common.JsonUtil;
 import com.ql.ivalues.ICfStaticDataValue;
+import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.bo.CircleMemberBean;
 import com.ql.party.bo.PartyBean;
 import com.ql.party.bo.SocialCircleBean;
@@ -30,6 +34,7 @@ import com.ql.party.service.PartyServiceFactory;
 import com.ql.party.sysmgr.RemoteResouseManager;
 import com.ql.party.wechat.WechatOpImpl;
 import com.ql.sysmgr.QLServiceFactory;
+import com.ql.wechat.MsgForwardTool;
 import com.ql.wechat.WechatCommons;
 import com.ql.wechat.WechatUtils;
 
@@ -155,7 +160,7 @@ public class PartyAction extends QLBaseAction{
 	//创建圈子
 	public void createCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
-			/*String mediaId = HttpUtil.getAsString(request, "mediaId");
+			String mediaId = HttpUtil.getAsString(request, "mediaId");
 			String json = HttpUtil.getStringFromBufferedReader(request);
 			Map map = JsonUtil.getMapFromJsObject(json);
 			
@@ -164,8 +169,7 @@ public class PartyAction extends QLBaseAction{
 			sc.setCreater(SessionManager.getUser().getID());
 			long cId = PartyServiceFactory.getPartySV().saveSocialCircle(sc);
 			remoteCircleImg(cId,mediaId);	
-	        HttpJsonUtil.showInfo(response,cId+"");*/
-			HttpJsonUtil.showInfo(response,"11");
+	        HttpJsonUtil.showInfo(response,cId+"");
 	    }
 	    catch(Exception ex){
 	      log.error(ex.getMessage(),ex);
@@ -191,8 +195,20 @@ public class PartyAction extends QLBaseAction{
 	public void changeMaster(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
 			long cId = HttpUtil.getAsLong(request, "cId");
+			String cName = HttpUtil.getAsString(request, "cName");
 			long userId = HttpUtil.getAsLong(request, "userId");
 			PartyServiceFactory.getPartySV().changeMaster(cId, userId);
+			
+			try{
+				IWechatUserValue wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, "0_"+userId);
+				if(wechatUser != null){
+					MsgForwardTool.sendTextMsg(wechatUser.getOpenid(), "您被设置为【"+cName+"】的圈主，\n请点击<a href='"+WechatCommons.getUrlView(WechatOpImpl.Type_CircleInfo+cId)+"'>这里</a>进入");
+				}
+			}
+			catch(Exception ex){
+				log.error(userId+"被设置为圈主的消息发送失败："+ex.getMessage());
+			}
+			
 	        HttpJsonUtil.showInfo(response,"处理成功!");
 	    }
 	    catch(Exception ex){
@@ -230,11 +246,13 @@ public class PartyAction extends QLBaseAction{
 	public void saveCircleMemberInfo(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
 			String json = HttpUtil.getStringFromBufferedReader(request);
-			Map map = JsonUtil.getMapFromJsObject(json);
-			
-			CircleMemberBean cm = new CircleMemberBean();
-			JsonUtil.mapToBean(map, cm);
-			PartyServiceFactory.getPartySV().saveCircleMemberInfo(cm);
+			if(StringUtils.isNotBlank(json) && "{}".equals(json) == false){
+				Map map = JsonUtil.getMapFromJsObject(json);
+				
+				CircleMemberBean cm = new CircleMemberBean();
+				JsonUtil.mapToBean(map, cm);
+				PartyServiceFactory.getPartySV().saveCircleMemberInfo(cm);
+			}
 	        HttpJsonUtil.showInfo(response,"保存成功!");
 	    }
 	    catch(Exception ex){
@@ -247,7 +265,8 @@ public class PartyAction extends QLBaseAction{
 	public void kickoutCircle(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
 			long cId = HttpUtil.getAsLong(request, "cId");
-			String users = HttpUtil.getAsString(request, "userIds");
+			String cName = HttpUtil.getAsString(request, "cName");
+			String users = HttpUtil.getStringFromBufferedReader(request);
 			StringTokenizer toKenizer = new StringTokenizer(users, ",");
 			long[] userIds = new long[toKenizer.countTokens()];
 			int i = 0;        
@@ -255,6 +274,21 @@ public class PartyAction extends QLBaseAction{
 				userIds[i++] = Long.valueOf(toKenizer.nextToken());        
 			}
 			PartyServiceFactory.getPartySV().kickoutCircle(userIds, cId);
+			
+			//发送消息
+			String msg = "您被圈主移出了圈子【"+cName+"】";
+			for(long userId : userIds){
+				try{
+					IWechatUserValue wechatUser = (IWechatUserValue)CacheFactory.get(WechatUserCacheImpl.class, "0_"+userId);
+					if(wechatUser != null){
+						MsgForwardTool.sendTextMsg(wechatUser.getOpenid(), msg);
+					}
+				}
+				catch(Exception ex){
+					log.error(userId+"的被踢消息发送失败："+ex.getMessage());
+				}
+			}
+			
 	        HttpJsonUtil.showInfo(response,"处理成功!");
 	    }
 	    catch(Exception ex){

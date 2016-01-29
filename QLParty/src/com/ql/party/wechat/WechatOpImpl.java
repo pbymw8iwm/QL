@@ -86,7 +86,7 @@ public class WechatOpImpl implements IWechatOp {
             		if(result == null)
             			result = rt;
             		else
-            			result += "\n"+rt;
+            			result += "\n\n"+rt;
             	}
             }
         }
@@ -212,9 +212,9 @@ public class WechatOpImpl implements IWechatOp {
 			try {
 				boolean isM = PartyServiceFactory.getPartySV().isJoinedCircle(Long.parseLong(strCId), wechatUser.getUserid());
 				//已经加入圈子
-//				if(isM)
-//					url += "?cId="+strCId+"#ci";
-//				else
+				if(isM)
+					url += "?cId="+strCId+"#ci";
+				else
 					url = "circle/CircleQR.jsp?cId="+strCId;
 			} 
 			catch (Exception e) {
@@ -226,9 +226,9 @@ public class WechatOpImpl implements IWechatOp {
 			try {
 				boolean isM = PartyServiceFactory.getPartySV().isJoinedParty(Long.parseLong(strPId), wechatUser.getUserid());
 				//已经加入聚会
-//				if(isM)
-//					url += "?partyId="+strPId+"#pi";
-//				else
+				if(isM)
+					url += "?partyId="+strPId+"#pi";
+				else
 					url = "party/PartyQR.jsp?partyId="+strPId;
 			} 
 			catch (Exception e) {

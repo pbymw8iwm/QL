@@ -54,6 +54,20 @@ $(window).on('hashchange', function (e) {
     toTop();
 });
 
+function showToast(text){
+	var $toast = $('#toast');
+	if(text != null)
+		$toast.text(text);
+    if ($toast.css('display') != 'none') {
+        return;
+    }
+
+    $toast.show();
+    setTimeout(function () {
+        $toast.hide();
+    }, 2000);
+}
+
 function showTooltips(text){
 	var tooltips = $("#tooltip");
 	tooltips.text(text);
@@ -87,6 +101,35 @@ function showDialogInfo(info){
     });
 }
 
+function showActionSheet(objEdit){
+	var mask = $('#mask');
+    var weuiActionsheet = $('#weui_actionsheet');
+    weuiActionsheet.addClass('weui_actionsheet_toggle');
+    mask.show().addClass('weui_fade_toggle').one('click',function () {
+        _hideActionSheet(weuiActionsheet, mask);
+    });
+    $('#actionsheet_cancel').one('click',function () {
+        _hideActionSheet(weuiActionsheet, mask);
+    });
+    weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');
+
+	function _hideActionSheet(weuiActionsheet, mask) {
+		if(objEdit != null)
+		  objEdit.remove();
+        weuiActionsheet.removeClass('weui_actionsheet_toggle');
+        mask.removeClass('weui_fade_toggle');
+        weuiActionsheet.on('transitionend', function () {
+            mask.hide();
+        }).on('webkitTransitionEnd', function () {
+            mask.hide();
+        });
+    }
+}
+
+function hideActionSheet(){
+	$('#mask').click();
+}
+
 function toTop(){
 	document.documentElement.scrollTop = document.body.scrollTop =0;
 }
@@ -94,9 +137,9 @@ function toTop(){
 function init(){
 	var hash = location.hash;
 	var url = null;
-	if(hash == "#pi")
+	if(hash == "#pi" && getParam("partyId") != null)
 		url = "/party/PartyInfo.jsp?partyId="+getParam("partyId");
-	else if(hash == "#ci")
+	else if(hash == "#ci" && getParam("cId") != null)
 		url = "/circle/CircleInfo.jsp?cId="+getParam("cId");
 	else{
 		url = "/party/CurrentParty.jsp";

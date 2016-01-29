@@ -141,6 +141,12 @@ p {
   margin: 0 0 10px;
 }
 
+input[type="checkbox"],input[type="radio"] {
+	width:17px;
+	height:17px;
+	margin:5px;
+}
+
 .page-header-group{
 	color: #04BE02;
 	font-size: 18px;
@@ -156,12 +162,12 @@ p {
     border-bottom: 2px solid #eee;
 }
 
-.page-header-group .left{
+.left{
 	float:left;
 	padding-left: 5px;
 }
 
-.page-header-group .right{
+.right{
 	float:right;
 	text-align: right;
 	padding-right: 5px;
@@ -208,6 +214,14 @@ p {
 
 .txt-info{
 	color: #5bc0de;
+}
+
+.txt-default {
+  color: #ccc;
+}
+
+.txt-warning {
+  color: #f0ad4e;
 }
 
 .sr-only {

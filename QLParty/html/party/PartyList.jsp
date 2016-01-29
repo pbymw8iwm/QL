@@ -23,6 +23,16 @@ boolean hasData = false;
     int year = 0;
     boolean isNewGroup = false;
     for(IQPartyValue party : partys){ 
+      String tmp = null;
+      if(party.getExtAttr("PState") == null)
+        tmp = "txt-default";
+      else{ 
+        long state = ((Long)party.getExtAttr("PState")).longValue();
+        if(state == 1)
+          tmp = "txt-info";
+        else
+          tmp = "txt-warning";
+      }
       if(party.getStarttime().getYear() != year){
         if(year != 0){
   %>
@@ -39,7 +49,9 @@ boolean hasData = false;
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p><a href='javascript:gotoPage("/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'>
 	                 <strong><%=party.getTheme() %></strong>
-	                 <small style="padding-left:5px"><%=df.format(party.getStarttime()) %></small>
+	                 <small style="padding-left:5px"><%=df.format(party.getStarttime()) %>
+	                   <span class="glyphicon glyphicon-glass <%=tmp%>" style="padding-left:5px"/>
+	                 </small>
 	            </a></p>
 	          </div>
 	          <div class="weui_cell_ft">

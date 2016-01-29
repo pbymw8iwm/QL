@@ -144,6 +144,7 @@ $(document).ready(function(){
 				success: function(data, textStatus){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
+				      showToast();
 				      gotoPage("/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
 				    }
 				    else
@@ -187,6 +188,7 @@ function dealImg(){
 				success: function(data, textStatus){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
+				      showToast();
 				      gotoPage("/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
 				    }
 				    else

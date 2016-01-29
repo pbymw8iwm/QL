@@ -268,6 +268,12 @@ public class PartySVImpl implements IPartySV{
 		cm.setStsToOld();
 		cm.delete();
 		QLServiceFactory.getQLDAO().saveData(cm);
+		
+		String sql = "delete from partyMember where cId = :cId and userId = :userId ";
+		Map param = new HashMap();
+		param.put("cId", cId);
+		param.put("userId", userId);
+		QLServiceFactory.getQLDAO().execute(sql, param);
 	}
 	
 	/**
@@ -297,6 +303,8 @@ public class PartySVImpl implements IPartySV{
 	 * @throws Exception
 	 */
 	public void kickoutCircle(long[] userIds,long cId)throws Exception{
+		Map param = new HashMap();
+		param.put("cId", cId);
 		CircleMemberBean[] cms = new CircleMemberBean[userIds.length];
 		for(int i=0;i<userIds.length;i++){
 			cms[i] = new CircleMemberBean();
@@ -304,6 +312,10 @@ public class PartySVImpl implements IPartySV{
 			cms[i].setUserid(userIds[i]);
 			cms[i].setStsToOld();
 			cms[i].delete();
+			
+			String sql = "delete from partyMember where cId = :cId and userId = :userId ";
+			param.put("userId", userIds[i]);
+			QLServiceFactory.getQLDAO().execute(sql, param);
 		}
 		QLServiceFactory.getQLDAO().saveDatas(cms);
 	}

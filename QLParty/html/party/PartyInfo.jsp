@@ -11,7 +11,7 @@ long partyId = HttpUtil.getAsLong(request, "partyId");
 IQPartyValue party = PartyAction.getParty(partyId,true);
 if(party == null){
 %>  
-<h3>聚会可能已经被删除</h3>
+<h4>聚会可能已经被删除</h4>
 <%
   return;
 }
@@ -19,40 +19,40 @@ long userId = SessionManager.getUser().getID();
 boolean isManager = userId == party.getCreater();
 %>
   <div class="page-header-group">
-    <span class="left">聚会信息</span>
+    <span class="left">聚会信息 - <%=party.getCname() %></span>
     <a class="right" id="btnPIShare"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a>
   </div>
   <div class="bd">
     <div class="weui_cells <%if(isManager){ %>weui_cells_access<%}%>">
-       <a class="weui_cell">
+       <a class="weui_cell" xname="pi">
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>主题</p>
+	         <p class="pi_title">主题</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getTheme() %></div>
+	      <div class="weui_cell_ft pi_value" data-type="text" data-name="Theme"><%=party.getTheme() %></div>
        </a>
-       <a class="weui_cell">
+       <a class="weui_cell" xname="pi">
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>开始</p>
+	         <p class="pi_title">开始</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getExtAttr("Start")%></div>
+	      <div class="weui_cell_ft pi_value" data-type="datetime-local" data-name="StartTime"><%=party.getExtAttr("Start")%></div>
        </a>
-       <a class="weui_cell">
+       <a class="weui_cell" xname="pi">
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>结束</p>
+	         <p class="pi_title">结束</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getExtAttr("End") %></div>
+	      <div class="weui_cell_ft pi_value" data-type="datetime-local" data-name="EndTime"><%=party.getExtAttr("End") %></div>
        </a>
-       <a class="weui_cell">
+       <a class="weui_cell" xname="pi">
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>地点</p>
+	         <p class="pi_title">地点</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getGatheringplace() %></div>
+	      <div class="weui_cell_ft pi_value" data-type="text" data-name="GatheringPlace"><%=party.getGatheringplace() %></div>
        </a>
-       <a class="weui_cell">
+       <a class="weui_cell" xname="pi">
 	      <div class="weui_cell_bd weui_cell_primary">
-	         <p>备注</p>
+	         <p class="pi_title">备注</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getRemarks().replaceAll("\n", "<br/>") %></div>
+	      <div class="weui_cell_ft pi_value" data-type="text" data-name="Remarks"><%=party.getRemarks().replaceAll("\n", " ") %></div>
        </a>
     </div>
     
@@ -82,6 +82,17 @@ boolean isManager = userId == party.getCreater();
        </a>
     </div>
   </div>
+  
+<script type="text/html" id="pias">
+<form role="form" class="form-horizontal" id="frmPI" name="frmPI">
+				   <div class="sr-only">
+				     <input type="text" maxlength="10" class="form-control" name="PartyId" value="<%=partyId%>"/>
+				   </div>
+                  <div class="weui_cell">
+	                <div class="weui_cell_bd weui_cell_primary" id="pi_area"></div>
+	              </div>
+                </form>
+</script>   
 
 <script language="javascript">
 
@@ -99,154 +110,74 @@ boolean isManager = userId == party.getCreater();
 	        // 用户取消分享后执行的回调函数
 	    }
 	};
-
-var partyInfo = {};
-var selfInfo = {};
-
-var lastPartyInfo = {
-  Theme : "<%=party.getTheme()%>",
-  StartTime : "<%=party.getStarttime()%>",
-  EndTime: "<%=party.getEndtime()%>",
-  GatheringPlace : "<%=party.getGatheringplace()%>",
-  Remarks : ""
-};
-
-var lastSelfInfo = {
-  State : "<%=party.getExtAttr("SelfState")%>",
-  PCount : "<%=party.getExtAttr("SelfCount")%>"
-};
   
 $(document).ready(function(){
   wx.onMenuShareAppMessage(sharePartyMsg);
   wx.onMenuShareTimeline(sharePartyMsg);
-  
-  //给tr增加一个click事件以在ios上触发点击，否则编辑的modal出不来
-  $("tr").click(function(){});
-  
+    
   $("#btnPIShare").click(function(){
     wx.onMenuShareAppMessage(sharePartyMsg);
     wx.onMenuShareTimeline(sharePartyMsg);
     showDialogInfo("请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友参加聚会！");
   }); 
+  
+  $("[xname='pi']").click(function(){
+    $piObj = $(this).find(".pi_value");
+    var title = $(this).find(".pi_title").text();
+    var value = $piObj.text();
+    var name = $piObj.data("name");
+    var type = $piObj.data("type");
+
+    $piObjEdit = $("<input class='weui_input' type='"+type+"' name='"+name+"' value='"+value+"'/>");
+    var $asAreaSub = $($("#pias").html());
+    $("#as_name").text(title);
+    $("#as_area").append($asAreaSub);
+    $("#pi_area").append($piObjEdit);
+    $piObjEdit.focus();
+    showActionSheet($asAreaSub);
     
-  $("#btnTheme").click(function(){
-    var value = $("#Theme").val();
-    if(value != lastPartyInfo.Theme){
-      lastPartyInfo.Theme = value;
-      partyInfo.Theme = value;
-      $("#tdTheme").text(value);
-      save();
-    }
-    $('#mTheme').modal('hide');
-  });
-  
-  $("#btnTime").click(function(){
-    var value = $("#StartTime").val();
-    if(value == ""){
-      $("#StartTime").focus();
-	  return;
-    }
-    if(value != lastPartyInfo.StartTime){
-      lastPartyInfo.StartTime = value;
-      partyInfo.StartTime = value+":00";
-      $("#tdStartTime").text(value);
-    }
-    value = $("#EndTime").val();
-    if(value != lastPartyInfo.EndTime){
-      lastPartyInfo.EndTime = value;
-      partyInfo.EndTime = value;
-      if(value.length > 0)
-        partyInfo.EndTime = partyInfo.EndTime + ":00";
-      $("#tdEndTime").text(value);
-    }
-    save();
-    $('#mTime').modal('hide');
-  });
-  
-  $("#btnPlace").click(function(){
-    var value = $("#GatheringPlace").val();
-    if(value != lastPartyInfo.GatheringPlace){
-      lastPartyInfo.GatheringPlace = value;
-      partyInfo.GatheringPlace = value;
-      $("#tdPlace").text(value);
-      save();
-    }
-    $('#mPlace').modal('hide');
-  });
-  
-  $("#btnRemarks").click(function(){
-    var value = $("#Remarks").val();
-    if(value != lastPartyInfo.Remarks){
-      lastPartyInfo.Remarks = value;
-      partyInfo.Remarks = value;
-      $("#tdRemarks").text(value);
-      save();
-    }
-    $('#mRemarks').modal('hide');
-  });
-  
-  $("#btnSelf").click(function(){
-    var changed = false;
-    var value = $("#PState").val();
-    if(value != lastSelfInfo.State){
-      lastSelfInfo.State = value;
-      selfInfo.State = value;
-      $("#tdState").text($("#PState option:selected").text());
-      changed = true;
-    }
-    selfInfo.State = value;
-    
-    value = $("#PCount").val();//parseInt
-    if(value == "" || value < 0)
-      value = 0;
-    if(lastSelfInfo.State == 0)
-      value = 0;
-    else if(value == 0)
-      value = 1;
-    $("#PCount").val(value);
-    if(value != lastSelfInfo.PCount){
-      lastSelfInfo.PCount = value;
-      selfInfo.PCount = value;
-      $("#tdCount").text(value);
-      changed = true;
-    }
-    selfInfo.PCount = value;
-    if(changed)
-      save();
-    $('#mSelf').modal('hide');
+    $("#btnASSave").one('click',saveParty);
   });
 });
 
-//直接关闭时这里不起作用
-//$(window).unload(save);
-
-function save() { 
-  var isChanged = false;
-  for (var prop in partyInfo){
-    isChanged = true;
-    partyInfo.PartyId = <%=partyId%>;
-    break;
-  }
-  if(isChanged){
-    $.ajax({ 
+$("#btnASSave").click(function(){alert(1);
+   		var value = $('#frmPI input[name=Theme]').val();
+   		if(value != undefined && value == ""){
+   		  $('#frmPI input[name=Theme]').focus();
+   		  return;
+   		}
+   		value = $('#frmPI input[name=StartTime]').val();
+   		if(value != undefined && value == ""){
+   		  $('#frmPI input[name=StartTime]').focus();
+   		  return;
+   		}
+	    var datas = JSON.stringify($('#frmPI').serializeObject());
+	    if(datas == "{}")
+	      return;
+	    $.ajax({ 
 				type: "post", 
-				async: true,
+				async: false,
 				processData: false,
 				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=saveParty",
-				data: JSON.stringify(partyInfo), 
+				data: datas, 
 				contentType: "text/html; charset=UTF-8",
 				success: function(data, textStatus){
-				  partyInfo = {};
-			    },
-			    error:function(httpRequest,errType,ex ){
-			    }
-	}); 
-  }
-  isChanged = false;
-  for (var prop in selfInfo){
-    isChanged = true;
-    break;
-  }
+				  if(textStatus == "success"){
+				    if(data.flag == true){
+				      $piObj.text($piObjEdit.val());
+				      hideActionSheet();
+				    }
+				    else
+				      alert(data.msg);
+				  }
+	      },
+	      error:function(httpRequest,errType,ex ){
+	        alert(ex);
+	      }
+	  }); 
+});
+    
+function save() { 
   if(isChanged){
     $.ajax({ 
 				type: "post", 

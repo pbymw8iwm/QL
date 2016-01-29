@@ -45,6 +45,30 @@
         </div>
     </div>
     <!--END dialog2-->
+    
+    <div id="toast" style="display: none;">
+        <div class="weui_mask_transparent"></div>
+        <div class="weui_toast">
+            <i class="weui_icon_toast"></i>
+            <p class="weui_toast_content">处理成功</p>
+        </div>
+    </div>
+    
+    <div id="actionSheet_wrap">
+        <div class="weui_mask_transition" id="mask"></div>
+        <div class="weui_actionsheet" id="weui_actionsheet">
+            <div class="page-header-group">
+              <div class="left" id="as_name"></div>
+              <div class="right"><a href='javascript:;' class="weui_btn weui_btn_mini weui_btn_plain_primary" id="btnASSave">保存</a></div>
+            </div>
+            <div class="bd">
+              <div class="weui_cells" id="as_area"></div>
+            </div>
+            <div class="weui_actionsheet_action">
+                <div class="weui_actionsheet_cell" id="actionsheet_cancel"><div class="weui_icon_cancel"></div></div>
+            </div>
+        </div>
+    </div>
   
 <div class="btn3 clearfix">
     <div class="menu">

@@ -11,13 +11,12 @@
   </head>
   
   <body>
-    <div class="container">
-		<p class="help-block text-center">
+	<p class="text-center" style="padding-top:10px;">
+		<font size="5">聚会助手</font>
 		<br/>		
 		<img src="<%=request.getContextPath() %>/images/QR.png" class="img-rounded" width="200" height="200"/>
-		<br/>		
-		<font size="5">聚会助手</font>
-		</p>
-	</div>
+		<br/>	
+		<div class="help-block text-center">长按识别二维码，关注聚会助手</div>	
+	</p>
   </body>
 </html>

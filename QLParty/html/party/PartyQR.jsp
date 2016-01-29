@@ -25,7 +25,7 @@ if(party == null){
     <%@ include file="/CommonHead.jsp"%>
   </head>
   <body>
-<div style="background-color:#5bc0de;width:100%;height:100%;padding-top:50px">
+<div style="background-color:#5bc0de;width:100%;height:100%;padding-top:30px">
   <div style="border-radius: 6px;background-color:#ffffff;width:80%;margin-right:auto;margin-left:auto;padding-top:10px;padding-bottom:10px">
 		  <h3 class="text-center"><%=party.getTheme() %></h3>
 		    <p class="text-center">
@@ -37,7 +37,7 @@ if(party == null){
 				<button type="button" class="btn btn-link" id="btnInfo" data-toggle="modal" data-target="#infoModal">查看参与情况</button>
 			</p>
 		<p class="text-center">
-		      参加聚会请长按识别下图二维码
+		      参加聚会请长按识别下图二维码<br/>
 		  <img src="<%=WechatCommons.Url_ShowQr + party.getQrticket()%>" class="img-rounded" width="200" height="200"/>
 		  <br/>
 		      扫码参加聚会，分享精彩时刻
@@ -70,10 +70,10 @@ $(document).ready(function(){
     var mask = $('#mask');
                     var weuiActionsheet = $('#weui_actionsheet');
                     weuiActionsheet.addClass('weui_actionsheet_toggle');
-                    mask.show().addClass('weui_fade_toggle').click(function () {
+                    mask.show().addClass('weui_fade_toggle').one('click',function () {
                         hideActionSheet(weuiActionsheet, mask);
                     });
-                    $('#actionsheet_cancel').click(function () {
+                    $('#actionsheet_cancel').one('click',function () {
                         hideActionSheet(weuiActionsheet, mask);
                     });
                     weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');

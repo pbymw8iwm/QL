@@ -67,7 +67,7 @@ int height2 = rows * 100;
 		   </div>
 	      </div>
 	     </div>
-	 <%if("".equals(partyName) == false){ %>    
+	 <%if("".equals(partyName) == false && count2 > 0){ %>    
        <div class="weui_cells_title">待定 (<%=count2 %>人)</div>
 	    <div class="weui_cells">
 	      <div class="weui_cell">

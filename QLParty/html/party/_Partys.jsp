@@ -4,7 +4,9 @@
     	  <div class="weui_cell">
 	          <div class="weui_cell_hd"><img src="<%=party.getImagedata() %>" class="img-circle" style="width:50px;margin-right:8px;display:block"/></div>
 	          <div class="weui_cell_bd weui_cell_primary">
-	            <p><a href='javascript:gotoPage("/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'><strong><%=party.getTheme() %></strong></a></p>
+	            <p><a href='javascript:gotoPage("/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'><strong><%=party.getTheme() %></strong></a>
+	              <small style="padding-left:5px;"><span class="glyphicon glyphicon-glass <%=stateClass %>" aria-hidden="true"></span></small>
+	            </p>
 	          </div>
 	          <div class="weui_cell_ft">
 		          <a xname="piShare" data-id="<%=party.getPartyid()%>" data-theme="<%=party.getTheme()%>" data-img="<%=party.getImagedata()%>">
