@@ -61,9 +61,7 @@
               <div class="left" id="as_name"></div>
               <div class="right"><a href='javascript:;' class="weui_btn weui_btn_mini weui_btn_plain_primary" id="btnASSave">保存</a></div>
             </div>
-            <div class="bd">
-              <div class="weui_cells" id="as_area"></div>
-            </div>
+            <div class="bd" id="as_area"></div>
             <div class="weui_actionsheet_action">
                 <div class="weui_actionsheet_cell" id="actionsheet_cancel"><div class="weui_icon_cancel"></div></div>
             </div>

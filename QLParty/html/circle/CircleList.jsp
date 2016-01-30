@@ -13,7 +13,7 @@ ISocialCircleValue[] scs = PartyAction.getSocialCircles(true);
 	  	  <table>
 		    <tr>
 		      <td rowspan="2"><img id="clImg<%=sc.getCid() %>" src="<%=sc.getImagedata() %>" class="img-thumbnail" style="width:80px;height:80px;margin-right:10px"/></td>
-		      <td><h4><a href='javascript:gotoPage("/circle/CircleInfo.jsp?cId=<%=sc.getCid()%>","#ci");' id="clA<%=sc.getCid()%>"><strong><%=sc.getCname() %></strong></a></h4></td>
+		      <td><h4><a href='javascript:gotoPage("/circle/CircleInfo.jsp?cId=<%=sc.getCid()%>","#ci");' id="clA<%=sc.getCid()%>"><strong class="txt-primary"><%=sc.getCname() %></strong></a></h4></td>
 		    </tr>
 		    <tr>
 		      <td><%=sc.getExtAttr("TypeName") %>

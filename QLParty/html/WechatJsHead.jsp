@@ -16,7 +16,7 @@ String[] s = WechatUtils.getJsSignature(request);
 <script language="javascript">
 
 wx.config({
-      debug: false,
+      debug: true,
       appId: '<%=WechatCommons.AppId%>',
       timestamp: <%=s[0] %>,
       nonceStr: '<%=s[1] %>',

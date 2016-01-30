@@ -65,11 +65,11 @@ boolean isManager = userId == party.getCreater();
 		          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 	          </div>
           </a>
-       <a class="weui_cell weui_cells_access">
+       <a class="weui_cell weui_cells_access" xname="piss">
 	      <div class="weui_cell_bd weui_cell_primary">
 	         <p>我</p>
 	      </div>
-	      <div class="weui_cell_ft"><%=party.getExtAttr("SelfStateName") %>(<%=party.getExtAttr("SelfCount") %>人)</div>
+	      <div class="weui_cell_ft"><span id="piSSN"><%=party.getExtAttr("SelfStateName") %></span>(<span id="piSC"><%=party.getExtAttr("SelfCount") %></span>人)</div>
        </a>
     </div>
     
@@ -84,14 +84,56 @@ boolean isManager = userId == party.getCreater();
   </div>
   
 <script type="text/html" id="pias">
-<form role="form" class="form-horizontal" id="frmPI" name="frmPI">
+<div class="weui_cells">
+  <form role="form" class="form-horizontal" id="frmPI" name="frmPI">
 				   <div class="sr-only">
 				     <input type="text" maxlength="10" class="form-control" name="PartyId" value="<%=partyId%>"/>
 				   </div>
                   <div class="weui_cell">
 	                <div class="weui_cell_bd weui_cell_primary" id="pi_area"></div>
 	              </div>
-                </form>
+  </form>
+</div>
+</script>   
+
+<script type="text/html" id="sias">
+<div class="weui_cells weui_cells_radio">
+            <label class="weui_cell weui_check_label">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>参加</p>
+                </div>
+                <div class="weui_cell_ft">
+                    <input type="radio" class="weui_check" name="piSState" value="1" data-name="参加">
+                    <span class="weui_icon_checked"></span>
+                </div>
+            </label>
+            <label class="weui_cell weui_check_label">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>待定</p>
+                </div>
+                <div class="weui_cell_ft">
+                    <input type="radio" class="weui_check" name="piSState" value="2" data-name="待定">
+                    <span class="weui_icon_checked"></span>
+                </div>
+            </label>
+            <label class="weui_cell weui_check_label">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>不参加</p>
+                </div>
+                <div class="weui_cell_ft">
+                    <input type="radio" class="weui_check" name="piSState" value="0" data-name="不参加">
+                    <span class="weui_icon_checked"></span>
+                </div>
+            </label>
+        </div>
+<div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">人数</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                  <input class="weui_input" maxlength="10" type="tel" name="piSCount"/>
+                </div>
+            </div>
+        </div>
 </script>   
 
 <script language="javascript">
@@ -134,13 +176,7 @@ $(document).ready(function(){
     $("#as_area").append($asAreaSub);
     $("#pi_area").append($piObjEdit);
     $piObjEdit.focus();
-    showActionSheet($asAreaSub);
-    
-    $("#btnASSave").one('click',saveParty);
-  });
-});
-
-$("#btnASSave").click(function(){alert(1);
+    showActionSheet($asAreaSub, function(){
    		var value = $('#frmPI input[name=Theme]').val();
    		if(value != undefined && value == ""){
    		  $('#frmPI input[name=Theme]').focus();
@@ -175,6 +211,53 @@ $("#btnASSave").click(function(){alert(1);
 	        alert(ex);
 	      }
 	  }); 
+	});
+  });
+  
+  $("[xname='piss']").click(function(){
+    var state = $("#piSSN").text();
+    var count = $("#piSC").text();
+
+    var $asAreaSub = $($("#sias").html());
+    $("#as_name").text("我的参与情况");
+    $("#as_area").append($asAreaSub);
+    
+    var radioIndex = 2;
+    if(state == "参加")
+      radioIndex = 0;
+    else if(state == "待定")
+      radioIndex = 1;
+    $("input[name=piSState]:eq("+radioIndex+")").attr("checked",'checked');
+    $("input[name=piSCount]").val(count);
+    
+    showActionSheet($asAreaSub, function(){
+   		state = $('input[name=piSState]:checked').val();
+   		count = parseInt($('input[name=piSCount]').val());
+   		if(state != "不参加" && (count == NaN || count <= 0))
+   		  count = 1;
+	    $.ajax({ 
+				type: "post", 
+				async: false,
+				processData: false,
+				url: _gModuleName+"/business/com.ql.party.web.PartyAction?action=setPartyMember&partyId=<%=partyId%>&state="+state+"&count="+count,
+				contentType: "text/html; charset=UTF-8",
+				success: function(data, textStatus){
+				  if(textStatus == "success"){
+				    if(data.flag == true){
+				      $("#piSSN").text($('input[name=piSState]:checked').data("name"));
+				      $("#piSC").text(count);
+				      hideActionSheet();
+				    }
+				    else
+				      alert(data.msg);
+				  }
+	      },
+	      error:function(httpRequest,errType,ex ){
+	        alert(ex);
+	      }
+	  }); 
+	});
+  });
 });
     
 function save() { 

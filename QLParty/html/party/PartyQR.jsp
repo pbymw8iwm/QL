@@ -67,7 +67,7 @@ $(document).ready(function(){
     var div = $("#divInfo");
     if(div.html() == "")
       div.load("<%=request.getContextPath()%>/party/MemberInfo.jsp?partyId=<%=partyId%>");
-    var mask = $('#mask');
+    				var mask = $('#mask');
                     var weuiActionsheet = $('#weui_actionsheet');
                     weuiActionsheet.addClass('weui_actionsheet_toggle');
                     mask.show().addClass('weui_fade_toggle').one('click',function () {
@@ -85,7 +85,9 @@ $(document).ready(function(){
                             mask.hide();
                         }).on('webkitTransitionEnd', function () {
                             mask.hide();
-                        })
+                        });
+                        mask.unbind("click");
+                        $('#actionsheet_cancel').unbind("click");
                     }
   });
 });

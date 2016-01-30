@@ -128,7 +128,8 @@ boolean isManager = userId == sc.getCreater();
 </script>
 
 <script type="text/html" id="cias">
-<form role="form" class="form-horizontal" id="frmCISI" name="frmCISI">
+<div class="weui_cells">
+  <form role="form" class="form-horizontal" id="frmCISI" name="frmCISI">
 				   <div class="sr-only">
 				     <input type="text" maxlength="10" class="form-control" name="CId" value="<%=cId%>"/>
 				     <input type="text" maxlength="10" class="form-control" name="UserId" value="<%=userId%>"/>
@@ -137,6 +138,7 @@ boolean isManager = userId == sc.getCreater();
 	                <div class="weui_cell_bd weui_cell_primary" id="ci_area"></div>
 	              </div>
                 </form>
+</div>
 </script>    
 
 <script language="javascript">
@@ -178,10 +180,7 @@ $(document).ready(function(){
     $("#as_area").append($asAreaSub);
     $("#ci_area").append($ciObjEdit);
     $ciObjEdit.focus();
-    showActionSheet($asAreaSub);
-  });
-
-  $("#btnASSave").click(function(){alert(2);
+    showActionSheet($asAreaSub, function(){
    		var value = $('#frmCISI input:text[name=UserName]').val();
    		if(value != undefined && value == ""){
    		  $('#frmCISI input:text[name=UserName]').focus();
@@ -211,6 +210,7 @@ $(document).ready(function(){
 	        alert(ex);
 	      }
 	  }); 
+  });
   });
   
   $("#btnCIQuit").click(function(){

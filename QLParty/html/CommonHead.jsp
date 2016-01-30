@@ -4,7 +4,7 @@ response.setHeader("Cache-Control","no-cache");
 response.setDateHeader("Expires", -10);
 %>
 
-<link rel="stylesheet" href="<%=request.getContextPath()%>/style/weui.min.css">
+<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/0.3.0/weui.min.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/style/weui_sample.css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/style/ql.css">
 				

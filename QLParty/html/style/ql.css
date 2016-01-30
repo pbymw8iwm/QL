@@ -212,6 +212,14 @@ input[type="checkbox"],input[type="radio"] {
   color: #737373;
 }
 
+.txt-primary {
+  color: #337ab7;
+}
+
+.txt-success{
+	color: #5cb85c;
+}
+
 .txt-info{
 	color: #5bc0de;
 }

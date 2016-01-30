@@ -101,7 +101,9 @@ function showDialogInfo(info){
     });
 }
 
-function showActionSheet(objEdit){
+function showActionSheet(objEdit,saveFunc){
+	if(saveFunc != null)
+		$("#btnASSave").bind("click",saveFunc);
 	var mask = $('#mask');
     var weuiActionsheet = $('#weui_actionsheet');
     weuiActionsheet.addClass('weui_actionsheet_toggle');
@@ -114,8 +116,6 @@ function showActionSheet(objEdit){
     weuiActionsheet.unbind('transitionend').unbind('webkitTransitionEnd');
 
 	function _hideActionSheet(weuiActionsheet, mask) {
-		if(objEdit != null)
-		  objEdit.remove();
         weuiActionsheet.removeClass('weui_actionsheet_toggle');
         mask.removeClass('weui_fade_toggle');
         weuiActionsheet.on('transitionend', function () {
@@ -123,6 +123,11 @@ function showActionSheet(objEdit){
         }).on('webkitTransitionEnd', function () {
             mask.hide();
         });
+		if(objEdit != null)
+			  objEdit.remove();
+		$("#btnASSave").unbind("click");
+		mask.unbind("click");
+        $('#actionsheet_cancel').unbind("click");
     }
 }
 
