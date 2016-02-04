@@ -26,6 +26,6 @@ CREATE TABLE WechatUser(
 );
 
 insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
-  values('SEQ_WUSER',10,1,0);
+  values('SEQ_WUSER',1,10,0);
 insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
-  values('WECHATUSER',1,'S','SEQ_WUSER',1); 
+  values('WECHATUSER',1,'S','SEQ_WUSER',10);  

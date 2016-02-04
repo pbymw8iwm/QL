@@ -1,7 +1,5 @@
 -- sequence
 insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
-  values('SEQ_WUSER',1,10,0);
-insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
   values('SEQ_SC',1,10,0);
 insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
   values('SEQ_CM',1,10,0);
@@ -12,8 +10,6 @@ insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
 insert into sys_sequences(sequence_name,start_by,increment_by,last_number)
   values('SEQ_MSG',1,10,0);
   
-insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
-  values('WECHATUSER',1,'S','SEQ_WUSER',10); 
 insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
   values('SOCIALCIRCLE',1,'S','SEQ_SC',10); 
 insert into cfg_id_generator(table_name,domain_id,generator_type,sequence_name,step_by)
