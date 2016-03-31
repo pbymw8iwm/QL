@@ -49,7 +49,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				    	showToast();
-				    	gotoPage("/circle/CircleInfo.jsp?cId="+data.msg,"#ci");
+				    	gotoPage("/party/circle/CircleInfo.jsp?cId="+data.msg,"#ci");
 				    }
 				    else
 				      alert(data.msg);

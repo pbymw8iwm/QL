@@ -58,7 +58,7 @@ else
 	      <%}%>
 	    </div>
     </div>
-		<div class="navbar-fixed-bottom text-center sr-only" id="divCMDel">
+		<div class="navbar-fixed-bottom text-center sr-only" style="margin-bottom: 50px;" id="divCMDel">
 		   <a class="weui_btn weui_btn_mini weui_btn_warn" id="btnCMSave">删除</a>&nbsp;&nbsp;&nbsp;&nbsp;
 		   <a class="weui_btn weui_btn_mini weui_btn_default" id="btnCMCancel">取消</a>
 		</div>
@@ -102,7 +102,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      showToast();
-				      gotoPage("/circle/MemberInfo.jsp?cId=<%=cId%>&cName=<%=cName %>&mId=<%=mId %>","#cm");
+				      gotoPage("/party/circle/MemberInfo.jsp?cId=<%=cId%>&cName=<%=cName %>&mId=<%=mId %>","#cm");
 				    }
 				    else
 				      alert(data.msg);
@@ -134,7 +134,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      showToast();
-				      gotoPage("/circle/CircleInfo.jsp?cId=<%=cId%>","#ci");
+				      gotoPage("/party/circle/CircleInfo.jsp?cId=<%=cId%>","#ci");
 				    }
 				    else
 				      alert(data.msg);

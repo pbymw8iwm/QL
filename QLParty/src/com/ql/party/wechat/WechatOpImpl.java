@@ -44,12 +44,12 @@ public class WechatOpImpl implements IWechatOp {
             	wechatUser = QLServiceFactory.getQLSV().getUser(openId);
             }
             if(wechatUser.isNew()){
-            	result = "欢迎使用聚会助手! \n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
+            	result = "欢迎使用汇聚时光! \n\n将照片传至【我的相册】，分组管理，快速查找；不占用手机空间，且永不丢失 \n\n使用【聚会助手】，不错过亲友聚会的精彩";
             }
             else if(wechatUser.getState() == 0){
         		wechatUser.setState(1);
         		isRecover = true;
-        		result = "欢迎回来^_^\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
+        		result = "欢迎回来^_^";
         	}
             if(wechatUser.isNew() || wechatUser.isModified()){
             	//获取微信用户信息
@@ -149,7 +149,7 @@ public class WechatOpImpl implements IWechatOp {
         	log.error(ex.getMessage(),ex);
         }
         if(result == null)
-        	result = "欢迎使用聚会助手！\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
+        	result = "欢迎使用汇聚时光! \n\n将照片传至【我的相册】，分组管理，快速查找；不占用手机空间，且永不丢失 \n\n使用【聚会助手】，不错过亲友聚会的精彩";
 		return result;
 	}
 	
@@ -159,7 +159,7 @@ public class WechatOpImpl implements IWechatOp {
 	 * @return
 	 */
 	public String processMsg(ReceiveXmlEntity xmlEntity){
-		return "欢迎使用聚会助手！\n请点击<a href='"+WechatCommons.getUrlView("0")+"'>这里</a>进入应用！";
+		return "将照片传至【我的相册】，分组管理，快速查找；不占用手机空间，且永不丢失 \n\n使用【聚会助手】，不错过亲友聚会的精彩";
 	}
 	
 	private String dealScan(String param,IWechatUserValue user)throws Exception{
@@ -198,41 +198,50 @@ public class WechatOpImpl implements IWechatOp {
 	 * @return
 	 */
 	public String getOpUrl(String param, IWechatUserValue wechatUser){
-		String url = "Main.jsp";
-		if(param.startsWith(Type_CircleInfo)){
-			String strCId = param.substring(Type_CircleInfo.length());
-        	url += "?cId="+strCId+"#ci";
+		String url = null;
+		if(param.equals(Type_Album)){
+			url = "album/Main.jsp";
 		}
-		else if(param.startsWith(Type_PartyInfo)){
-			String strPId = param.substring(Type_PartyInfo.length());
-        	url += "?partyId="+strPId+"#pi";
-		}
-		else if(param.startsWith(Type_JoinCircle)){
-			String strCId = param.substring(Type_JoinCircle.length());
-			try {
-				boolean isM = PartyServiceFactory.getPartySV().isJoinedCircle(Long.parseLong(strCId), wechatUser.getUserid());
-				//已经加入圈子
-				if(isM)
-					url += "?cId="+strCId+"#ci";
-				else
-					url = "circle/CircleQR.jsp?cId="+strCId;
-			} 
-			catch (Exception e) {
-				log.error(e.getMessage(),e);
+		else{
+			url = "party/Main.jsp";
+			if(param.equals(Type_Party)){
+				
 			}
-		}
-		else if(param.startsWith(Type_JoinParty)){
-			String strPId = param.substring(Type_JoinParty.length());
-			try {
-				boolean isM = PartyServiceFactory.getPartySV().isJoinedParty(Long.parseLong(strPId), wechatUser.getUserid());
-				//已经加入聚会
-				if(isM)
-					url += "?partyId="+strPId+"#pi";
-				else
-					url = "party/PartyQR.jsp?partyId="+strPId;
-			} 
-			catch (Exception e) {
-				log.error(e.getMessage(),e);
+			else if(param.startsWith(Type_CircleInfo)){
+				String strCId = param.substring(Type_CircleInfo.length());
+	        	url += "?cId="+strCId+"#ci";
+			}
+			else if(param.startsWith(Type_PartyInfo)){
+				String strPId = param.substring(Type_PartyInfo.length());
+	        	url += "?partyId="+strPId+"#pi";
+			}
+			else if(param.startsWith(Type_JoinCircle)){
+				String strCId = param.substring(Type_JoinCircle.length());
+				try {
+					boolean isM = PartyServiceFactory.getPartySV().isJoinedCircle(Long.parseLong(strCId), wechatUser.getUserid());
+					//已经加入圈子
+					if(isM)
+						url += "?cId="+strCId+"#ci";
+					else
+						url = "party/circle/CircleQR.jsp?cId="+strCId;
+				} 
+				catch (Exception e) {
+					log.error(e.getMessage(),e);
+				}
+			}
+			else if(param.startsWith(Type_JoinParty)){
+				String strPId = param.substring(Type_JoinParty.length());
+				try {
+					boolean isM = PartyServiceFactory.getPartySV().isJoinedParty(Long.parseLong(strPId), wechatUser.getUserid());
+					//已经加入聚会
+					if(isM)
+						url += "?partyId="+strPId+"#pi";
+					else
+						url = "party/party/PartyQR.jsp?partyId="+strPId;
+				} 
+				catch (Exception e) {
+					log.error(e.getMessage(),e);
+				}
 			}
 		}
 		return url;
@@ -247,25 +256,22 @@ public class WechatOpImpl implements IWechatOp {
 		String url = null;
 		if(param.startsWith(Type_JoinCircle)){
 			String strCId = param.substring(Type_JoinCircle.length());
-        	url = "circle/CircleQR.jsp?cId="+strCId;
+        	url = "party/circle/CircleQR.jsp?cId="+strCId;
 		}
 		else if(param.startsWith(Type_JoinParty)){
 			String strPId = param.substring(Type_JoinParty.length());
-        	url = "party/PartyQR.jsp?partyId="+strPId;
+        	url = "party/party/PartyQR.jsp?partyId="+strPId;
 		}
 		return url;
 	}
 	
-	public static final String Type_NewParty = "1";
-	public static final String Type_CurrentParty = "2";
-	public static final String Type_PartyList = "3";
-	public static final String Type_PartyInfo = "4_";
-	public static final String Type_JoinParty = "5_";
-	
-	public static final String Type_NewCircle = "11";
-	public static final String Type_CircleList = "12";
-	public static final String Type_CircleInfo = "13_";
-	public static final String Type_JoinCircle = "14_";
+	public static final String Type_Album = "1";
+
+	public static final String Type_Party = "2";
+	public static final String Type_PartyInfo = "21_";
+	public static final String Type_JoinParty = "22_";
+	public static final String Type_CircleInfo = "23_";
+	public static final String Type_JoinCircle = "24_";
 
 	public static final String Type_Feedback = "99";
 }

@@ -13,12 +13,12 @@ ISocialCircleValue[] scs = PartyAction.getSocialCircles(true);
 	  	  <table>
 		    <tr>
 		      <td rowspan="2"><img id="clImg<%=sc.getCid() %>" src="<%=sc.getImagedata() %>" class="img-thumbnail" style="width:80px;height:80px;margin-right:10px"/></td>
-		      <td><h4><a href='javascript:gotoPage("/circle/CircleInfo.jsp?cId=<%=sc.getCid()%>","#ci");' id="clA<%=sc.getCid()%>"><strong class="txt-primary"><%=sc.getCname() %></strong></a></h4></td>
+		      <td><h4><a href='javascript:gotoPage("/party/circle/CircleInfo.jsp?cId=<%=sc.getCid()%>","#ci");' id="clA<%=sc.getCid()%>"><strong class="txt-primary"><%=sc.getCname() %></strong></a></h4></td>
 		    </tr>
 		    <tr>
 		      <td><%=sc.getExtAttr("TypeName") %>
-		  	<a style="margin-left:8px" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'><%=sc.getExtAttr("MemberCount") %>个成员</a>
-		  	<a style="margin-left:8px" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'><%=sc.getExtAttr("PartyCount") %>个聚会</a>
+		  	<a style="margin-left:8px" href='javascript:gotoPage("/party/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'><%=sc.getExtAttr("MemberCount") %>个成员</a>
+		  	<a style="margin-left:8px" href='javascript:gotoPage("/party/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'><%=sc.getExtAttr("PartyCount") %>个聚会</a>
 		  	<a style="margin-left:8px" href='javascript:;' xname="clShare" data-id="<%=sc.getCid()%>"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></a></td>
 		    </tr>
 		  </table>
@@ -27,4 +27,4 @@ ISocialCircleValue[] scs = PartyAction.getSocialCircles(true);
 	  
 	</div>
 
-<script src="<%=request.getContextPath()%>/circle/CircleList.js" language="JavaScript"></script>
+<script src="<%=request.getContextPath()%>/party/circle/CircleList.js" language="JavaScript"></script>

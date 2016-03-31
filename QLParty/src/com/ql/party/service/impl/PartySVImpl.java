@@ -765,6 +765,8 @@ public class PartySVImpl implements IPartySV{
 	}
 	
 	private String getExpireDate(Timestamp st){
+		if(st == null)
+			return "";
 		SimpleDateFormat df = new SimpleDateFormat("yyyy年MM月dd日");
 		return df.format(new Timestamp(st.getTime() + 24*3600*1000*29L));
 	}

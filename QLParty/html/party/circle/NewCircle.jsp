@@ -42,4 +42,4 @@ ICfStaticDataValue[] sdatas = PartyAction.getStaticDatas("CircleType");
 			</form>
 		</div>
 
-<script src="<%=request.getContextPath()%>/circle/NewCircle.js" language="JavaScript"></script>
+<script src="<%=request.getContextPath()%>/party/circle/NewCircle.js" language="JavaScript"></script>

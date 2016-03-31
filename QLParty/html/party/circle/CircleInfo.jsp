@@ -41,13 +41,13 @@ boolean isManager = userId == sc.getCreater();
 	          </div>
 	          <div class="weui_cell_ft"><span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span></div>
           </a>
-          <a class="weui_cell" href='javascript:gotoPage("/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'>
+          <a class="weui_cell" href='javascript:gotoPage("/party/circle/MemberInfo.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'>
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p>圈友</p>
 	          </div>
 	          <div class="weui_cell_ft"><%=sc.getExtAttr("MemberCount") %>人</div>
           </a>
-          <a class="weui_cell" href='javascript:gotoPage("/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'>
+          <a class="weui_cell" href='javascript:gotoPage("/party/party/PartyList.jsp?cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>","#pl");'>
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p>聚会</p>
 	          </div>
@@ -83,7 +83,7 @@ boolean isManager = userId == sc.getCreater();
         </div>
         <%if(isManager){ %>
         <div class="weui_cells weui_cells_access">
-          <a class="weui_cell" href='javascript:gotoPage("/circle/MemberInfo.jsp?type=2&cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'>
+          <a class="weui_cell" href='javascript:gotoPage("/party/circle/MemberInfo.jsp?type=2&cId=<%=sc.getCid()%>&cName=<%=sc.getCname() %>&mId=<%=sc.getCreater() %>","#cm");'>
 	          <div class="weui_cell_bd weui_cell_primary">
 	            <p>转让圈主</p>
 	          </div>
@@ -229,7 +229,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      showToast();
-				      gotoPage("/circle/CircleList.jsp","#cl");
+				      gotoPage("/party/circle/CircleList.jsp","#cl");
 				    }
 				    else
 				      alert(data.msg);

@@ -74,7 +74,7 @@ int height = rows * 100;
             <p class="weui_toast_content">上传中</p>
         </div>
     </div>
-		<div class="navbar-fixed-bottom text-center sr-only" id="divPPDel">
+		<div class="navbar-fixed-bottom text-center sr-only" style="margin-bottom: 50px;" id="divPPDel">
 		   <a class="weui_btn weui_btn_mini weui_btn_warn" id="btnPPSave">删除</a>&nbsp;&nbsp;&nbsp;&nbsp;
 		   <a class="weui_btn weui_btn_mini weui_btn_default" id="btnPPCancel">取消</a>
 		</div>
@@ -145,7 +145,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      showToast();
-				      gotoPage("/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
+				      gotoPage("/party/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
 				    }
 				    else
 				      alert(data.msg);
@@ -189,7 +189,7 @@ function dealImg(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				      showToast();
-				      gotoPage("/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
+				      gotoPage("/party/party/Photo.jsp?partyId=<%=partyId%>&cId=<%=cId%>&manager=<%=manager%>&partyName=<%=partyName %>","#pp");
 				    }
 				    else
 				      alert(data.msg);

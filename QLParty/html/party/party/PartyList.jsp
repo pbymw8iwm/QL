@@ -47,7 +47,7 @@ boolean hasData = false;
       <div class="page-group">
           <div class="weui_cell">
 	          <div class="weui_cell_bd weui_cell_primary">
-	            <p><a href='javascript:gotoPage("/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'>
+	            <p><a href='javascript:gotoPage("/party/party/PartyInfo.jsp?partyId=<%=party.getPartyid()%>","#pi");'>
 	                 <strong><%=party.getTheme() %></strong>
 	                 <small style="padding-left:5px"><%=df.format(party.getStarttime()) %>
 	                   <span class="glyphicon glyphicon-glass <%=tmp%>" style="padding-left:5px"/>
@@ -55,7 +55,7 @@ boolean hasData = false;
 	            </a></p>
 	          </div>
 	          <div class="weui_cell_ft">
-		          <a href='javascript:gotoPage("/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>&partyName=<%=party.getTheme() %>","#pp");'>
+		          <a href='javascript:gotoPage("/party/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>&partyName=<%=party.getTheme() %>","#pp");'>
 	   		        <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
 	   		      </a>
 	          </div>
@@ -70,7 +70,7 @@ boolean hasData = false;
   
   <div class="weui_cells"></div>
   <div class="bd spacing">
-			   <a href='javascript:gotoPage("/party/NewParty.jsp?cId=<%=cId%>&cName=<%=cName %>","#pn");' class="weui_btn weui_btn_primary">创建聚会</a>
+			   <a href='javascript:gotoPage("/party/party/NewParty.jsp?cId=<%=cId%>&cName=<%=cName %>","#pn");' class="weui_btn weui_btn_primary">创建聚会</a>
   </div>
 </div>
 

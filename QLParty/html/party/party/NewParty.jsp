@@ -71,4 +71,4 @@ else
 			</form>
 	</div>
 
-<script src="<%=request.getContextPath()%>/party/NewParty.js" language="JavaScript"></script>
+<script src="<%=request.getContextPath()%>/party/party/NewParty.js" language="JavaScript"></script>

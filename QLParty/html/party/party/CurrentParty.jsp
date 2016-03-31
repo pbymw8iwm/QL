@@ -22,7 +22,7 @@ String stateClass = null;
             stateClass = "txt-warning";
           hasData = true;
       %>
-      <%@ include file="/party/_Partys.jsp"%>
+      <%@ include file="/party/party/_Partys.jsp"%>
       <%} %>
       <%if(hasData == false){ %>
       <div class="weui_cells"><div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div></div>
@@ -37,11 +37,11 @@ String stateClass = null;
             continue;
           hasData = true;
       %>
-      <%@ include file="/party/_Partys.jsp"%>
+      <%@ include file="/party/party/_Partys.jsp"%>
       <%} %>
       <%if(hasData == false){ %>
       <div class="weui_cells"><div class="page-group">&nbsp;&nbsp;&nbsp;&nbsp;无</div></div>
       <%} %>
   </div>
 
-<script src="<%=request.getContextPath()%>/party/Partys.js" language="JavaScript"></script>
+<script src="<%=request.getContextPath()%>/party/party/Partys.js" language="JavaScript"></script>

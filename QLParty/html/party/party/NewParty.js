@@ -5,16 +5,16 @@ $(document).ready(function(){
   $StartTime = $('#frmParty input[name="StartTime"]');
   $EndTime = $('#frmParty input[name="EndTime"]');
 
-  if($CId.val() == ""){
+  if($CId.val() == undefined || $CId.val() == ""){
         showDialogConfirm("需要先创建圈子<br/>是否前往创建？",function(){
-        		gotoPage("/circle/NewCircle.jsp","#cn");
+        		gotoPage("/party/circle/NewCircle.jsp","#cn");
         });
   }
 
   $("#btnNewParty").click(function(){
-        if($CId.val() == ""){
+        if($CId.val() == undefined || $CId.val() == ""){
 	      showDialogConfirm("需要先创建圈子<br/>是否前往创建？",function(){
-        		gotoPage("/circle/NewCircle.jsp","#cn");
+        		gotoPage("/party/circle/NewCircle.jsp","#cn");
           });
 	      return;
 	    }
@@ -41,7 +41,7 @@ $(document).ready(function(){
 				  if(textStatus == "success"){
 				    if(data.flag == true){
 				        showDialogInfo("聚会创建成功<br/>请点击右上角的三个小点，分享到朋友或朋友圈，邀请朋友参加聚会！");
-				    	gotoPage("/party/PartyInfo.jsp?partyId="+data.msg,"#pi");
+				    	gotoPage("/party/party/PartyInfo.jsp?partyId="+data.msg,"#pi");
 				    }
 				    else
 				      alert(data.msg);

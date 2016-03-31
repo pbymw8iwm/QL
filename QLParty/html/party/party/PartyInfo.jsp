@@ -74,7 +74,7 @@ boolean isManager = userId == party.getCreater();
     </div>
     
     <div class="weui_cells">
-       <a class="weui_cell" href='javascript:gotoPage("/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>&partyName=<%=party.getTheme() %>","#pp");'>
+       <a class="weui_cell" href='javascript:gotoPage("/party/party/Photo.jsp?partyId=<%=party.getPartyid()%>&cId=<%=party.getCid()%>&manager=<%=party.getCreater()%>&partyName=<%=party.getTheme() %>","#pp");'>
 	      <div class="weui_cell_bd weui_cell_primary">
 	         <p>相册</p>
 	      </div>
