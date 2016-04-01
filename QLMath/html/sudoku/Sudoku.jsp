@@ -53,7 +53,7 @@
 	    <div class="page-header">
 		  <h3><span id="title"></span>
 		    &nbsp;&nbsp;&nbsp;&nbsp;
-		    <small>计时：<span id="sTimeUp">0</span></small>
+		    <small>最高纪录：<span id="sRecord">无</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计时：<span id="sTimeUp">0</span></small>
 		  </h3>
 		</div>
 		<div id="content">

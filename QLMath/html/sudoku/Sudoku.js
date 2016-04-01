@@ -3,6 +3,8 @@ var intervalId;
 var nowTime = 0;
 var currentDD;
 var level;
+var record = 0;
+var sdkIndex = 0;
 //定义10个，第一个不用
 var count = [0,0,0,0,0,0,0,0,0,0];
 //记录历史
@@ -11,6 +13,8 @@ var hisValue = new Array();
 
 $(document).ready(function(){
   level = getParam('type');
+  if(level == null)
+	  level = "1";
   if(level == "1"){
     $("#title").text("简单");
   }
@@ -84,11 +88,32 @@ $(document).ready(function(){
       var oldi = currentDD.text();
       currentDD.text(newi);
       //设置统计值
-      statistic(newi,oldi);
+      var isOk = statistic(newi,oldi);
       setSame(newi,oldi);
       //记录历史
       hisId[hisId.length] = currentDD.attr("i");
       hisValue[hisValue.length] = newi;
+      if(isOk){
+    	  if(record == 0 || nowTime < record){
+    		  $("#sRecord").text(nowTime+"s");
+    		  alert("新纪录哎，太厉害了!");
+    		  $.ajax({ 
+    			  async: true,
+                    cache: false,
+	  				type: "get", 
+	  				url: _gModuleName+"/business/com.ql.math.web.MathAction?action=setSudokuRecord&level="+level+"&index="+sdkIndex+"&record="+nowTime,
+	  				contentType: "text/html; charset=UTF-8",
+	  				success: function(data, textStatus){
+	  				},
+	  				error:function(httpRequest,errType,ex ){
+	  					//alert(ex);
+	  				}
+	  		});
+    	  }
+    	  else{
+    		  alert("顺利完成，给自己一个赞吧!");
+    	  }
+      }
     }
   });
   
@@ -96,6 +121,10 @@ $(document).ready(function(){
 });
 
 function generate(){
+	$("#content dd").each(function(index,data){ 
+		  $(this).removeClass("same");
+		  $(this).removeClass("current");
+	  });
   $.ajax({ 
                 cache: false,
 				type: "get", 
@@ -107,6 +136,12 @@ function generate(){
 				    	var datas = data.msg;
 				    	genSDK(datas[0]);
 				    	genAnswer(datas[1],datas[0]);
+				    	if(datas[2] > 0)
+				    		$("#sRecord").text(datas[2]+"s");
+				    	else
+				    		$("#sRecord").text("无");
+				    	record = datas[2];
+				    	sdkIndex = datas[3];
 				    	nowTime = 0;
 				    	intervalId = setInterval("timeCountUp()",1000);
 				    }
@@ -171,7 +206,7 @@ function statistic(newi,oldi){
     $("#s"+oldi).text(count[oldi]);
   }
   if(newi == 0)
-    return;
+    return false;
   count[newi]++;
   $("#s"+newi).text(count[newi]);
   var sum = 0;
@@ -179,8 +214,9 @@ function statistic(newi,oldi){
     sum += count[i];
   }  
   if(sum == 81){
-    check();
+    return check();
   }
+  return false;
 }
 
 function check(){
@@ -193,8 +229,9 @@ function check(){
       && checkBlock(datas)){
 	clearInterval(intervalId);
 	intervalId = null;
-    alert("恭喜完成!");
+    return true;
   }
+  return false;
 }
 
 function checkRow(datas){

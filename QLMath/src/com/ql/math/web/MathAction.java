@@ -1,6 +1,14 @@
 package com.ql.math.web;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
@@ -9,6 +17,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,19 +33,56 @@ public class MathAction extends QLBaseAction {
 	
 	private static Properties pps = new Properties();
 	private static ArrayList[] ErrorSudoku = new ArrayList[3];
+
+	private static Properties ppsRecord = new Properties();
+	private static int[][] SudokuRecord = new int[3][];
+	private static URI SudokuRecordFile = null;
 	
 	static{
+		InputStream in = null;
 		try {
-			InputStream in = MathAction.class.getClassLoader().getResourceAsStream("sudoku");
+			in = MathAction.class.getClassLoader().getResourceAsStream("sudoku");
 			pps.load(in);
-		} catch (Exception e) {
+			
+			SudokuRecordFile = MathAction.class.getClassLoader().getResource("record").toURI();
+			in = MathAction.class.getClassLoader().getResourceAsStream("record");
+			ppsRecord.load(in);
+			
+			loadRecord();
+		} 
+		catch (Exception e) {
 			log.error(e.getMessage(),e);
-		}  
+		} 
+		finally{
+			if(in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					log.error(e.getMessage(),e);
+				}
+		}
+	}
+	
+	private static void loadRecord(){
+		for(int i=0;i<3;i++)
+			_loadRecord(i);
+	}
+	
+	private static void _loadRecord(int level){
+		int count = Integer.parseInt(pps.getProperty("L"+(level+1)));
+		SudokuRecord[level] = new int[count];
+		for(int i=0;i<count;i++){
+			String r = ppsRecord.getProperty("L"+(level+1)+"_R_"+i);
+			if(StringUtils.isNumeric(r))
+				SudokuRecord[level][i] = Integer.parseInt(r);			
+		}
 	}
 	
 	public void getSudoku(HttpServletRequest request,HttpServletResponse response)throws Exception{
 		try{
 			String level = HttpUtil.getAsString(request, "level");
+			if(StringUtils.isNumeric(level) == false)
+				level = "1";
 			int iLevel = Integer.parseInt(level) - 1;
 			int count = Integer.parseInt(pps.getProperty("L"+level));
 			if(ErrorSudoku[iLevel] != null && ErrorSudoku[iLevel].size() == count){
@@ -46,10 +92,11 @@ public class MathAction extends QLBaseAction {
 			}
 			int[] sdk = new int[81];
 			int[] result = new int[81];
+			int index = 0;
 			boolean isCheck = false;
 			while(isCheck == false){
 				Random random = new Random();
-				int index = random.nextInt(count);
+				index = random.nextInt(count);
 				if(ErrorSudoku[iLevel] != null && ErrorSudoku[iLevel].contains(index))
 					continue;
 				
@@ -84,11 +131,62 @@ public class MathAction extends QLBaseAction {
 				}
 			}
 			
-	        HttpJsonUtil.showInfo(response,JsonUtil.getJsonFromList(new Object[]{sdk,result}));
+	        HttpJsonUtil.showInfo(response,JsonUtil.getJsonFromList(new Object[]{sdk,result,SudokuRecord[iLevel][index],index}));
 	    }
 	    catch(Exception ex){
 	      log.error(ex.getMessage(),ex);
 	      HttpJsonUtil.showError(response,ex.getMessage());
 	    }
+	}
+	
+	public void setSudokuRecord(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			int level = HttpUtil.getAsInt(request, "level") - 1;
+			int index = HttpUtil.getAsInt(request, "index");
+			int record = HttpUtil.getAsInt(request, "record");
+			if(SudokuRecord[level][index] == 0 || record < SudokuRecord[level][index]){
+				SudokuRecord[level][index] = record;
+				ppsRecord.setProperty("L"+(level+1)+"_R_"+index, String.valueOf(record));
+				OutputStream fos = null; 
+				try{
+					fos = new FileOutputStream(new File(SudokuRecordFile));
+					ppsRecord.store(fos, null);
+				}
+				finally{
+					if(fos != null)
+						fos.close();
+				}
+			}
+		}
+		catch(Exception ex){
+		      log.error(ex.getMessage(),ex);
+		      HttpJsonUtil.showError(response,ex.getMessage());
+		    }
+	}
+	
+	public void getSudokuRecord(HttpServletRequest request,HttpServletResponse response)throws Exception{
+		try{
+			
+			File file = new File(SudokuRecordFile);
+			// 以流的形式下载文件。
+            InputStream fis = new BufferedInputStream(new FileInputStream(file));
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String("record".getBytes()));
+            response.addHeader("Content-Length", "" + file.length());
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+		}
+		catch(Exception ex){
+		      log.error(ex.getMessage(),ex);
+		      HttpJsonUtil.showError(response,ex.getMessage());
+		    }
 	}
 }
