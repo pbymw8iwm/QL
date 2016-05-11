@@ -15,6 +15,7 @@
   <body>
 <div id="container">
 </div>
+<%@ include file="/WeuiCommon.jsp"%>
   </body>
 </html>
 

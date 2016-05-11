@@ -16,7 +16,7 @@ String[][] labels = new String[][]{
 	  .labelTitle {display:inline;text-align:center;margin:10px;color:green;}
 	  .labelItem {display:inline;text-align:center;margin:10px;}
 	</style>
-	
+<div style="padding-right:10px;">	
     <%for(String[] tmps : labels){
         if(tmps.length <= 1)
           continue;
@@ -28,3 +28,15 @@ String[][] labels = new String[][]{
 	    <%} %>
     </div>
     <%} %>
+  <div class="text-right"><span class="glyphicon glyphicon-cog lconfig" aria-hidden="true"></span></div>
+</div>
+<div style="border-bottom: 2px solid #eee;"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".lconfig").click(function(){
+    //alert(1);  多次 TODO
+    gotoPage("/album/LabelManage.jsp","#LM");
+  });
+});
+</script>

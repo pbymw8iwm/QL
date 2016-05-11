@@ -5,8 +5,9 @@
 	  #dlSelected dd {float:left;text-align:center ;margin:5px;font-size: 16px;}
 	</style>
 
+<div id="divAm">
 <%@ include file="/album/_label.jsp"%>	
-<div style="border-bottom: 2px solid #eee;margin-top:10px;"></div>
+</div>
 
   <select class="weui_select" style="height:25px;margin-top:10px;">
     <option value="1">分组：年</option>
@@ -48,7 +49,7 @@ var PhotoIds = [];
 
 $(document).ready(function(){
 
-  $(".labelItem").click(function(){
+  $("#divAm .labelItem").click(function(){
     var label = $(this).text();
     var found = false;
     $("#dlSelected .labelSlt span").each(function(index,s){

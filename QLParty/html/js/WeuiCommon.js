@@ -45,6 +45,8 @@ function showDialogInfo(info){
     });
 }
 
+var $ActionSheetName = $("#as_name");
+var $ActionSheetArea = $("#as_area");
 function showActionSheet(objEdit,saveFunc){
 	if(saveFunc != null)
 		$("#btnASSave").bind("click",saveFunc);

@@ -172,8 +172,8 @@ $(document).ready(function(){
 
     $piObjEdit = $("<input class='weui_input' type='"+type+"' name='"+name+"' value='"+value+"'/>");
     var $asAreaSub = $($("#pias").html());
-    $("#as_name").text(title);
-    $("#as_area").append($asAreaSub);
+    $ActionSheetName.text(title);
+    $ActionSheetArea.append($asAreaSub);
     $("#pi_area").append($piObjEdit);
     $piObjEdit.focus();
     showActionSheet($asAreaSub, function(){
@@ -219,8 +219,8 @@ $(document).ready(function(){
     var count = $("#piSC").text();
 
     var $asAreaSub = $($("#sias").html());
-    $("#as_name").text("我的参与情况");
-    $("#as_area").append($asAreaSub);
+    $ActionSheetName.text("我的参与情况");
+    $ActionSheetArea.append($asAreaSub);
     
     var radioIndex = 2;
     if(state == "参加")

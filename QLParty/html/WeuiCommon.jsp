@@ -41,7 +41,7 @@
         <div class="weui_actionsheet" id="weui_actionsheet">
             <div class="page-header-group">
               <div class="left" id="as_name"></div>
-              <div class="right"><a href='javascript:;' class="weui_btn weui_btn_mini weui_btn_plain_primary" id="btnASSave">保存</a></div>
+              <div class="right"><a href='javascript:;' class="weui_btn weui_btn_mini weui_btn_plain_primary" id="btnASSave">确定</a></div>
             </div>
             <div class="bd" id="as_area"></div>
             <div class="weui_actionsheet_action">

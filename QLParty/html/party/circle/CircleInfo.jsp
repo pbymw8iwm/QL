@@ -176,8 +176,8 @@ $(document).ready(function(){
 
     $ciObjEdit = $("<input class='weui_input' maxlength='15' type='"+type+"' name='"+name+"' value='"+value+"'/>");
     var $asAreaSub = $($("#cias").html());
-    $("#as_name").text(title);
-    $("#as_area").append($asAreaSub);
+    $ActionSheetName.text(title);
+    $ActionSheetArea.append($asAreaSub);
     $("#ci_area").append($ciObjEdit);
     $ciObjEdit.focus();
     showActionSheet($asAreaSub, function(){

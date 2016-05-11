@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8"%>
 
 <div class="page-header-border">设置标签</div>
-<div class="bd">
+<div class="bd" id="divLS">
 <%@ include file="/album/_label.jsp"%>	
 
 	<style type="text/css">
@@ -9,8 +9,6 @@
 	  #labelSelected dd {float:left;text-align:center ;margin:10px;font-size: 20px;}
 	</style>
 	
-<hr style="margin-top:7px;">
-
 <dl id="labelSelected">
 </dl>
 
@@ -24,9 +22,7 @@
 
 $(document).ready(function(){
 
-  $(".labelItem").click(function(){
-    if($("#labelSelected").length == 0)
-      return;
+  $("#divLS .labelItem").click(function(){
     var label = $(this).text();
     var found = false;
     $("#labelSelected .labelSlt span").each(function(index,s){
@@ -44,6 +40,10 @@ $(document).ready(function(){
   $("#labelSelected").on("click",".labelSlt",function(){
     $(this).remove();
   }); 
+  
+  $("#btnLFinish").click(function(){
+    history.back();
+  });
   
   $("#btnLCancel").click(function(){
     history.back();
