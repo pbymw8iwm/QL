@@ -178,6 +178,7 @@
 		  </dl>
 		</div>
 		<p class="text-center">
+		  <button type="button" class="btn btn-link" id="btnBlank">置空</button>
 		  <button type="button" class="btn btn-link" id="btnBack">回退</button>
 		  <button type="button" class="btn btn-link" id="btnClear">清空</button>
 		  <button type="button" class="btn btn-default" id="btnNext">下一题</button>

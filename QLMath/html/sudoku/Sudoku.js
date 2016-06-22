@@ -52,6 +52,18 @@ $(document).ready(function(){
 	statistic(0,v);
   });
   
+  $("#btnBlank").click(function(){
+	  if(currentDD == null || currentDD.attr("t") == "1")
+		  return;
+	  var oldi = currentDD.text();
+	  currentDD.text("");
+      //设置统计值
+      statistic(0,oldi);
+      //记录历史
+      hisId[hisId.length] = currentDD.attr("i");
+      hisValue[hisValue.length] = 0;
+  });
+  
   $("#btnClear").click(function(){
     if(confirm("确定清空？") == false)
       return;
