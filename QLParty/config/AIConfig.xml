@@ -8,7 +8,7 @@
   <ConfigItem name="MainWebPageUrl" remarks="web程序主页面url" ></ConfigItem>
   <ConfigItem name="LoginOutPageUrl" remarks="web框架的Loginout页面url" >/index.jsp</ConfigItem>
   <ConfigItem name="LoginInPageUrl" remarks="web框架的Loginout页面url" >/index.jsp</ConfigItem>
-  <ConfigItem name="UserManagerClass" remarks="用户登陆的实现类" >com.ql.party.sysmgr.UserManagerImpl</ConfigItem>
+  <ConfigItem name="UserManagerClass" remarks="用户登陆的实现类" >com.ql.sysmgr.UserManagerImpl</ConfigItem>
   <ConfigItem name="HostIPPrefix" remarks="为了获取主机的有些IP地址，需要根据前缀获得有些IP,例如10.9" ></ConfigItem>
   <ConfigItem name="ENHANCE_PACKAGE" remarks="需要增强的包" ></ConfigItem>
   <ConfigItem name="AuthTimeOut" remarks="SSO认证超时时间(秒)" >1800</ConfigItem>
@@ -43,8 +43,8 @@
 
 <ConfigKind name="UNCHECK_URL" remarks="不进行验证的url(包括session和访问权限)">
   <ConfigItem name="/help/Help.jsp" remarks="帮助页面">N</ConfigItem>
-  <ConfigItem name="/circle/CircleQR.jsp" remarks="加入圈子">N</ConfigItem>
-  <ConfigItem name="/party/PartyQR.jsp" remarks="加入聚会">N</ConfigItem>
+  <ConfigItem name="/party/circle/CircleQR.jsp" remarks="加入圈子">N</ConfigItem>
+  <ConfigItem name="/party/party/PartyQR.jsp" remarks="加入聚会">N</ConfigItem>
   <ConfigItem name="/index.jsp" remarks="首页">N</ConfigItem>
   <ConfigItem name="/js/Globe.jsp" remarks="平台">N</ConfigItem>
   <ConfigItem name="/webframe/" remarks="平台">N</ConfigItem>
@@ -118,7 +118,7 @@
 </ConfigKind>
 
 <ConfigKind name="AppFrame55" remarks="AppFrame55配置">
-  <ConfigItem name="ILLEGAL_CHAR_CHECK" remarks="非法字符校验" >document.cookie|iframe</ConfigItem>
+  <ConfigItem name="ILLEGAL_CHAR_CHECK" remarks="非法字符校验" >document.cookie|href|script|select |select/|select\(|select\*|insert |insert/|insert\(|insert\*|update |update/|update\(|update\*|delete |delete/|delete\(|delete\*|truncate |truncate/|truncate\(|truncate\*|exec |exec/|exec\(|exec\*|drop |drop/|drop\(|drop\*</ConfigItem>
 	<ConfigItem name="URL_BY_GET" remarks="仅仅只能通过GET方式处理的URL的列表" >.jsp</ConfigItem>
   <ConfigItem name="CPU_TIME_SUPPORT" remarks="cpu时间是否支持(如果没有,系统支持就使用,系统不支持就不使用)" >false</ConfigItem>
   <ConfigItem name="CACHE_READONLY" remarks="CacheFactory返回只读的map(如果没有,返回只读Map)" >true</ConfigItem>

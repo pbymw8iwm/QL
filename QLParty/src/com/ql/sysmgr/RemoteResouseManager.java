@@ -1,4 +1,4 @@
-package com.ql.party.sysmgr;
+package com.ql.sysmgr;
 
 import java.io.InputStream;
 import java.util.Properties;

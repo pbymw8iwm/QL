@@ -21,7 +21,7 @@ else
 		      <div class="weui_cell weui_cell_select weui_select_after">
 	            <div class="weui_cell_hd"><label class="weui_label">圈子</label></div>
 	            <div class="weui_cell_bd weui_cell_primary">
-	               <select class="weui_select" name="CId">
+	               <select class="weui_select" name="CId" id="CId">
 			          <%if(cId > 0){ %>
 			            <option value="<%=cId %>"><%=cName %></option>
 			          <%} else{

@@ -1,4 +1,4 @@
-package com.ql.party.sysmgr;
+package com.ql.party.service;
 
 public class PartyCommon {
 

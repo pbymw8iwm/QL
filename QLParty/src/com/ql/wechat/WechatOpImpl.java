@@ -1,4 +1,4 @@
-package com.ql.party.wechat;
+package com.ql.wechat;
 
 import java.util.HashMap;
 
@@ -13,7 +13,7 @@ import com.ql.ivalues.IWechatUserValue;
 import com.ql.party.ivalues.IQPartyValue;
 import com.ql.party.ivalues.ISocialCircleValue;
 import com.ql.party.service.PartyServiceFactory;
-import com.ql.party.sysmgr.PartyCommon;
+import com.ql.party.service.PartyCommon;
 import com.ql.sysmgr.QLServiceFactory;
 import com.ql.wechat.IWechatOp;
 import com.ql.wechat.ReceiveJson;

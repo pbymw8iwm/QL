@@ -1,5 +1,5 @@
 <%@page import="com.ql.party.ivalues.IQPartyValue"%>
-<%@page import="com.ql.party.wechat.WechatOpImpl"%>
+<%@page import="com.ql.wechat.WechatOpImpl"%>
 <%@page import="com.ai.appframe2.common.SessionManager"%>
 <%@page import="com.ql.wechat.WechatCommons"%>
 <%@page import="com.ql.party.web.PartyAction"%>

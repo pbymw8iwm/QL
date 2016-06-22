@@ -1,6 +1,6 @@
 
 $(document).ready(function(){
-  $CId = $('#frmParty input[name="CId"]');
+  $CId = $('#frmParty select[name="CId"]');
   $Theme = $('#frmParty input[name="Theme"]');
   $StartTime = $('#frmParty input[name="StartTime"]');
   $EndTime = $('#frmParty input[name="EndTime"]');

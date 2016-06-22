@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sysbolist>
+  <sysbo datasource="base" name="AlbumPhoto" mainattr="PhotoId">
+    <mapingenty type="table">albumphoto</mapingenty>
+    <datafilter />
+    <attrlist>
+      <attr floatlength="0" name="PhotoId" maxlength="21" datatype="Long" type="PK">
+        <mapingcol datatype="bigint">PhotoId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="PhotoData" maxlength="500" datatype="String" type="COL">
+        <mapingcol datatype="varchar">PhotoData</mapingcol>
+      </attr>
+      <attr floatlength="0" name="Labels" maxlength="100" datatype="String" type="COL">
+        <mapingcol datatype="varchar">Labels</mapingcol>
+      </attr>
+      <attr floatlength="0" name="UserId" maxlength="21" datatype="Long" type="COL">
+        <mapingcol datatype="bigint">UserId</mapingcol>
+      </attr>
+      <attr floatlength="0" name="State" maxlength="20" datatype="Long" type="COL">
+        <mapingcol datatype="tinyint">State</mapingcol>
+      </attr>
+      <attr floatlength="0" name="DoneDate" maxlength="20" datatype="DateTime" type="COL">
+        <mapingcol datatype="datetime">DoneDate</mapingcol>
+      </attr>
+    </attrlist>
+    <relationlist />
+    <oplist />
+  </sysbo>
+</sysbolist>

@@ -1,4 +1,4 @@
-package com.ql.party.wechat;
+package com.ql.wechat;
 
 import com.ql.wechat.ReceiveJson;
 import com.ql.wechat.WechatCommons;
